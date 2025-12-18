@@ -1,4 +1,10 @@
-// 1. Snowfall Effect
+// --- GLOBAL VARIABLES ---
+const SONGS_PER_PAGE = 3;
+let currentPage = 1;
+// A default placeholder image for new songs
+const DEFAULT_SONG_IMG = 'https://via.placeholder.com/220?text=Click+to+Add+Image';
+
+// --- 1. Snowfall Effect ---
 function createSnow() {
     const container = document.getElementById('snow-container');
     const flake = document.createElement('div');
@@ -19,7 +25,8 @@ function createSnow() {
 }
 setInterval(createSnow, 300);
 
-// 2. Countdown Logic (Change your date here!)
+// --- 2. Countdown Logic ---
+// CHANGE THIS DATE TO YOUR OWN SPECIAL DATE!
 const targetDate = new Date("December 25, 2025 00:00:00").getTime();
 
 function updateTimer() {
@@ -29,37 +36,135 @@ function updateTimer() {
     const day = 1000 * 60 * 60 * 24;
     const d = Math.floor(gap / day);
     
-    document.getElementById('countdown-timer').innerText = 
-        d > 0 ? `${d} Days until Christmas! 🎄` : "Merry Christmas! 🎁";
+    const timerElement = document.getElementById('countdown-timer');
+    if (timerElement) {
+        timerElement.innerText = d > 0 ? `${d} Days until Christmas! 🎄` : "Merry Christmas! 🎁";
+    }
 }
 setInterval(updateTimer, 1000);
 
-// 3. Music Binder Logic
-function addSong() {
-    const input = document.getElementById('songInput');
-    if (!input.value) return;
+// --- 3. MUSIC BINDER LOGIC (NEW!) ---
 
-    let songs = JSON.parse(localStorage.getItem('mySongs')) || [];
-    songs.push(input.value);
-    localStorage.setItem('mySongs', JSON.stringify(songs));
+// Helper to get songs from LocalStorage
+function getSongs() {
+    return JSON.parse(localStorage.getItem('binderSongs')) || [];
+}
+
+// Helper to save songs to LocalStorage
+function saveSongs(songs) {
+    localStorage.setItem('binderSongs', JSON.stringify(songs));
+}
+
+// Function to add a new song entry
+function addNewSong() {
+    const input = document.getElementById('songLinkInput');
+    const link = input.value.trim();
     
-    renderSongs();
-    input.value = '';
+    if (!link) {
+        alert("Please paste a link first!");
+        return;
+    }
+
+    const songs = getSongs();
+    // Create a new song object with placeholder data
+    const newSong = {
+        id: Date.now(), // Unique ID for the song
+        link: link,
+        title: "Click to Edit Title",
+        artist: "Click to Edit Artist",
+        image: DEFAULT_SONG_IMG,
+        favoriteLine: "",
+        sideNote: ""
+    };
+
+    songs.unshift(newSong); // Add to the beginning of the list
+    saveSongs(songs);
+    
+    input.value = ''; // Clear input
+    currentPage = 1; // Go back to the first page to see the new song
+    renderBinderPage();
 }
 
-function renderSongs() {
-    const grid = document.getElementById('musicGrid');
-    const songs = JSON.parse(localStorage.getItem('mySongs')) || [];
-    grid.innerHTML = songs.map(song => `
-        <div class="music-card">
-            <div class="tape-effect"></div>
-            <div style="font-size: 2rem;">💿</div>
-            <p><strong>${song}</strong></p>
-        </div>
-    `).join('');
+// Function to update a song's details when edited
+function updateSongDetails(id, field, value) {
+    const songs = getSongs();
+    const songIndex = songs.findIndex(song => song.id === id);
+    if (songIndex !== -1) {
+        songs[songIndex][field] = value;
+        saveSongs(songs);
+    }
 }
 
-// 4. Bucket List Logic
+// Function to change song image
+function changeSongImage(id) {
+    const newUrl = prompt("Paste the URL of the song's album art here:");
+    if (newUrl) {
+        updateSongDetails(id, 'image', newUrl);
+        renderBinderPage();
+    }
+}
+
+// Function to render the current page of songs
+function renderBinderPage() {
+    const songs = getSongs();
+    const displayContainer = document.getElementById('binder-pages-display');
+    displayContainer.innerHTML = ''; // Clear current display
+
+    // Calculate pagination bounds
+    const startIndex = (currentPage - 1) * SONGS_PER_PAGE;
+    const endIndex = Math.min(startIndex + SONGS_PER_PAGE, songs.length);
+    const songsToDisplay = songs.slice(startIndex, endIndex);
+
+    if (songs.length === 0) {
+        displayContainer.innerHTML = '<p style="text-align:center; font-style:italic;">No songs added yet. Paste a link above to begin!</p>';
+    } else {
+        songsToDisplay.forEach(song => {
+            // Create the HTML structure for one song entry
+            const songEntryHTML = `
+                <div class="song-entry">
+                    <div class="song-card">
+                        <div class="song-image" onclick="changeSongImage(${song.id})" style="background-image: url('${song.image}')"></div>
+                        <div class="song-details">
+                            <div class="song-title" contenteditable="true" onblur="updateSongDetails(${song.id}, 'title', this.innerText)">${song.title}</div>
+                            <div class="song-artist" contenteditable="true" onblur="updateSongDetails(${song.id}, 'artist', this.innerText)">${song.artist}</div>
+                        </div>
+                        <div class="favorite-line-container">
+                            <label class="favorite-line-label">♥ Favorite Line:</label>
+                            <input type="text" class="handwritten-input" 
+                                   value="${song.favoriteLine}" 
+                                   oninput="updateSongDetails(${song.id}, 'favoriteLine', this.value)" 
+                                   placeholder="Write it here...">
+                        </div>
+                    </div>
+
+                    <div class="side-note-area">
+                        <label class="side-note-label">📝 Notes & Memories:</label>
+                        <textarea class="side-note-textarea" 
+                                  oninput="updateSongDetails(${song.id}, 'sideNote', this.value)" 
+                                  placeholder="Why does this song remind you of us?">${song.sideNote}</textarea>
+                    </div>
+                </div>
+            `;
+            displayContainer.insertAdjacentHTML('beforeend', songEntryHTML);
+        });
+    }
+
+    // Update Pagination Controls
+    document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = endIndex >= songs.length;
+}
+
+// Function to handle page changes
+function changePage(direction) {
+    currentPage += direction;
+    renderBinderPage();
+    // Scroll back to the top of the binder container for a better experience
+    document.querySelector('.binder-container').scrollIntoView({ behavior: 'smooth' });
+}
+
+
+// --- 4. Bucket List Logic ---
 function addToBucket() {
     const input = document.getElementById('bucketInput');
     if (!input.value) return;
@@ -78,7 +183,7 @@ function renderBucket() {
     list.innerHTML = items.map(item => `<li>${item}</li>`).join('');
 }
 
-// 5. Note Station
+// --- 5. Note Station Logic ---
 function saveNote() {
     const note = document.getElementById('noteInput').value;
     localStorage.setItem('savedNote', note);
@@ -87,11 +192,14 @@ function saveNote() {
 
 function displayNote() {
     const note = localStorage.getItem('savedNote');
-    document.getElementById('latestNote').innerText = note ? `"${note}"` : "No notes yet...";
+    document.getElementById('latestNote').innerText = note ? note : "No notes yet...";
 }
 
-// Load everything on startup
-renderSongs();
-renderBucket();
-displayNote();
-updateTimer();
+// --- INITIAL LOAD ---
+// Runs when the page first opens
+window.onload = function() {
+    updateTimer();
+    renderBinderPage();
+    renderBucket();
+    displayNote();
+};
