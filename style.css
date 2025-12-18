@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  background: #f2ece7;
+  font-family: 'Inter', sans-serif;
+}
+
+.binder {
+  display: flex;
+  max-width: 900px;
+  margin: 40px auto;
+}
+
+.rings {
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 80px;
+}
+
+.rings span {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #999;
+  border-radius: 50%;
+  margin: 25px 0;
+}
+
+.page {
+  background: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+h1 {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 2.5em;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: #777;
+  margin-bottom: 30px;
+}
+
+.add-song {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.add-song input {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.9em;
+}
+
+.add-song button {
+  padding: 10px 15px;
+  border: none;
+  background: #c49a9a;
+  color: #fff;
+  cursor: pointer;
+}
+
+.song-card {
+  background: #f8f3f0;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.spotify {
+  background: #e6d6d6;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.notes {
+  font-family: 'Patrick Hand', cursive;
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  min-height: 60px;
+}
