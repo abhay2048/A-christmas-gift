@@ -75,12 +75,13 @@ h1 {
     display: inline-block;
 }
 
-/* --- NEW BINDER STYLES --- */
+/* --- BINDER STYLES --- */
 .binder-container {
     display: flex;
     background-color: var(--paper-color);
     border-radius: 20px;
     box-shadow: 10px 10px 30px rgba(0,0,0,0.15);
+    margin-top: 30px; /* Added spacing */
     margin-bottom: 50px;
     position: relative;
     width: 100%;
@@ -134,14 +135,6 @@ h1 {
     border: 2px dashed var(--primary-pink);
 }
 
-.helper-text {
-    font-size: 0.9rem;
-    color: #777;
-    text-align: center;
-    margin-top: 10px;
-    font-style: italic;
-}
-
 /* Song Entry Layout */
 .song-entry {
     display: flex;
@@ -152,13 +145,13 @@ h1 {
     align-items: flex-start;
 }
 
-/* Song Card Style (from image) */
+/* Song Card Style */
 .song-card {
     background: #fff;
     padding: 15px;
     border-radius: 12px;
     box-shadow: 5px 5px 15px rgba(0,0,0,0.08);
-    width: 220px;
+    width: 280px; /* Slightly wider to fit player */
     flex-shrink: 0;
     transform: rotate(-1deg);
     transition: transform 0.3s;
@@ -169,41 +162,26 @@ h1 {
     transform: rotate(0deg) scale(1.02);
 }
 
-.song-image {
+/* Spotify Player Container */
+.spotify-embed-container {
     width: 100%;
-    aspect-ratio: 1;
-    background-color: #eee;
+    height: 152px; /* Standard height for compact spotify player */
     border-radius: 8px;
+    overflow: hidden;
     margin-bottom: 12px;
-    background-size: cover;
-    background-position: center;
-    cursor: pointer;
-    border: 2px solid transparent;
-}
-.song-image:hover { border-color: var(--primary-pink); }
-
-.song-details {
-    text-align: left;
+    background: #000;
 }
 
-.song-title {
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 5px;
-    cursor: text;
-}
-
-.song-artist {
-    font-size: 0.9rem;
-    color: #777;
-    margin-bottom: 15px;
-    cursor: text;
+.spotify-embed-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
 /* Favorite Line & Side Note */
 .favorite-line-container {
-    margin-top: 15px;
-    padding-top: 15px;
+    margin-top: 10px;
+    padding-top: 10px;
     border-top: 1px solid #eee;
 }
 
@@ -241,7 +219,7 @@ h1 {
     border: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
-    min-height: 250px;
+    min-height: 250px; /* Matches card height roughly */
 }
 
 .side-note-textarea {
@@ -274,7 +252,7 @@ h1 {
     font-size: 1.3rem;
 }
 
-/* --- Other Sections --- */
+/* --- Sections --- */
 .glass-card {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(5px);
@@ -333,6 +311,7 @@ button:disabled {
     padding: 0;
 }
 
+/* Bucket List Items */
 .styled-list li {
     background: white;
     padding: 15px;
@@ -341,13 +320,30 @@ button:disabled {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
     display: flex;
     align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.styled-list li:hover {
+    background: #f9f9f9;
 }
 
 .styled-list li::before {
-    content: '✈️';
-    margin-right: 10px;
+    content: '⬜'; /* Empty checkbox */
+    margin-right: 15px;
 }
 
+.styled-list li.completed {
+    text-decoration: line-through;
+    color: #aaa;
+    background: #f0f0f0;
+}
+
+.styled-list li.completed::before {
+    content: '✅'; /* Checked box */
+}
+
+/* Notes */
 .note-paper {
     background: #fffdf0;
     padding: 25px;
@@ -359,6 +355,7 @@ button:disabled {
     box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
     border: 1px solid #eee;
     position: relative;
+    white-space: pre-wrap; /* Preserves line breaks in notes */
 }
 .note-paper::before {
     content: '';
