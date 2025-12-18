@@ -1,36 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Our Songs</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Winter Wonderland</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="binder">
+    <div class="snow-container" id="snow-container"></div>
 
-  <div class="rings">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
+    <div class="main-content">
+        <header>
+            <h1>Our Winter Wonderland</h1>
+            <div id="countdown-timer" class="timer">Loading our countdown...</div>
+        </header>
 
-  <div class="page">
-    <h1>Our Songs</h1>
-    <p class="subtitle">Little pieces of us</p>
+        <section class="binder-section">
+            <div class="binder-spine"></div>
+            <div class="binder-content">
+                <h2>🎵 Our Music Binder</h2>
+                <div class="input-group">
+                    <input type="text" id="songInput" placeholder="Song Title - Artist">
+                    <button onclick="addSong()">Add to Binder</button>
+                </div>
+                <div class="music-grid" id="musicGrid">
+                    </div>
+            </div>
+        </section>
 
-    <div class="add-song">
-      <input id="songLink" placeholder="Paste Spotify song link here">
-      <button onclick="addSong()">Add</button>
+        <section class="glass-card">
+            <h2>✈️ Our Future Bucket List</h2>
+            <div class="input-group">
+                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
+                <button onclick="addToBucket()">Add</button>
+            </div>
+            <ul id="bucketList" class="styled-list"></ul>
+        </section>
+
+        <section class="glass-card">
+            <h2>✉️ The Note Station</h2>
+            <textarea id="noteInput" placeholder="Write a sweet note here..."></textarea>
+            <button onclick="saveNote()" class="full-btn">Pin Note</button>
+            <div id="latestNote" class="note-paper"></div>
+        </section>
     </div>
 
-    <div id="songs"></div>
-  </div>
-
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
