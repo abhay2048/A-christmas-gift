@@ -17,6 +17,24 @@
             <div id="countdown-timer" class="timer">Loading our countdown...</div>
         </header>
 
+        <section class="glass-card full-width">
+            <h2>✉️ The Note Station</h2>
+            <p style="text-align:center; margin-bottom:15px; font-style:italic; font-size:0.9rem;">Leave a message for me to find...</p>
+            <textarea id="noteInput" placeholder="Write a sweet note here..." rows="4"></textarea>
+            <button onclick="saveNote()" class="full-btn add-btn" style="margin-top: 10px;">Pin Note</button>
+            <div id="latestNote" class="note-paper"></div>
+        </section>
+
+        <section class="glass-card full-width">
+            <h2>✈️ Our Future Bucket List</h2>
+            <p style="text-align:center; margin-bottom:15px; font-style:italic; font-size:0.9rem;">Click an item to cross it off!</p>
+            <div class="input-group">
+                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
+                <button onclick="addToBucket()" class="add-btn">Add</button>
+            </div>
+            <ul id="bucketList" class="styled-list"></ul>
+        </section>
+
         <section class="binder-container">
             <div class="binder-rings">
                 <div class="ring"></div>
@@ -29,10 +47,9 @@
                 
                 <div class="add-song-section full-width">
                     <div class="input-group">
-                        <input type="text" id="songLinkInput" placeholder="Paste a Spotify link here...">
+                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link (e.g., https://open.spotify.com/track/...)">
                         <button onclick="addNewSong()" class="add-btn">Add Song Page</button>
                     </div>
-                    <p class="helper-text">Paste a link, then click the card details to edit them!</p>
                 </div>
 
                 <div id="binder-pages-display">
@@ -46,22 +63,6 @@
             </div>
         </section>
 
-
-        <section class="glass-card full-width">
-            <h2>✈️ Our Future Bucket List</h2>
-            <div class="input-group">
-                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
-                <button onclick="addToBucket()" class="add-btn">Add</button>
-            </div>
-            <ul id="bucketList" class="styled-list"></ul>
-        </section>
-
-        <section class="glass-card full-width">
-            <h2>✉️ The Note Station</h2>
-            <textarea id="noteInput" placeholder="Write a sweet note here..." rows="4"></textarea>
-            <button onclick="saveNote()" class="full-btn add-btn" style="margin-top: 10px;">Pin Note</button>
-            <div id="latestNote" class="note-paper"></div>
-        </section>
     </div>
 
     <script src="script.js"></script>
