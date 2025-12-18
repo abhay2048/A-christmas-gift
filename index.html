@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Winter Wonderland</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,32 +17,49 @@
             <div id="countdown-timer" class="timer">Loading our countdown...</div>
         </header>
 
-        <section class="binder-section">
-            <div class="binder-spine"></div>
-            <div class="binder-content">
-                <h2>🎵 Our Music Binder</h2>
-                <div class="input-group">
-                    <input type="text" id="songInput" placeholder="Song Title - Artist">
-                    <button onclick="addSong()">Add to Binder</button>
-                </div>
-                <div class="music-grid" id="musicGrid">
+        <section class="binder-container">
+            <div class="binder-rings">
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+            </div>
+            <div class="binder-page">
+                <h2>🎵 Our Music Memory Binder</h2>
+                
+                <div class="add-song-section full-width">
+                    <div class="input-group">
+                        <input type="text" id="songLinkInput" placeholder="Paste a Spotify link here...">
+                        <button onclick="addNewSong()" class="add-btn">Add Song Page</button>
                     </div>
+                    <p class="helper-text">Paste a link, then click the card details to edit them!</p>
+                </div>
+
+                <div id="binder-pages-display">
+                    </div>
+
+                <div class="pagination-controls">
+                    <button onclick="changePage(-1)" id="prevBtn" disabled>&laquo; Prev Page</button>
+                    <span id="pageIndicator">Page 1</span>
+                    <button onclick="changePage(1)" id="nextBtn">Next Page &raquo;</button>
+                </div>
             </div>
         </section>
 
-        <section class="glass-card">
+
+        <section class="glass-card full-width">
             <h2>✈️ Our Future Bucket List</h2>
             <div class="input-group">
                 <input type="text" id="bucketInput" placeholder="What's our next adventure?">
-                <button onclick="addToBucket()">Add</button>
+                <button onclick="addToBucket()" class="add-btn">Add</button>
             </div>
             <ul id="bucketList" class="styled-list"></ul>
         </section>
 
-        <section class="glass-card">
+        <section class="glass-card full-width">
             <h2>✉️ The Note Station</h2>
-            <textarea id="noteInput" placeholder="Write a sweet note here..."></textarea>
-            <button onclick="saveNote()" class="full-btn">Pin Note</button>
+            <textarea id="noteInput" placeholder="Write a sweet note here..." rows="4"></textarea>
+            <button onclick="saveNote()" class="full-btn add-btn" style="margin-top: 10px;">Pin Note</button>
             <div id="latestNote" class="note-paper"></div>
         </section>
     </div>
