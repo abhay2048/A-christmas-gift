@@ -1,217 +1,194 @@
+// Import the functions you need from the SDKs (Using CDN for GitHub Pages compatibility)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+// Your specific Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
+    authDomain: "a-christmas-gift.firebaseapp.com",
+    databaseURL: "https://a-christmas-gift-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "a-christmas-gift",
+    storageBucket: "a-christmas-gift.firebasestorage.app",
+    messagingSenderId: "560215769128",
+    appId: "1:560215769128:web:331327bdc0417b4056351d"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 // --- GLOBAL VARIABLES ---
 const SONGS_PER_PAGE = 3;
 let currentPage = 1;
+let allSongs = [];
 
-// --- 1. Snowfall Effect ---
-function createSnow() {
-    const container = document.getElementById('snow-container');
-    const flake = document.createElement('div');
-    const size = Math.random() * 10 + 10 + 'px';
-    
-    flake.classList.add('snowflake');
-    flake.innerHTML = '❄';
-    flake.style.left = Math.random() * 100 + 'vw';
-    flake.style.fontSize = size;
-    flake.style.opacity = Math.random();
-    flake.style.animationDuration = Math.random() * 3 + 2 + 's';
-    
-    container.appendChild(flake);
-    
-    setTimeout(() => {
-        flake.remove();
-    }, 5000);
-}
-setInterval(createSnow, 300);
-
-// --- 2. Countdown Logic ---
-// CHANGE THIS DATE TO YOUR OWN SPECIAL DATE!
+// --- 1. COUNTDOWN TIMER ---
 const targetDate = new Date("December 25, 2025 00:00:00").getTime();
-
-function updateTimer() {
+setInterval(() => {
     const now = new Date().getTime();
     const gap = targetDate - now;
-
-    const day = 1000 * 60 * 60 * 24;
-    const d = Math.floor(gap / day);
+    const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+    const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     
     const timerElement = document.getElementById('countdown-timer');
     if (timerElement) {
-        timerElement.innerText = d > 0 ? `${d} Days until Christmas! 🎄` : "Merry Christmas! 🎁";
+        timerElement.innerText = d > 0 ? `${d} Days, ${h} Hours until Christmas! 🎄` : "Merry Christmas! 🎁";
     }
-}
-setInterval(updateTimer, 1000);
+}, 1000);
 
-// --- 3. AUTO-PLAY MUSIC BINDER LOGIC ---
+// --- 2. NOTE STATION (Shared) ---
+const noteRef = ref(db, 'notes/currentNote');
 
-// Helper: Extract Spotify Embed URL from a standard Link
-function getSpotifyEmbedUrl(url) {
-    // Tries to find "track", "album", or "playlist" and the ID
-    const match = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-    if (match) {
-        // match[1] is type (track), match[2] is ID
-        return `https://open.spotify.com/embed/${match[1]}/${match[2]}`;
+document.getElementById('saveNoteBtn').addEventListener('click', () => {
+    const note = document.getElementById('noteInput').value;
+    if (note.trim() !== "") {
+        set(noteRef, note);
+        document.getElementById('noteInput').value = ""; // Clear input after pinning
     }
-    return null;
-}
+});
 
-function getSongs() {
-    return JSON.parse(localStorage.getItem('binderSongs')) || [];
-}
+onValue(noteRef, (snapshot) => {
+    const data = snapshot.val();
+    document.getElementById('latestNote').innerText = data ? data : "No notes yet... Write something for me!";
+});
 
-function saveSongs(songs) {
-    localStorage.setItem('binderSongs', JSON.stringify(songs));
-}
+// --- 3. BUCKET LIST (Shared & Click to Cross Out) ---
+const bucketRef = ref(db, 'bucketList');
 
-function addNewSong() {
+document.getElementById('addBucketBtn').addEventListener('click', () => {
+    const input = document.getElementById('bucketInput');
+    if (!input.value) return;
+    
+    push(bucketRef, {
+        text: input.value,
+        done: false
+    });
+    input.value = '';
+});
+
+onValue(bucketRef, (snapshot) => {
+    const list = document.getElementById('bucketList');
+    list.innerHTML = '';
+    const data = snapshot.val();
+
+    if (data) {
+        Object.entries(data).forEach(([key, item]) => {
+            const li = document.createElement('li');
+            li.innerHTML = item.text;
+            if (item.done) li.classList.add('completed');
+            
+            li.addEventListener('click', () => {
+                update(ref(db, `bucketList/${key}`), { done: !item.done });
+            });
+            list.appendChild(li);
+        });
+    }
+});
+
+// --- 4. MUSIC BINDER (Shared & Auto-Player) ---
+const songsRef = ref(db, 'binderSongs');
+
+document.getElementById('addSongBtn').addEventListener('click', () => {
     const input = document.getElementById('songLinkInput');
     const rawLink = input.value.trim();
+    if (!rawLink) return;
+
+    // Convert regular Spotify link to Embed URL
+    const match = rawLink.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+    if (!match) return alert("Please use a valid Spotify link!");
     
-    if (!rawLink) {
-        alert("Please paste a Spotify link!");
-        return;
-    }
+    const embedUrl = `https://open.spotify.com/embed/${match[1]}/${match[2]}`;
 
-    const embedUrl = getSpotifyEmbedUrl(rawLink);
-
-    if (!embedUrl) {
-        alert("Oops! That doesn't look like a valid Spotify track link.");
-        return;
-    }
-
-    const songs = getSongs();
-    const newSong = {
-        id: Date.now(),
+    push(songsRef, {
         embedUrl: embedUrl,
         favoriteLine: "",
-        sideNote: ""
-    };
-
-    songs.unshift(newSong); // Add to top
-    saveSongs(songs);
-    
+        sideNote: "",
+        timestamp: Date.now()
+    });
     input.value = '';
-    currentPage = 1;
-    renderBinderPage();
-}
+});
 
-function updateSongDetails(id, field, value) {
-    const songs = getSongs();
-    const songIndex = songs.findIndex(song => song.id === id);
-    if (songIndex !== -1) {
-        songs[songIndex][field] = value;
-        saveSongs(songs);
+onValue(songsRef, (snapshot) => {
+    const data = snapshot.val();
+    allSongs = [];
+    if (data) {
+        Object.entries(data).forEach(([key, song]) => {
+            allSongs.push({ ...song, id: key });
+        });
+        allSongs.sort((a, b) => b.timestamp - a.timestamp);
     }
-}
+    renderBinderPage();
+});
 
 function renderBinderPage() {
-    const songs = getSongs();
     const displayContainer = document.getElementById('binder-pages-display');
     displayContainer.innerHTML = ''; 
 
     const startIndex = (currentPage - 1) * SONGS_PER_PAGE;
-    const endIndex = Math.min(startIndex + SONGS_PER_PAGE, songs.length);
-    const songsToDisplay = songs.slice(startIndex, endIndex);
+    const endIndex = Math.min(startIndex + SONGS_PER_PAGE, allSongs.length);
+    const songsToDisplay = allSongs.slice(startIndex, endIndex);
 
-    if (songs.length === 0) {
-        displayContainer.innerHTML = '<p style="text-align:center; font-style:italic;">No songs added yet. Paste a link above!</p>';
+    if (allSongs.length === 0) {
+        displayContainer.innerHTML = '<p style="text-align:center; font-style:italic;">No songs in our binder yet...</p>';
     } else {
         songsToDisplay.forEach(song => {
-            const songEntryHTML = `
-                <div class="song-entry">
-                    <div class="song-card">
-                        <div class="spotify-embed-container">
-                            <iframe src="${song.embedUrl}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-                        </div>
-                        <div class="favorite-line-container">
-                            <label class="favorite-line-label">♥ Favorite Line:</label>
-                            <input type="text" class="handwritten-input" 
-                                   value="${song.favoriteLine}" 
-                                   oninput="updateSongDetails(${song.id}, 'favoriteLine', this.value)" 
-                                   placeholder="Type lyrics here...">
-                        </div>
+            const div = document.createElement('div');
+            div.className = 'song-entry';
+            div.innerHTML = `
+                <div class="song-card">
+                    <div class="spotify-embed-container">
+                        <iframe src="${song.embedUrl}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
                     </div>
-
-                    <div class="side-note-area">
-                        <label class="side-note-label">📝 Notes & Memories:</label>
-                        <textarea class="side-note-textarea" 
-                                  oninput="updateSongDetails(${song.id}, 'sideNote', this.value)" 
-                                  placeholder="Why this song? Write a memory...">${song.sideNote}</textarea>
+                    <div class="favorite-line-container">
+                        <label class="favorite-line-label">♥ Favorite Line:</label>
+                        <input type="text" class="handwritten-input fav-input" value="${song.favoriteLine}" placeholder="Type lyrics here...">
                     </div>
                 </div>
+                <div class="side-note-area">
+                    <label class="side-note-label">📝 Notes & Memories:</label>
+                    <textarea class="side-note-textarea note-input" placeholder="Why this song reminds me of you...">${song.sideNote}</textarea>
+                </div>
             `;
-            displayContainer.insertAdjacentHTML('beforeend', songEntryHTML);
+
+            // Auto-save fields as they type
+            div.querySelector('.fav-input').addEventListener('change', (e) => {
+                update(ref(db, `binderSongs/${song.id}`), { favoriteLine: e.target.value });
+            });
+
+            div.querySelector('.note-input').addEventListener('change', (e) => {
+                update(ref(db, `binderSongs/${song.id}`), { sideNote: e.target.value });
+            });
+
+            displayContainer.appendChild(div);
         });
     }
 
-    // Update Pagination
     document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
     document.getElementById('prevBtn').disabled = currentPage === 1;
-    document.getElementById('nextBtn').disabled = endIndex >= songs.length;
+    document.getElementById('nextBtn').disabled = endIndex >= allSongs.length;
 }
 
-function changePage(direction) {
-    currentPage += direction;
+document.getElementById('prevBtn').addEventListener('click', () => {
+    currentPage--;
     renderBinderPage();
-    document.querySelector('.binder-container').scrollIntoView({ behavior: 'smooth' });
-}
-
-
-// --- 4. BUCKET LIST LOGIC (Updated for Strikethrough) ---
-function addToBucket() {
-    const input = document.getElementById('bucketInput');
-    if (!input.value) return;
-
-    let items = JSON.parse(localStorage.getItem('myBucket')) || [];
-    // Each item is now an object: { text: "...", done: false }
-    items.push({ text: input.value, done: false });
-    
-    localStorage.setItem('myBucket', JSON.stringify(items));
-    renderBucket();
-    input.value = '';
-}
-
-function toggleBucketItem(index) {
-    let items = JSON.parse(localStorage.getItem('myBucket')) || [];
-    items[index].done = !items[index].done; // Flip true/false
-    localStorage.setItem('myBucket', JSON.stringify(items));
-    renderBucket();
-}
-
-function renderBucket() {
-    const list = document.getElementById('bucketList');
-    const items = JSON.parse(localStorage.getItem('myBucket')) || [];
-    
-    // Check if legacy data exists (strings instead of objects) and fix it
-    if (items.length > 0 && typeof items[0] === 'string') {
-        const fixedItems = items.map(t => ({ text: t, done: false }));
-        localStorage.setItem('myBucket', JSON.stringify(fixedItems));
-        renderBucket(); // Re-run with fixed data
-        return;
-    }
-
-    list.innerHTML = items.map((item, index) => `
-        <li class="${item.done ? 'completed' : ''}" onclick="toggleBucketItem(${index})">
-            ${item.text}
-        </li>
-    `).join('');
-}
-
-// --- 5. NOTE STATION LOGIC ---
-function saveNote() {
-    const note = document.getElementById('noteInput').value;
-    localStorage.setItem('savedNote', note);
-    displayNote();
-}
-
-function displayNote() {
-    const note = localStorage.getItem('savedNote');
-    document.getElementById('latestNote').innerText = note ? note : "No notes yet...";
-}
-
-// --- INITIAL LOAD ---
-window.onload = function() {
-    updateTimer();
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+    currentPage++;
     renderBinderPage();
-    renderBucket();
-    displayNote();
-};
+});
+
+// --- 5. VISUAL SNOW ---
+function createSnow() {
+    const container = document.getElementById('snow-container');
+    if (!container) return;
+    const flake = document.createElement('div');
+    flake.classList.add('snowflake');
+    flake.innerHTML = '❄';
+    flake.style.left = Math.random() * 100 + 'vw';
+    flake.style.fontSize = Math.random() * 10 + 10 + 'px';
+    flake.style.opacity = Math.random();
+    flake.style.animationDuration = Math.random() * 3 + 2 + 's';
+    container.appendChild(flake);
+    setTimeout(() => flake.remove(), 5000);
+}
+setInterval(createSnow, 300);
