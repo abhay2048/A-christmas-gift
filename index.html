@@ -21,8 +21,8 @@
             <h2>✉️ The Note Station</h2>
             <p style="text-align:center; margin-bottom:15px; font-style:italic; font-size:0.9rem;">Leave a message for me to find...</p>
             <textarea id="noteInput" placeholder="Write a sweet note here..." rows="4"></textarea>
-            <button onclick="saveNote()" class="full-btn add-btn" style="margin-top: 10px;">Pin Note</button>
-            <div id="latestNote" class="note-paper"></div>
+            <button id="saveNoteBtn" class="full-btn add-btn" style="margin-top: 10px;">Pin Note</button>
+            <div id="latestNote" class="note-paper">Loading note...</div>
         </section>
 
         <section class="glass-card full-width">
@@ -30,7 +30,7 @@
             <p style="text-align:center; margin-bottom:15px; font-style:italic; font-size:0.9rem;">Click an item to cross it off!</p>
             <div class="input-group">
                 <input type="text" id="bucketInput" placeholder="What's our next adventure?">
-                <button onclick="addToBucket()" class="add-btn">Add</button>
+                <button id="addBucketBtn" class="add-btn">Add</button>
             </div>
             <ul id="bucketList" class="styled-list"></ul>
         </section>
@@ -47,8 +47,8 @@
                 
                 <div class="add-song-section full-width">
                     <div class="input-group">
-                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link (e.g., https://open.spotify.com/track/...)">
-                        <button onclick="addNewSong()" class="add-btn">Add Song Page</button>
+                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                        <button id="addSongBtn" class="add-btn">Add Song Page</button>
                     </div>
                 </div>
 
@@ -56,15 +56,15 @@
                     </div>
 
                 <div class="pagination-controls">
-                    <button onclick="changePage(-1)" id="prevBtn" disabled>&laquo; Prev Page</button>
+                    <button id="prevBtn" disabled>« Prev Page</button>
                     <span id="pageIndicator">Page 1</span>
-                    <button onclick="changePage(1)" id="nextBtn">Next Page &raquo;</button>
+                    <button id="nextBtn">Next Page »</button>
                 </div>
             </div>
         </section>
 
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
