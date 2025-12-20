@@ -14,117 +14,109 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- SETTINGS SYNC ---
-const configRef = ref(db, 'vaultConfig');
 let targetDate;
 let eventName;
 
+// --- SETTINGS SYNC ---
+const configRef = ref(db, 'vaultConfig');
 onValue(configRef, (snapshot) => {
     const data = snapshot.val() || { eventName: "Christmas", date: "2025-12-25" };
     eventName = data.eventName;
     targetDate = new Date(data.date + "T00:00:00").getTime();
     document.getElementById('vault-title').innerText = `Our ${eventName} Wonderland`;
+    document.getElementById('event-name-input').value = eventName;
+    document.getElementById('event-date-input').value = data.date;
 });
 
 document.getElementById('save-settings-btn').onclick = () => {
-    const newName = document.getElementById('event-name-input').value;
-    const newDate = document.getElementById('event-date-input').value;
-    if(newName && newDate) {
-        set(configRef, { eventName: newName, date: newDate });
-        alert("Vault Settings Updated! ✨");
-        location.reload();
+    const name = document.getElementById('event-name-input').value;
+    const date = document.getElementById('event-date-input').value;
+    if(name && date) {
+        set(configRef, { eventName: name, date: date });
+        toggleSettings();
     }
 };
 
+// --- APP LOGIC ---
 window.addEventListener('app-unlocked', () => {
-    startTimer();
     initApp();
 });
 
-function startTimer() {
+function initApp() {
+    // 1. TIMER
     const timerBox = document.getElementById('countdown-timer');
-    
     setInterval(() => {
         const now = new Date().getTime();
         const diff = targetDate - now;
+
+        if (diff <= 0) {
+            timerBox.innerHTML = "Merry Christmas my love, may your coming days be as pretty as snow! ✨❤️";
+            timerBox.classList.add('intense');
+            return;
+        }
 
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-        if (diff < 0) {
-            timerBox.innerHTML = "Merry Christmas my love, may your coming days be as pretty as snow! ✨❤️";
-            timerBox.classList.add('intense');
-            return;
-        }
-
-        if (diff < 10000) { // Under 10 seconds
+        if (diff < 10000) { 
             timerBox.innerText = s;
             timerBox.classList.add('intense');
-        } else if (diff < 60000) { // Under 1 minute
+        } else if (diff < 60000) { 
             timerBox.innerText = `${s} Seconds Left!`;
-            timerBox.style.color = "#ff85a2";
-        } else if (diff < 3600000) { // Under 1 hour
+        } else if (diff < 3600000) { 
             timerBox.innerText = `${m}m ${s}s Remaining`;
-        } else if (d < 1) { // Under 1 day
-            timerBox.innerText = `${h}h ${m}m Left`;
+        } else if (d < 1) { 
+            timerBox.innerText = `${h} Hours Left`;
         } else {
             timerBox.innerText = `${d} Days until ${eventName}`;
         }
     }, 1000);
-}
 
-function initApp() {
-    // NOTE logic
+    // 2. NOTES
     const noteRef = ref(db, 'notes/currentNote');
     document.getElementById('saveNoteBtn').onclick = () => {
-        const note = document.getElementById('noteInput').value;
-        if(note.trim()) set(noteRef, note);
+        const val = document.getElementById('noteInput').value;
+        if(val.trim()) set(noteRef, val);
     };
-    onValue(noteRef, snap => {
-        document.getElementById('latestNote').innerText = snap.val() || "No notes yet...";
-    });
+    onValue(noteRef, s => { document.getElementById('latestNote').innerText = s.val() || "No notes yet..."; });
 
-    // BUCKET LIST logic (with Sleeker Deletes)
+    // 3. BUCKET LIST
     const bucketRef = ref(db, 'bucketList');
     document.getElementById('addBucketBtn').onclick = () => {
-        const input = document.getElementById('bucketInput');
-        if(input.value) push(bucketRef, { text: input.value, done: false });
-        input.value = '';
+        const el = document.getElementById('bucketInput');
+        if(el.value) push(bucketRef, { text: el.value, done: false });
+        el.value = '';
     };
-
-    onValue(bucketRef, snap => {
+    onValue(bucketRef, s => {
         const list = document.getElementById('bucketList');
         list.innerHTML = '';
-        if(snap.val()) {
-            Object.entries(snap.val()).forEach(([key, item]) => {
+        if(s.val()) {
+            Object.entries(s.val()).forEach(([key, val]) => {
                 const li = document.createElement('li');
-                li.className = item.done ? 'completed' : '';
-                li.innerHTML = `
-                    <div class="list-content"><span>${item.text}</span></div>
-                    <button class="del-btn-sleek" onclick="deleteItem('${key}')"><i class="fas fa-times"></i></button>
-                `;
-                li.onclick = (e) => {
-                    if(e.target.closest('.del-btn-sleek')) return;
-                    update(ref(db, `bucketList/${key}`), { done: !item.done });
-                };
+                li.className = val.done ? 'completed' : '';
+                li.innerHTML = `<span>${val.text}</span> <i class="fas fa-times del-btn-sleek" onclick="deleteItem('${key}')"></i>`;
+                li.onclick = (e) => { if(e.target.tagName !== 'I') update(ref(db, `bucketList/${key}`), {done: !val.done}); };
                 list.appendChild(li);
             });
         }
     });
 
-    // MUSIC logic (QUEUE + NO SCROLL)
+    // 4. SONGS (FIXED LINK LOGIC)
     const songsRef = ref(db, 'binderSongs');
     document.getElementById('addSongBtn').onclick = () => {
         const input = document.getElementById('songLinkInput');
-        const match = input.value.match(/spotify\.com\/(track|album)\/([a-zA-Z0-9]+)/);
+        const url = input.value;
+        // This regex extracts the ID correctly
+        const match = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+        
         if(match) {
-            push(songsRef, { 
-                embedUrl: `https://open.spotify.com/embed/$...{match[1]}/${match[2]}`,
-                timestamp: Date.now() 
-            });
+            const embedUrl = `https://open.spotify.com/embed/${match[1]}/${match[2]}`;
+            push(songsRef, { embedUrl, timestamp: Date.now() });
             input.value = '';
+        } else {
+            alert("Please paste a valid Spotify link!");
         }
     };
 
@@ -133,38 +125,36 @@ function initApp() {
         display.innerHTML = '';
         const songs = [];
         if(snap.val()) {
-            Object.entries(snap.val()).forEach(([key, s]) => songs.push({...s, id: key}));
-            songs.sort((a,b) => a.timestamp - b.timestamp); // Queue
+            Object.entries(snap.val()).forEach(([k, v]) => songs.push({...v, id: k}));
+            songs.sort((a,b) => a.timestamp - b.timestamp);
             songs.forEach(s => {
                 const div = document.createElement('div');
                 div.className = 'song-entry';
                 div.innerHTML = `
                     <div class="song-card">
-                        <div class="spotify-embed-container">
-                            <iframe src="${s.embedUrl}" width="100%" height="80" frameBorder="0" allow="encrypted-media"></iframe>
-                        </div>
+                        <iframe src="${s.embedUrl}" width="100%" height="80" frameBorder="0" allow="encrypted-media"></iframe>
                     </div>
-                    <button class="del-btn-sleek" onclick="deleteSong('${s.id}')"><i class="fas fa-trash-alt"></i></button>
+                    <i class="fas fa-trash del-btn-sleek" onclick="deleteSong('${s.id}')"></i>
                 `;
                 display.appendChild(div);
             });
         }
     });
 
-    // SNOW EFFECT
+    // 5. SNOW
     setInterval(() => {
         const container = document.getElementById('snow-container');
+        if(!container) return;
         const flake = document.createElement('div');
         flake.className = 'snowflake';
         flake.innerHTML = '❄';
         flake.style.left = Math.random() * 100 + 'vw';
         flake.style.animationDuration = Math.random() * 3 + 3 + 's';
-        flake.style.fontSize = Math.random() * 10 + 15 + 'px';
+        flake.style.opacity = Math.random() * 0.5 + 0.5;
         container.appendChild(flake);
         setTimeout(() => flake.remove(), 5000);
-    }, 200);
+    }, 250);
 }
 
-// Global window functions for icons to work
 window.deleteItem = (id) => remove(ref(db, `bucketList/${id}`));
 window.deleteSong = (id) => remove(ref(db, `binderSongs/${id}`));
