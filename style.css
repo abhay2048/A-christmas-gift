@@ -1,202 +1,126 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-// Your Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
-    authDomain: "a-christmas-gift.firebaseapp.com",
-    databaseURL: "https://a-christmas-gift-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "a-christmas-gift",
-    storageBucket: "a-christmas-gift.firebasestorage.app",
-    messagingSenderId: "560215769128",
-    appId: "1:560215769128:web:331327bdc0417b4056351d"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// --- GLOBAL VARIABLES ---
-const SONGS_PER_PAGE = 3;
-let currentPage = 1;
-let allSongs = [];
-
-// --- WAIT FOR UNLOCK EVENT ---
-window.addEventListener('app-unlocked', () => {
-    initializeAppLogic();
-});
-
-// Main Function that runs only after password is correct
-function initializeAppLogic() {
-    console.log("App Unlocked! Connecting to Memory Database...");
-
-    // 1. COUNTDOWN
-    const targetDate = new Date("December 25, 2025 00:00:00").getTime();
-    setInterval(() => {
-        const now = new Date().getTime();
-        const gap = targetDate - now;
-        const d = Math.floor(gap / (1000 * 60 * 60 * 24));
-        const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        
-        const timerElement = document.getElementById('countdown-timer');
-        if (timerElement) {
-            timerElement.innerText = d > 0 ? `${d} Days, ${h} Hours until Christmas! 🎄` : "Merry Christmas! 🎁";
-        }
-    }, 1000);
-
-    // 2. NOTE STATION
-    const noteRef = ref(db, 'notes/currentNote');
-    
-    document.getElementById('saveNoteBtn').addEventListener('click', () => {
-        const note = document.getElementById('noteInput').value;
-        if (note.trim() !== "") {
-            set(noteRef, note);
-            document.getElementById('noteInput').value = ""; 
-        }
-    });
-
-    onValue(noteRef, (snapshot) => {
-        const data = snapshot.val();
-        document.getElementById('latestNote').innerText = data ? data : "No notes yet... Write something for me!";
-    });
-
-    // 3. BUCKET LIST
-    const bucketRef = ref(db, 'bucketList');
-
-    document.getElementById('addBucketBtn').addEventListener('click', () => {
-        const input = document.getElementById('bucketInput');
-        if (!input.value) return;
-        
-        push(bucketRef, {
-            text: input.value,
-            done: false
-        });
-        input.value = '';
-    });
-
-    onValue(bucketRef, (snapshot) => {
-        const list = document.getElementById('bucketList');
-        list.innerHTML = '';
-        const data = snapshot.val();
-
-        if (data) {
-            Object.entries(data).forEach(([key, item]) => {
-                const li = document.createElement('li');
-                li.innerHTML = item.text;
-                if (item.done) li.classList.add('completed');
-                
-                li.addEventListener('click', () => {
-                    update(ref(db, `bucketList/${key}`), { done: !item.done });
-                });
-                list.appendChild(li);
-            });
-        }
-    });
-
-    // 4. MUSIC BINDER
-    const songsRef = ref(db, 'binderSongs');
-
-    document.getElementById('addSongBtn').addEventListener('click', () => {
-        const input = document.getElementById('songLinkInput');
-        const rawLink = input.value.trim();
-        if (!rawLink) return;
-
-        const match = rawLink.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-        if (!match) return alert("Please use a valid Spotify link!");
-        
-        const embedUrl = `https://open.spotify.com/embed/${match[1]}/${match[2]}`;
-
-        push(songsRef, {
-            embedUrl: embedUrl,
-            favoriteLine: "",
-            sideNote: "",
-            timestamp: Date.now()
-        });
-        input.value = '';
-    });
-
-    onValue(songsRef, (snapshot) => {
-        const data = snapshot.val();
-        allSongs = [];
-        if (data) {
-            Object.entries(data).forEach(([key, song]) => {
-                allSongs.push({ ...song, id: key });
-            });
-            allSongs.sort((a, b) => b.timestamp - a.timestamp);
-        }
-        renderBinderPage();
-    });
-
-    // 5. SNOWFALL (Starts only after unlock)
-    function createSnow() {
-        const container = document.getElementById('snow-container');
-        if (!container) return;
-        const flake = document.createElement('div');
-        flake.classList.add('snowflake');
-        flake.innerHTML = '❄';
-        flake.style.left = Math.random() * 100 + 'vw';
-        flake.style.fontSize = Math.random() * 10 + 10 + 'px';
-        flake.style.opacity = Math.random();
-        flake.style.animationDuration = Math.random() * 3 + 2 + 's';
-        container.appendChild(flake);
-        setTimeout(() => flake.remove(), 5000);
-    }
-    setInterval(createSnow, 300);
+:root {
+    --primary-pink: #ffb7c5;
+    --ice-blue: #e0f7fa;
+    --binder-spine: #ff85a2;
+    --handwritten: 'Indie Flower', cursive;
 }
 
-// Helper: Render Pages
-function renderBinderPage() {
-    const displayContainer = document.getElementById('binder-pages-display');
-    displayContainer.innerHTML = ''; 
-
-    const startIndex = (currentPage - 1) * SONGS_PER_PAGE;
-    const endIndex = Math.min(startIndex + SONGS_PER_PAGE, allSongs.length);
-    const songsToDisplay = allSongs.slice(startIndex, endIndex);
-
-    if (allSongs.length === 0) {
-        displayContainer.innerHTML = '<p style="text-align:center; font-style:italic;">No songs in our binder yet...</p>';
-    } else {
-        songsToDisplay.forEach(song => {
-            const div = document.createElement('div');
-            div.className = 'song-entry';
-            div.innerHTML = `
-                <div class="song-card">
-                    <div class="spotify-embed-container">
-                        <iframe src="${song.embedUrl}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-                    </div>
-                    <div class="favorite-line-container">
-                        <label class="favorite-line-label">♥ Favorite Line:</label>
-                        <input type="text" class="handwritten-input fav-input" value="${song.favoriteLine}" placeholder="Type lyrics here...">
-                    </div>
-                </div>
-                <div class="side-note-area">
-                    <label class="side-note-label">📝 Notes & Memories:</label>
-                    <textarea class="side-note-textarea note-input" placeholder="Why this song reminds me of you...">${song.sideNote}</textarea>
-                </div>
-            `;
-
-            div.querySelector('.fav-input').addEventListener('change', (e) => {
-                update(ref(db, `binderSongs/${song.id}`), { favoriteLine: e.target.value });
-            });
-
-            div.querySelector('.note-input').addEventListener('change', (e) => {
-                update(ref(db, `binderSongs/${song.id}`), { sideNote: e.target.value });
-            });
-
-            displayContainer.appendChild(div);
-        });
-    }
-
-    document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
-    document.getElementById('prevBtn').disabled = currentPage === 1;
-    document.getElementById('nextBtn').disabled = endIndex >= allSongs.length;
+body {
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(to bottom, #f0f8ff, #d1e9ff);
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #444;
 }
 
-document.getElementById('prevBtn').addEventListener('click', () => {
-    currentPage--;
-    renderBinderPage();
-});
-document.getElementById('nextBtn').addEventListener('click', () => {
-    currentPage++;
-    renderBinderPage();
-});
+/* LOCK SCREEN */
+#login-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #e0f7fa;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+.login-box {
+    background: white; padding: 30px; border-radius: 20px;
+    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+#main-app {
+    opacity: 0; /* Hidden by default until unlocked */
+    transition: opacity 1s ease;
+}
+
+/* CONTAINER */
+.main-content {
+    max-width: 900px; margin: 20px auto; padding: 0 15px;
+    display: flex; flex-direction: column; align-items: center;
+}
+
+/* HEADINGS */
+h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--binder-spine); text-align: center; }
+h2 { font-family: var(--handwritten); color: var(--binder-spine); font-size: 1.8rem; }
+
+/* BUCKET LIST STYLES */
+.styled-list li {
+    background: white; padding: 10px 15px; margin-bottom: 10px;
+    border-radius: 10px; display: flex; align-items: center;
+    justify-content: space-between; /* Pushes delete button to right */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+}
+.list-content { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-grow: 1; }
+.completed .text { text-decoration: line-through; color: #aaa; }
+.action-btn {
+    border: none; background: none; cursor: pointer; color: #aaa; font-size: 1rem; padding: 5px;
+}
+.action-btn:hover { color: #ff6b8d; }
+
+/* BINDER STYLES */
+.binder-container {
+    display: flex; background: #fffaf0; border-radius: 15px;
+    box-shadow: 5px 5px 20px rgba(0,0,0,0.1);
+    margin-top: 20px; width: 100%;
+    position: relative;
+}
+.binder-rings {
+    width: 40px; background: #eee; display: flex; flex-direction: column;
+    justify-content: space-around; align-items: center;
+    border-radius: 15px 0 0 15px; border-right: 2px solid #ccc;
+}
+.ring { width: 20px; height: 20px; border-radius: 50%; border: 3px solid #999; background: #ccc; }
+.binder-page { flex-grow: 1; padding: 20px; }
+
+/* SONG CARD */
+.song-entry {
+    display: flex; gap: 20px; margin-bottom: 30px;
+    padding-bottom: 20px; border-bottom: 2px dashed #eee;
+    position: relative;
+}
+.delete-song-btn {
+    position: absolute; top: -10px; right: -10px;
+    background: #ff6b8d; color: white; border-radius: 50%;
+    width: 25px; height: 25px; border: none; cursor: pointer;
+}
+.song-card {
+    background: white; padding: 10px; border-radius: 10px;
+    width: 250px; flex-shrink: 0; box-shadow: 3px 3px 10px rgba(0,0,0,0.05);
+}
+.side-note-area {
+    flex-grow: 1; background: white; padding: 15px; border-radius: 10px;
+    display: flex; flex-direction: column; min-height: 200px;
+}
+textarea {
+    border: 1px solid #ddd; width: 100%; resize: vertical;
+    font-family: var(--handwritten); font-size: 1.2rem; background: transparent;
+}
+
+/* UTILS */
+.glass-card {
+    background: rgba(255,255,255,0.85); padding: 20px;
+    border-radius: 15px; margin-bottom: 20px;
+    width: 100%; box-sizing: border-box;
+}
+.input-group { display: flex; gap: 5px; margin-bottom: 15px; }
+input { flex-grow: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
+.add-btn { background: var(--binder-spine); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+
+/* MOBILE RESPONSIVENESS (The fix for "Laptop and Phone") */
+@media (max-width: 768px) {
+    .binder-container { flex-direction: column; }
+    .binder-rings { 
+        width: 100%; height: 30px; flex-direction: row; 
+        border-radius: 15px 15px 0 0; border-right: none; border-bottom: 2px solid #ccc;
+    }
+    .song-entry { flex-direction: column; }
+    .song-card { width: 100%; box-sizing: border-box; }
+    .side-note-area { min-height: 120px; }
+    h1 { font-size: 2rem; }
+}
+
+/* Snow */
+.snow-container { position: fixed; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.snowflake { position: absolute; color: white; animation: fall linear infinite; }
+@keyframes fall { to { transform: translateY(105vh); } }
