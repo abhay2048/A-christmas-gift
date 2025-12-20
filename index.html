@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Our Winter Wonderland</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memory Vault</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -14,19 +15,38 @@
             <h1>❄️ Our Secret World ❄️</h1>
             <p>Enter our special code:</p>
             <input type="password" id="passcode-input" placeholder="Passcode">
-            <button onclick="checkPasscode()">Unlock</button>
-            <p id="error-msg">Wrong code, try again! ❤️</p>
+            <button onclick="checkPasscode()" class="add-btn">Unlock</button>
+            <p id="error-msg" style="display:none; color: #ff6b8d; margin-top:10px;">Wrong code, try again! ❤️</p>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content glass-card">
+            <h3>⚙️ Vault Settings</h3>
+            <label>Event Name:</label>
+            <input type="text" id="event-name-input" placeholder="e.g. Christmas">
+            <label>Event Date (YYYY-MM-DD):</label>
+            <input type="date" id="event-date-input">
+            <button id="save-settings-btn" class="add-btn">Update Vault</button>
+            <button onclick="toggleSettings()" class="close-btn">Close</button>
         </div>
     </div>
 
     <div id="main-app">
+        <div class="ghost-art snowman">⛄</div>
+        <div class="ghost-art snowflake-static">❄</div>
+        <div class="ghost-art reindeer">🦌</div>
         
         <div class="snow-container" id="snow-container"></div>
 
+        <button class="settings-trigger" onclick="toggleSettings()">
+            <i class="fas fa-cog"></i>
+        </button>
+
         <div class="main-content">
             <header>
-                <h1>Our Winter Wonderland</h1>
-                <div id="countdown-timer" class="timer">Loading our countdown...</div>
+                <h1 id="vault-title">Our Winter Wonderland</h1>
+                <div id="countdown-timer" class="timer">Calculating...</div>
             </header>
 
             <section class="glass-card full-width">
@@ -42,7 +62,7 @@
                 <h2>✈️ Our Future Bucket List</h2>
                 <div class="input-group">
                     <input type="text" id="bucketInput" placeholder="What's our next adventure?">
-                    <button id="addBucketBtn" class="add-btn">Add</button>
+                    <button id="addBucketBtn" class="add-btn"><i class="fas fa-plus"></i></button>
                 </div>
                 <ul id="bucketList" class="styled-list"></ul>
             </section>
@@ -52,21 +72,18 @@
                     <div class="ring"></div><div class="ring"></div><div class="ring"></div>
                 </div>
                 <div class="binder-page">
-                    <h2>🎵 Our Music Memory Binder</h2>
-                    
+                    <h2>🎵 Music Memory Binder</h2>
                     <div class="add-song-section full-width">
                         <div class="input-group">
                             <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                            <button id="addSongBtn" class="add-btn">Add Page</button>
+                            <button id="addSongBtn" class="add-btn"><i class="fas fa-music"></i></button>
                         </div>
                     </div>
-
                     <div id="binder-pages-display"></div>
-
                     <div class="pagination-controls">
-                        <button id="prevBtn" disabled>« Prev</button>
+                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
                         <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn">Next »</button>
+                        <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
             </section>
@@ -74,33 +91,24 @@
     </div>
 
     <script type="module" src="script.js"></script>
-    
     <script>
         const SECRET_CODE = "1234"; // CHANGE THIS
-
         function checkPasscode() {
-            const input = document.getElementById('passcode-input').value;
-            if (input === SECRET_CODE) {
-                unlockApp();
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-            }
-        }
-
-        function unlockApp() {
-            document.getElementById('login-overlay').style.opacity = '0';
-            setTimeout(() => {
+            if (document.getElementById('passcode-input').value === SECRET_CODE) {
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('main-app').style.opacity = '1';
                 window.dispatchEvent(new Event('app-unlocked'));
-            }, 500);
-            localStorage.setItem('isUnlocked', 'true');
+                localStorage.setItem('isUnlocked', 'true');
+            } else { document.getElementById('error-msg').style.display = 'block'; }
         }
-
         if(localStorage.getItem('isUnlocked') === 'true') {
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('main-app').style.opacity = '1';
             setTimeout(() => window.dispatchEvent(new Event('app-unlocked')), 100);
+        }
+        function toggleSettings() {
+            const modal = document.getElementById('settings-modal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         }
     </script>
 </body>
