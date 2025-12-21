@@ -1,61 +1,209 @@
+/* --- THE BEAUTIFUL UI CORE --- */
 :root {
     --primary-pink: #ffb7c5;
+    --ice-blue: #e0f7fa;
     --binder-spine: #ff85a2;
     --handwritten: 'Indie Flower', cursive;
-    --snow-contrast: rgba(255, 255, 255, 0.9); /* Sharper snowflakes */
+    --glass: rgba(255, 255, 255, 0.85);
 }
 
 body {
-    margin: 0; font-family: 'Quicksand', sans-serif;
-    background: linear-gradient(to bottom, #f0f8ff, #d1e9ff);
-    min-height: 100vh; overflow-x: hidden;
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #f0f8ff 0%, #d1e9ff 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #4a4a4a;
 }
 
-/* GHOST ART (Unobtrusive background outlines) */
+/* GHOST ART (Subtle Background Decorations) */
 .ghost-art {
-    position: fixed; font-size: 8rem; color: rgba(255, 255, 255, 0.15);
-    pointer-events: none; z-index: -1; user-select: none;
+    position: fixed;
+    font-size: clamp(5rem, 15vw, 10rem);
+    color: rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    z-index: -1;
+    user-select: none;
 }
 .snowman { bottom: 5%; left: 5%; transform: rotate(-10deg); }
-.snowflake-static { top: 10%; right: 5%; font-size: 6rem; }
+.snowflake-static { top: 10%; right: 5%; }
 .reindeer { top: 40%; left: -2%; opacity: 0.1; }
 
-/* TIMER STYLES */
+/* MAIN CONTENT LAYOUT */
+.main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-top: 20px;
+}
+
+h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    color: var(--binder-spine);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+}
+
+/* THE TIMER */
 .timer {
-    font-size: 1.5rem; font-weight: 700; text-align: center;
-    padding: 15px 30px; border-radius: 50px;
-    background: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin: 20px auto; display: block; width: fit-content;
-    transition: all 0.5s ease;
-}
-.timer.intense { color: #ff4757; font-size: 2rem; transform: scale(1.1); font-weight: 900; }
-
-/* SETTINGS */
-.settings-trigger {
-    position: fixed; top: 20px; right: 20px; z-index: 100;
-    background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer;
-}
-.modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); z-index: 1000; display: none;
-    justify-content: center; align-items: center;
-}
-.modal-content { width: 300px; padding: 30px; }
-
-/* SPOTIFY FIX */
-.spotify-embed-container {
-    width: 100%; height: 80px; /* Slimmer for better fit */
-    border-radius: 12px; overflow: hidden;
-    background: #000; border: 1px solid #eee;
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: var(--glass);
+    padding: 15px 25px;
+    border-radius: 50px;
+    display: inline-block;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.8);
+    transition: all 0.4s ease;
 }
 
-/* SLEEK DELETE OPTIONS */
+.timer.intense {
+    background: #fff0f3;
+    color: #ff4757;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.2);
+}
+
+/* GLASS CARDS */
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255,255,255,0.6);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+/* BINDER STYLING */
+.binder-container {
+    display: flex;
+    background: #fffaf0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 10px 10px 30px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.binder-rings {
+    width: 40px;
+    background: #f0f0f0;
+    border-right: 2px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 20px 0;
+}
+
+.ring {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid #bbb;
+    background: #eee;
+    margin: 0 auto;
+}
+
+.binder-page {
+    flex: 1;
+    padding: 30px;
+    background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* SPOTIFY NO-SCROLL FIX */
+.song-entry {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    background: white;
+    padding: 10px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.03);
+}
+
+.song-card { flex-grow: 1; }
+
+.song-card iframe {
+    border-radius: 12px;
+    display: block; /* Removes weird gaps */
+}
+
+/* INPUTS & BUTTONS */
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.add-btn {
+    background: var(--binder-spine);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.add-btn:hover { background: #ff6b8d; transform: translateY(-2px); }
+
+/* LISTS & DELETES */
+.styled-list { list-style: none; padding: 0; }
+.styled-list li {
+    background: white;
+    padding: 12px 18px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
 .del-btn-sleek {
-    color: #ccc; transition: 0.3s; padding: 5px;
+    color: #ffccd5;
+    cursor: pointer;
+    transition: 0.3s;
 }
 .del-btn-sleek:hover { color: #ff6b8d; }
 
-/* Existing layout styles (Snow, Glass Card, etc) stay the same as previous response */
-.snowflake { color: var(--snow-contrast); }
-.glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border-radius: 20px; margin-bottom: 20px; }
+/* SNOWFALL */
+.snow-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 2;
+}
+.snowflake {
+    position: absolute;
+    color: white;
+    text-shadow: 0 0 5px rgba(255,255,255,0.8);
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to { transform: translateY(105vh) rotate(360deg); }
+}
+
+/* RESPONSIVE FIXES */
+@media (max-width: 600px) {
+    .main-content { padding: 10px; }
+    .binder-container { flex-direction: column; }
+    .binder-rings {
+        width: 100%; height: 30px; 
+        flex-direction: row; border-right: none; border-bottom: 2px solid #ddd;
+    }
+}
