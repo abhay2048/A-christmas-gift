@@ -1,122 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Memory Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+:root {
+    --primary-pink: #ffb7c5;
+    --binder-spine: #ff85a2;
+    --handwritten: 'Indie Flower', cursive;
+    --gear-color: #ff4d6d; /* Deep pink/red */
+}
 
-    <div id="login-overlay">
-        <div class="login-box">
-            <h1>❄️ Our Secret World ❄️</h1>
-            <input type="password" id="passcode-input" placeholder="Passcode">
-            <button onclick="checkPasscode()" class="add-btn">Unlock</button>
-            <p id="error-msg" style="display:none; color: #ff6b8d; margin-top:10px;">Wrong code! ❤️</p>
-        </div>
-    </div>
+body {
+    margin: 0; font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #f0f8ff, #d1e9ff);
+    min-height: 100vh; overflow-x: hidden;
+}
 
-    <div id="settings-modal" class="modal" style="display: none;">
-        <div class="modal-content glass-card">
-            <h3>⚙️ Vault Settings</h3>
-            <label>Event Name:</label>
-            <input type="text" id="event-name-input">
-            <label>Event Date:</label>
-            <input type="date" id="event-date-input">
-            <div style="margin-top:20px; display:flex; gap:10px;">
-                <button id="save-settings-btn" class="add-btn">Save</button>
-                <button onclick="toggleSettings()" class="add-btn" style="background:#888;">Close</button>
-            </div>
-        </div>
-    </div>
+/* LOCK OVERLAY */
+#login-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #e0f7fa; z-index: 10000;
+    display: flex; justify-content: center; align-items: center;
+}
+.login-box {
+    background: white; padding: 40px; border-radius: 20px;
+    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
 
-    <div id="main-app" style="display:none; opacity: 0; transition: opacity 1s ease;">
-        <div class="ghost-art snowman">⛄</div>
-        <div class="ghost-art snowflake-static">❄</div>
-        <div class="ghost-art reindeer">🦌</div>
-        
-        <div class="snow-container" id="snow-container"></div>
+/* SETTINGS GEAR */
+.settings-trigger {
+    position: fixed; top: 20px; right: 20px;
+    background: none; border: none; font-size: 1.8rem;
+    color: var(--gear-color); cursor: pointer; z-index: 999;
+}
 
-        <button class="settings-trigger" onclick="toggleSettings()">
-            <i class="fas fa-cog"></i>
-        </button>
+/* SPOTIFY FIX */
+.song-card { 
+    flex-grow: 1; height: 80px; 
+    background: #000; border-radius: 12px; overflow: hidden; 
+}
+.song-card iframe { border: none; width: 100%; height: 80px; }
 
-        <div class="main-content">
-            <header>
-                <h1 id="vault-title">Our Winter Wonderland</h1>
-                <div id="countdown-timer" class="timer">Calculating...</div>
-            </header>
+/* GHOST ART & GLASS CARDS */
+.ghost-art { position: fixed; font-size: 8rem; color: rgba(255, 255, 255, 0.4); pointer-events: none; z-index: -1; }
+.snowman { bottom: 5%; left: 5%; }
+.snowflake-static { top: 10%; right: 5%; }
 
-            <section class="glass-card">
-                <h2>✉️ The Note Station</h2>
-                <textarea id="noteInput" placeholder="Write a sweet note..." rows="4"></textarea>
-                <button id="saveNoteBtn" class="add-btn" style="width:100%; margin-top:10px;">Pin Note</button>
-                <div id="latestNote" class="note-paper">Loading...</div>
-            </section>
+.glass-card {
+    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
+    border-radius: 20px; padding: 25px; margin-bottom: 25px;
+    border: 1px solid white; box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+}
 
-            <section class="glass-card">
-                <h2>✈️ Our Future Bucket List</h2>
-                <div class="input-group">
-                    <input type="text" id="bucketInput" placeholder="New adventure?">
-                    <button id="addBucketBtn" class="add-btn"><i class="fas fa-plus"></i></button>
-                </div>
-                <ul id="bucketList" class="styled-list"></ul>
-            </section>
+.timer {
+    font-size: 1.3rem; font-weight: 700; background: white;
+    padding: 15px 30px; border-radius: 50px; display: table; margin: 20px auto;
+}
+.timer.intense { color: #ff4757; font-weight: 900; border: 2px solid #ff4757; }
 
-            <section class="binder-container">
-                <div class="binder-rings">
-                    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
-                </div>
-                <div class="binder-page">
-                    <h2>🎵 Music Memory Binder</h2>
-                    <div class="input-group">
-                        <input type="text" id="songLinkInput" placeholder="Spotify Link...">
-                        <button id="addSongBtn" class="add-btn"><i class="fas fa-music"></i></button>
-                    </div>
-                    <div id="binder-pages-display"></div>
-                    <div class="pagination-controls">
-                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
-                        <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
+/* SNOW */
+.snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+.snowflake { position: absolute; color: white; will-change: transform; }
+@keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
 
-    <script type="module" src="script.js"></script>
-    <script>
-        const SECRET_CODE = "MOON"; 
+/* UI ELEMENTS */
+.styled-list li { background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px; display: flex; justify-content: space-between; }
+.binder-container { display: flex; background: #fffaf0; border-radius: 20px; overflow: hidden; }
+.binder-rings { width: 35px; background: #f0f0f0; border-right: 2px solid #ddd; display: flex; flex-direction: column; justify-content: space-around; }
+.ring { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #bbb; background: #eee; margin: 0 auto; }
+.binder-page { flex: 1; padding: 25px; }
 
-        function checkPasscode() {
-            if (document.getElementById('passcode-input').value === SECRET_CODE) { 
-                unlockApp(); 
-            } else { 
-                document.getElementById('error-msg').style.display = 'block'; 
-            }
-        }
-
-        function unlockApp() {
-            document.getElementById('login-overlay').style.display = 'none';
-            const app = document.getElementById('main-app');
-            app.style.display = 'block';
-            setTimeout(() => { app.style.opacity = '1'; }, 50); // Fade in
-            localStorage.setItem('isUnlocked', 'true');
-            window.dispatchEvent(new Event('app-unlocked'));
-        }
-
-        if(localStorage.getItem('isUnlocked') === 'true') { 
-            unlockApp(); 
-        }
-
-        function toggleSettings() {
-            const m = document.getElementById('settings-modal');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        }
-    </script>
-</body>
-</html>
-
+.modal { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.6); z-index: 20000; 
+    display: none; justify-content: center; align-items: center; 
+}
