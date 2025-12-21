@@ -89,6 +89,7 @@ function initSongs() {
         const url = document.getElementById('songLinkInput').value;
         const m = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
         if(m) { 
+            // FIXED: Added missing '$' for template literal and used open.spotify.com domain
             const embed = `https://open.spotify.com/embed/${m[1]}/${m[2]}`;
             push(r, { embedUrl: embed, timestamp: Date.now() }); 
             document.getElementById('songLinkInput').value = ''; 
@@ -114,6 +115,7 @@ function renderSongs() {
     document.getElementById('nextBtn').disabled = (start + 3) >= allSongs.length;
 }
 
+// Pagination controls
 document.getElementById('prevBtn').onclick = () => { currentPage--; renderSongs(); };
 document.getElementById('nextBtn').onclick = () => { currentPage++; renderSongs(); };
 
@@ -128,5 +130,6 @@ function startSnow() {
     }
 }
 
+// Global window functions for HTML onclick events
 window.deleteItem = (id) => remove(ref(db, `bucketList/${id}`));
 window.deleteSong = (id) => remove(ref(db, `binderSongs/${id}`));
