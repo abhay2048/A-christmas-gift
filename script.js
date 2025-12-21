@@ -16,7 +16,7 @@ const db = getDatabase(app);
 
 let targetDate, eventName, allSongs = [], currentPage = 1;
 
-// --- LOAD DATA IMMEDIATELY ---
+// --- LOAD DATA ---
 initSettings();
 initTimer();
 initNotes();
@@ -26,7 +26,7 @@ startSnow();
 
 function initSettings() {
     onValue(ref(db, 'vaultConfig'), (snap) => {
-        const data = snap.val() || { eventName: "Christmas", date: "2025-12-25" };
+        const data = snap.val() || { eventName: "Winter", date: "2025-12-25" };
         eventName = data.eventName;
         targetDate = new Date(data.date + "T00:00:00").getTime();
         document.getElementById('vault-title').innerText = `Our ${eventName} Wonderland`;
@@ -46,24 +46,27 @@ function initTimer() {
     setInterval(() => {
         const diff = targetDate - new Date().getTime();
         if (diff <= 0) {
-            box.innerHTML = "Merry Christmas my love, may your coming days be as pretty as snow! ✨❤️";
+            box.innerHTML = `Merry ${eventName}! ✨❤️`;
             box.classList.add('intense'); return;
         }
         const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000),
               m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
         
-        if (diff < 10000) box.innerText = s;
-        else if (diff < 60000) box.innerText = `${s} Seconds Left!`;
-        else if (diff < 3600000) box.innerText = `${m}m ${s}s Remaining`;
-        else if (d < 1) box.innerText = `${h} Hours Left`;
+        if (d < 1) box.innerText = `${h}h ${m}m ${s}s Remaining`;
         else box.innerText = `${d} Days until ${eventName}`;
     }, 1000);
 }
 
 function initNotes() {
     const r = ref(db, 'notes/currentNote');
-    document.getElementById('saveNoteBtn').onclick = () => set(r, document.getElementById('noteInput').value);
-    onValue(r, s => document.getElementById('latestNote').innerText = s.val() || "...");
+    document.getElementById('saveNoteBtn').onclick = () => {
+        const val = document.getElementById('noteInput').value;
+        if(val) {
+            set(r, val);
+            document.getElementById('noteInput').value = '';
+        }
+    };
+    onValue(r, s => document.getElementById('latestNote').innerText = s.val() || "No notes yet...");
 }
 
 function initBucket() {
@@ -76,7 +79,7 @@ function initBucket() {
         const list = document.getElementById('bucketList'); list.innerHTML = '';
         if(s.val()) Object.entries(s.val()).forEach(([k, v]) => {
             const li = document.createElement('li'); li.className = v.done ? 'completed' : '';
-            li.innerHTML = `<span>${v.text}</span> <i class="fas fa-times del-btn-sleek" style="cursor:pointer;" onclick="deleteItem('${k}')"></i>`;
+            li.innerHTML = `<span>${v.text}</span> <i class="fas fa-times" style="cursor:pointer; color:red;" onclick="deleteItem('${k}')"></i>`;
             li.onclick = (e) => { if(e.target.tagName !== 'I') update(ref(db, `bucketList/${k}`), {done: !v.done}); };
             list.appendChild(li);
         });
@@ -89,7 +92,6 @@ function initSongs() {
         const url = document.getElementById('songLinkInput').value;
         const m = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
         if(m) { 
-            // FIXED: Added missing '$' for template literal and used open.spotify.com domain
             const embed = `https://open.spotify.com/embed/${m[1]}/${m[2]}`;
             push(r, { embedUrl: embed, timestamp: Date.now() }); 
             document.getElementById('songLinkInput').value = ''; 
@@ -106,8 +108,8 @@ function renderSongs() {
     const start = (currentPage-1)*3;
     allSongs.slice(start, start + 3).forEach(s => {
         const div = document.createElement('div'); div.className = 'song-entry';
-        div.innerHTML = `<div class="song-card"><iframe src="${s.embedUrl}" width="100%" height="80" allow="encrypted-media"></iframe></div>
-                         <i class="fas fa-trash del-btn-sleek" style="cursor:pointer; margin-left:10px;" onclick="deleteSong('${s.id}')"></i>`;
+        div.innerHTML = `<div class="song-card"><iframe src="${s.embedUrl}" allow="encrypted-media"></iframe></div>
+                         <i class="fas fa-trash" style="cursor:pointer; color:white; margin-left:10px;" onclick="deleteSong('${s.id}')"></i>`;
         d.appendChild(div);
     });
     document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
@@ -115,7 +117,6 @@ function renderSongs() {
     document.getElementById('nextBtn').disabled = (start + 3) >= allSongs.length;
 }
 
-// Pagination controls
 document.getElementById('prevBtn').onclick = () => { currentPage--; renderSongs(); };
 document.getElementById('nextBtn').onclick = () => { currentPage++; renderSongs(); };
 
@@ -130,6 +131,5 @@ function startSnow() {
     }
 }
 
-// Global window functions for HTML onclick events
 window.deleteItem = (id) => remove(ref(db, `bucketList/${id}`));
 window.deleteSong = (id) => remove(ref(db, `binderSongs/${id}`));
