@@ -17,29 +17,35 @@ const db = getDatabase(app);
 let targetDate, eventName, allSongs = [], currentPage = 1;
 const SONGS_PER_PAGE = 3;
 
-// --- SETTINGS SYNC ---
-onValue(ref(db, 'vaultConfig'), (snap) => {
-    const data = snap.val() || { eventName: "Christmas", date: "2025-12-25" };
-    eventName = data.eventName;
-    targetDate = new Date(data.date + "T00:00:00").getTime();
-    document.getElementById('vault-title').innerText = `Our ${eventName} Wonderland`;
-    document.getElementById('event-name-input').value = eventName;
-    document.getElementById('event-date-input').value = data.date;
-});
-
-document.getElementById('save-settings-btn').onclick = () => {
-    const name = document.getElementById('event-name-input').value;
-    const date = document.getElementById('event-date-input').value;
-    if(name && date) set(ref(db, 'vaultConfig'), { eventName: name, date: date });
-};
-
+// --- INITIALIZE ON UNLOCK ---
 window.addEventListener('app-unlocked', () => {
+    initSettings();
     initTimer();
     initNotes();
     initBucket();
     initSongs();
     startSnow();
 });
+
+function initSettings() {
+    onValue(ref(db, 'vaultConfig'), (snap) => {
+        const data = snap.val() || { eventName: "Christmas", date: "2025-12-25" };
+        eventName = data.eventName;
+        targetDate = new Date(data.date + "T00:00:00").getTime();
+        document.getElementById('vault-title').innerText = `Our ${eventName} Wonderland`;
+        document.getElementById('event-name-input').value = eventName;
+        document.getElementById('event-date-input').value = data.date;
+    });
+
+    document.getElementById('save-settings-btn').onclick = () => {
+        const name = document.getElementById('event-name-input').value;
+        const date = document.getElementById('event-date-input').value;
+        if(name && date) {
+            set(ref(db, 'vaultConfig'), { eventName: name, date: date });
+            alert("Settings Saved!");
+        }
+    };
+}
 
 function initTimer() {
     const box = document.getElementById('countdown-timer');
@@ -88,11 +94,16 @@ function initSongs() {
     document.getElementById('addSongBtn').onclick = () => {
         const url = document.getElementById('songLinkInput').value;
         const m = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-        if(m) { push(r, { embedUrl: `https://open.spotify.com/embed/$...{m[1]}/${m[2]}`, timestamp: Date.now() }); document.getElementById('songLinkInput').value = ''; }
+        if(m) { 
+            push(r, { embedUrl: `https://open.spotify.com/embed/$...{m[1]}/${m[2]}`, timestamp: Date.now() }); 
+            document.getElementById('songLinkInput').value = ''; 
+        }
     };
     onValue(r, snap => {
-        allSongs = []; if(snap.val()) Object.entries(snap.val()).forEach(([k, v]) => allSongs.push({...v, id: k}));
-        allSongs.sort((a,b) => a.timestamp - b.timestamp); renderSongs();
+        allSongs = []; 
+        if(snap.val()) Object.entries(snap.val()).forEach(([k, v]) => allSongs.push({...v, id: k}));
+        allSongs.sort((a,b) => a.timestamp - b.timestamp); 
+        renderSongs();
     });
 }
 
@@ -102,7 +113,7 @@ function renderSongs() {
     allSongs.slice(start, end).forEach(s => {
         const div = document.createElement('div'); div.className = 'song-entry';
         div.innerHTML = `<div class="song-card"><iframe src="${s.embedUrl}" width="100%" height="80" frameBorder="0" allow="encrypted-media"></iframe></div>
-                         <i class="fas fa-trash del-btn-sleek" onclick="deleteSong('${s.id}')"></i>`;
+                         <i class="fas fa-trash del-btn-sleek" style="margin-left: 10px;" onclick="deleteSong('${s.id}')"></i>`;
         d.appendChild(div);
     });
     document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
@@ -115,14 +126,15 @@ document.getElementById('nextBtn').onclick = () => { currentPage++; renderSongs(
 
 function startSnow() {
     const c = document.getElementById('snow-container');
-    for(let i=0; i<40; i++) {
+    c.innerHTML = ''; // Clear old snow
+    for(let i=0; i<30; i++) {
         const f = document.createElement('div'); f.className = 'snowflake'; f.innerHTML = '❄';
-        const reset = () => {
-            f.style.left = Math.random()*100+'vw'; f.style.top = -Math.random()*100+'vh';
-            f.style.opacity = Math.random(); f.style.fontSize = Math.random()*15+10+'px';
-            f.style.animation = `fall ${Math.random()*5+5}s linear infinite`;
-        };
-        reset(); c.appendChild(f);
+        f.style.left = Math.random()*100+'vw';
+        f.style.top = -Math.random()*100+'vh';
+        f.style.opacity = Math.random()*0.7 + 0.3;
+        f.style.fontSize = Math.random()*15+10+'px';
+        f.style.animation = `fall ${Math.random()*5+5}s linear infinite`;
+        c.appendChild(f);
     }
 }
 
