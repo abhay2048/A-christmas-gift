@@ -2,78 +2,71 @@
     --primary-pink: #ffb7c5;
     --binder-spine: #ff85a2;
     --handwritten: 'Indie Flower', cursive;
-    --gear-color: #ff6b8d; /* Pinkish-Red for the Settings Gear */
+    --gear-color: #ff4d6d; /* Deep pink/red */
 }
 
 body {
     margin: 0; font-family: 'Quicksand', sans-serif;
     background: linear-gradient(135deg, #f0f8ff, #d1e9ff);
-    background-attachment: fixed; min-height: 100vh; overflow-x: hidden;
+    min-height: 100vh; overflow-x: hidden;
 }
 
-/* SETTINGS GEAR COLOR */
+/* LOCK OVERLAY */
+#login-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #e0f7fa; z-index: 10000;
+    display: flex; justify-content: center; align-items: center;
+}
+.login-box {
+    background: white; padding: 40px; border-radius: 20px;
+    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* SETTINGS GEAR */
 .settings-trigger {
     position: fixed; top: 20px; right: 20px;
-    background: none; border: none;
-    font-size: 1.8rem;
-    color: var(--gear-color); /* Updated Color */
-    cursor: pointer; z-index: 100;
-    transition: transform 0.3s ease;
-}
-.settings-trigger:hover { transform: rotate(90deg); }
-
-/* GHOST ART */
-.ghost-art {
-    position: fixed; font-size: 8rem; color: rgba(255, 255, 255, 0.3);
-    pointer-events: none; z-index: -1;
-}
-.snowman { bottom: 5%; left: 5%; transform: rotate(-10deg); }
-.snowflake-static { top: 10%; right: 5%; }
-.reindeer { top: 40%; left: -2%; opacity: 0.1; }
-
-/* SNOW */
-.snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99; }
-.snowflake { position: absolute; color: white; will-change: transform; text-shadow: 0 0 5px rgba(255,255,255,0.8); }
-@keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
-
-/* UI ELEMENTS */
-.main-content { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; }
-.timer {
-    font-size: 1.4rem; font-weight: 700; background: rgba(255,255,255,0.6);
-    padding: 15px 25px; border-radius: 50px; display: table; margin: 20px auto;
-    border: 1px solid white; transition: 0.5s;
-}
-.timer.intense { color: #ff4757; transform: scale(1.1); font-weight: 900; background: white; }
-
-.glass-card {
-    background: rgba(255,255,255,0.8); backdrop-filter: blur(8px);
-    border-radius: 20px; padding: 25px; margin-bottom: 25px;
-    border: 1px solid rgba(255,255,255,0.5);
+    background: none; border: none; font-size: 1.8rem;
+    color: var(--gear-color); cursor: pointer; z-index: 999;
 }
 
-/* SPOTIFY SQUARE FIX */
+/* SPOTIFY FIX */
 .song-card { 
-    flex-grow: 1; 
-    height: 80px; /* Force small height */
-    background: #000; 
-    border-radius: 12px; 
-    overflow: hidden; 
+    flex-grow: 1; height: 80px; 
+    background: #000; border-radius: 12px; overflow: hidden; 
 }
 .song-card iframe { border: none; width: 100%; height: 80px; }
 
-.binder-container { display: flex; background: #fffaf0; border-radius: 20px; box-shadow: 10px 10px 30px rgba(0,0,0,0.1); }
-.binder-rings { width: 40px; background: #f0f0f0; border-right: 2px solid #ddd; display: flex; flex-direction: column; justify-content: space-around; padding: 20px 0; }
-.ring { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #bbb; background: #eee; margin: 0 auto; }
-.binder-page { flex: 1; padding: 25px; background-image: radial-gradient(#e0e0e0 1px, transparent 1px); background-size: 20px 20px; }
+/* GHOST ART & GLASS CARDS */
+.ghost-art { position: fixed; font-size: 8rem; color: rgba(255, 255, 255, 0.4); pointer-events: none; z-index: -1; }
+.snowman { bottom: 5%; left: 5%; }
+.snowflake-static { top: 10%; right: 5%; }
 
-/* MODAL FIX */
-.modal { 
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.5); z-index: 1000; 
-    display: none; justify-content: center; align-items: center; 
+.glass-card {
+    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
+    border-radius: 20px; padding: 25px; margin-bottom: 25px;
+    border: 1px solid white; box-shadow: 0 8px 32px rgba(0,0,0,0.05);
 }
 
-@media (max-width: 600px) {
-    .binder-container { flex-direction: column; }
-    .binder-rings { width: 100%; height: 30px; flex-direction: row; border-right: none; border-bottom: 2px solid #ddd; }
+.timer {
+    font-size: 1.3rem; font-weight: 700; background: white;
+    padding: 15px 30px; border-radius: 50px; display: table; margin: 20px auto;
+}
+.timer.intense { color: #ff4757; font-weight: 900; border: 2px solid #ff4757; }
+
+/* SNOW */
+.snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+.snowflake { position: absolute; color: white; will-change: transform; }
+@keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+
+/* UI ELEMENTS */
+.styled-list li { background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px; display: flex; justify-content: space-between; }
+.binder-container { display: flex; background: #fffaf0; border-radius: 20px; overflow: hidden; }
+.binder-rings { width: 35px; background: #f0f0f0; border-right: 2px solid #ddd; display: flex; flex-direction: column; justify-content: space-around; }
+.ring { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #bbb; background: #eee; margin: 0 auto; }
+.binder-page { flex: 1; padding: 25px; }
+
+.modal { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.6); z-index: 20000; 
+    display: none; justify-content: center; align-items: center; 
 }
