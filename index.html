@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Memory Vault</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div id="settings-modal" class="modal">
+    <div id="settings-modal" class="modal" style="display: none;">
         <div class="modal-content glass-card">
             <h3>⚙️ Vault Settings</h3>
             <label>Event Name:</label>
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <div id="main-app" style="display:none;">
+    <div id="main-app" style="display:none; opacity: 0; transition: opacity 1s ease;">
         <div class="ghost-art snowman">⛄</div>
         <div class="ghost-art snowflake-static">❄</div>
         <div class="ghost-art reindeer">🦌</div>
@@ -80,7 +80,7 @@
                     <div class="pagination-controls">
                         <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
                         <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+                        <button id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
             </section>
@@ -89,18 +89,29 @@
 
     <script type="module" src="script.js"></script>
     <script>
-        const SECRET_CODE = "MOON"; 
+        const SECRET_CODE = "1234"; 
+
         function checkPasscode() {
-            if (document.getElementById('passcode-input').value === SECRET_CODE) { unlockApp(); }
-            else { document.getElementById('error-msg').style.display = 'block'; }
+            if (document.getElementById('passcode-input').value === SECRET_CODE) { 
+                unlockApp(); 
+            } else { 
+                document.getElementById('error-msg').style.display = 'block'; 
+            }
         }
+
         function unlockApp() {
             document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
+            const app = document.getElementById('main-app');
+            app.style.display = 'block';
+            setTimeout(() => { app.style.opacity = '1'; }, 50); // Fade in
             localStorage.setItem('isUnlocked', 'true');
             window.dispatchEvent(new Event('app-unlocked'));
         }
-        if(localStorage.getItem('isUnlocked') === 'true') { unlockApp(); }
+
+        if(localStorage.getItem('isUnlocked') === 'true') { 
+            unlockApp(); 
+        }
+
         function toggleSettings() {
             const m = document.getElementById('settings-modal');
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
