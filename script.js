@@ -41,8 +41,7 @@ function initSettings() {
         const date = document.getElementById('event-date-input').value;
         if(name && date) { set(ref(db, 'vaultConfig'), { eventName: name, date: date }); alert("Saved!"); location.reload(); }
     };
-
-    // PREVIEW BUTTON (Updated with Secret Message Reveal)
+    // PREVIEW BUTTON
     document.getElementById('simulate-btn').onclick = () => {
         simulationMode = true;
         targetDate = new Date().getTime() + 10000; // 10 seconds
@@ -61,15 +60,7 @@ function initTimer() {
         if (diff <= 0) {
             box.innerHTML = `✨ Merry Christmas!<br><span style="font-size:1rem; font-weight:400;">I love you more than words can say.</span>`;
             box.classList.add('celebrate');
-            
-            // NEW: Reveal the secret Christmas message div
-            const secretMsg = document.getElementById('secretMessage');
-            if (secretMsg && !secretMsg.classList.contains('visible')) {
-                secretMsg.classList.add('visible');
-                secretMsg.style.display = 'block';
-            }
-
-            if(!fireworksInterval) startFireworks(); 
+            if(!fireworksInterval) startFireworks(); // START FIREWORKS
             return;
         }
 
@@ -83,78 +74,19 @@ function initTimer() {
     }, 1000);
 }
 
-// --- MUSIC BINDER (Updated with Scrapyard Features) ---
-function initSongs() {
-    const r = ref(db, 'binderSongs');
-    document.getElementById('addSongBtn').onclick = () => {
-        const url = document.getElementById('songLinkInput').value;
-        const mood = document.getElementById('songMoodInput').value;
-        const lyric = document.getElementById('songLyricInput').value;
-        const note = document.getElementById('songNoteInput').value;
-
-        const m = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-        if(m) { 
-            push(r, { 
-                embedUrl: `https://open.spotify.com/embed/${m[1]}/${m[2]}`, 
-                mood: mood || "General",
-                lyric: lyric || "",
-                note: note || "",
-                timestamp: Date.now() 
-            }); 
-            // Reset inputs
-            document.getElementById('songLinkInput').value = '';
-            document.getElementById('songMoodInput').value = '';
-            document.getElementById('songLyricInput').value = '';
-            document.getElementById('songNoteInput').value = '';
-        }
-    };
-    onValue(r, snap => {
-        allSongs = []; 
-        if(snap.val()) Object.entries(snap.val()).forEach(([k, v]) => allSongs.push({...v, id: k}));
-        allSongs.sort((a, b) => b.timestamp - a.timestamp); // Newest first
-        renderSongs();
-    });
-}
-
-function renderSongs() {
-    const d = document.getElementById('binder-pages-display'); 
-    d.innerHTML = '';
-    const start = (currentPage-1)*3;
-    
-    allSongs.slice(start, start + 3).forEach(s => {
-        const div = document.createElement('div'); 
-        div.className = 'song-entry';
-        div.innerHTML = `
-            <iframe src="${s.embedUrl}" width="250" height="80" frameborder="0" allow="encrypted-media"></iframe>
-            <div class="song-info">
-                <h3>Mood: ${s.mood}</h3>
-                <p class="lyric">"${s.lyric}"</p>
-                <p class="note">${s.note}</p>
-                <div class="del-btn-sleek" onclick="deleteSong('${s.id}')"><i class="fas fa-trash"></i></div>
-            </div>
-        `;
-        d.appendChild(div);
-    });
-
-    document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
-    document.getElementById('prevBtn').disabled = currentPage === 1;
-    document.getElementById('nextBtn').disabled = (start + 3) >= allSongs.length;
-}
-
-// Pagination Controls
-document.getElementById('prevBtn').onclick = () => { if(currentPage > 1) { currentPage--; renderSongs(); } };
-document.getElementById('nextBtn').onclick = () => { if((currentPage * 3) < allSongs.length) { currentPage++; renderSongs(); } };
-
 // --- FIREWORKS ENGINE ---
 function startFireworks() {
     const canvas = document.getElementById('fireworksCanvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    
+    // Darken background for effect
     document.body.style.background = "#2d3436"; 
     
     let particles = [];
     fireworksInterval = setInterval(() => {
+        // Create explosion
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height / 2;
         const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
@@ -165,7 +97,7 @@ function startFireworks() {
 
     function animate() {
         requestAnimationFrame(animate);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Trail effect
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         particles.forEach((p, index) => {
             p.x += p.dx; p.y += p.dy; p.alpha -= 0.02;
@@ -177,7 +109,7 @@ function startFireworks() {
     animate();
 }
 
-// --- REMAINING UTILS ---
+// --- STANDARD FEATURES ---
 function initNotes() {
     const r = ref(db, 'notes/currentNote');
     document.getElementById('saveNoteBtn').onclick = () => set(r, document.getElementById('noteInput').value);
@@ -197,6 +129,32 @@ function initBucket() {
         });
     });
 }
+function initSongs() {
+    const r = ref(db, 'binderSongs');
+    document.getElementById('addSongBtn').onclick = () => {
+        const url = document.getElementById('songLinkInput').value;
+        const m = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+        if(m) { push(r, { embedUrl: `https://open.spotify.com/embed/$...{m[1]}/${m[2]}`, timestamp: Date.now() }); document.getElementById('songLinkInput').value = ''; }
+    };
+    onValue(r, snap => {
+        allSongs = []; if(snap.val()) Object.entries(snap.val()).forEach(([k, v]) => allSongs.push({...v, id: k}));
+        renderSongs();
+    });
+}
+function renderSongs() {
+    const d = document.getElementById('binder-pages-display'); d.innerHTML = '';
+    const start = (currentPage-1)*3;
+    allSongs.slice(start, start + 3).forEach(s => {
+        const div = document.createElement('div'); div.className = 'song-entry';
+        div.innerHTML = `<div class="song-card"><iframe src="${s.embedUrl}" allow="encrypted-media"></iframe></div><div class="del-btn-sleek" onclick="deleteSong('${s.id}')"><i class="fas fa-trash"></i></div>`;
+        d.appendChild(div);
+    });
+    document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = (start + 3) >= allSongs.length;
+}
+document.getElementById('prevBtn').onclick = () => { currentPage--; renderSongs(); };
+document.getElementById('nextBtn').onclick = () => { currentPage++; renderSongs(); };
 function startSnow() {
     const c = document.getElementById('snow-container'); c.innerHTML = '';
     for(let i=0; i<30; i++) {
