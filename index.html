@@ -1,103 +1,91 @@
-<!DOCTYPE html>
+v<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Memory Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@500;700&family=Indie+Flower&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;600;700&family=Indie+Flower&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <canvas id="fireworksCanvas"></canvas>
-    <div id="suspense-overlay"></div>
+<canvas id="fireworksCanvas"></canvas>
 
-    <div id="settings-modal" class="modal">
-        <div class="modal-content glass-card">
-            <h3 class="fancy-title" style="font-size: 2.5rem;">Settings</h3>
-            <label>Event Name:</label>
-            <input type="text" id="event-name-input">
-            <label>Event Date:</label>
-            <input type="date" id="event-date-input">
-            
-            <button id="simulate-btn" class="add-btn preview-glow">
-                ✨ Preview 10s Suspense
+<div id="login-overlay">
+    <div class="login-box glass-card">
+        <h1 class="fancy-title">Our Secret World</h1>
+        <input type="password" id="passcode-input" placeholder="Enter Magic Word">
+        <button onclick="checkPasscode()" class="add-btn">Unlock</button>
+        <p id="error-msg">Wrong password ❤️</p>
+    </div>
+</div>
+
+<div class="main-content">
+
+    <h1 id="vault-title" class="fancy-title">Our Winter Wonderland</h1>
+    <div id="countdown-timer" class="timer">Loading...</div>
+
+    <!-- SECRET MESSAGE -->
+    <div id="secret-message" class="secret-msg">
+        ✨ Merry Christmas My Love ✨
+        <span>
+            I waited for this moment just to tell you…  
+            you are my favorite song forever ❤️ may your days to come be as beautiful as the snow!!!
+        </span>
+    </div>
+
+    <!-- MUSIC BINDER -->
+    <section class="binder-container">
+        <div class="binder-rings">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+        </div>
+
+        <div class="binder-page">
+            <h2>🎵 Music Binder</h2>
+
+            <input id="songLinkInput" placeholder="Spotify link">
+            <input id="songTitleInput" placeholder="Card title (e.g. In Love)">
+            <textarea id="songNoteInput" placeholder="Short note..."></textarea>
+            <input id="songLineInput" placeholder="Favorite lyric line">
+
+            <button id="addSongBtn" class="add-btn full-width">
+                <i class="fas fa-music"></i> Add Page
             </button>
 
-            <div style="margin-top:20px; display:flex; gap:10px;">
-                <button id="save-settings-btn" class="add-btn">Save</button>
-                <button onclick="toggleSettings()" class="add-btn" style="background:#666;">Close</button>
+            <div id="binder-pages-display"></div>
+
+            <div class="pagination">
+                <button id="prevBtn">◀</button>
+                <span id="pageIndicator">Page 1</span>
+                <button id="nextBtn">▶</button>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div id="login-overlay">
-        <div class="login-box glass-card">
-            <h1 class="fancy-title" style="font-size: 3.5rem;">Our Secret World</h1>
-            <input type="password" id="passcode-input" placeholder="Magic Word...">
-            <button onclick="checkPasscode()" class="add-btn">Unlock Heart</button>
-        </div>
-    </div>
+</div>
 
-    <div id="main-app">
-        <div class="snow-container" id="snow-container"></div>
-        <button class="settings-trigger" onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
+<script type="module" src="script.js"></script>
+<script>
+const SECRET_CODE = "MOON";
+function checkPasscode(){
+    if(passcode-input.value === SECRET_CODE){
+        localStorage.setItem("unlocked","true");
+        login-overlay.style.display="none";
+    }else error-msg.style.display="block";
+}
+if(localStorage.getItem("unlocked")==="true"){
+    login-overlay.style.display="none";
+}
+</script>
 
-        <div class="main-content">
-            <header>
-                <h1 id="vault-title" class="fancy-title">Our Winter Wonderland</h1>
-                <div id="countdown-container">
-                    <div id="countdown-timer" class="timer">Connecting...</div>
-                    <div id="secret-message-box" style="display:none;"></div>
-                </div>
-            </header>
-
-            <section class="glass-card">
-                <h2>✉️ The Note Station</h2>
-                <textarea id="noteInput" placeholder="Write a sweet note..." rows="3"></textarea>
-                <button id="saveNoteBtn" class="add-btn full-width">Pin Note</button>
-                <div id="latestNote" class="note-paper">...</div>
-            </section>
-
-            <section class="binder-container">
-                <div class="binder-rings">
-                    <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
-                </div>
-                <div class="binder-page">
-                    <h2 class="handmade-title">🎵 Music Binder</h2>
-                    <div class="binder-input-area">
-                        <input type="text" id="songLinkInput" placeholder="Spotify Link...">
-                        <input type="text" id="songLineInput" placeholder="Favorite Line...">
-                        <textarea id="songNoteInput" placeholder="Short dedication..."></textarea>
-                        <button id="addSongBtn" class="add-btn full-width">Add Page</button>
-                    </div>
-                    
-                    <div id="binder-pages-display"></div>
-                    
-                    <div class="pagination">
-                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
-                        <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
-
-    <script type="module" src="script.js"></script>
-    <script>
-        function checkPasscode() {
-            if (document.getElementById('passcode-input').value === "1234") { 
-                document.getElementById('login-overlay').style.display = 'none';
-                localStorage.setItem('isUnlocked', 'true');
-            }
-        }
-        if(localStorage.getItem('isUnlocked') === 'true') document.getElementById('login-overlay').style.display = 'none';
-        function toggleSettings() {
-            const m = document.getElementById('settings-modal');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        }
-    </script>
 </body>
 </html>
+
