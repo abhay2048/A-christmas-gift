@@ -18,16 +18,14 @@
             <input type="text" id="event-name-input" placeholder="e.g. Christmas Day">
             <label>Event Date:</label>
             <input type="date" id="event-date-input">
-            
             <button id="simulate-btn" class="add-btn" style="background: linear-gradient(45deg, #a18cd1, #fbc2eb); width:100%; margin-top:15px;">
-                ✨ Preview The Surprise (10s)
+                ✨ Preview Surprise
             </button>
-
             <div style="margin-top:20px; display:flex; gap:10px;">
                 <button id="save-settings-btn" class="add-btn">Save</button>
                 <button onclick="toggleSettings()" class="add-btn" style="background:#aaa;">Close</button>
             </div>
-            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Reset Lock</button>
+            <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; color:red; cursor:pointer; background:none; border:none;">Reset Passcode</button>
         </div>
     </div>
 
@@ -42,10 +40,7 @@
 
     <div id="main-app">
         <div class="snow-container" id="snow-container"></div>
-
-        <button class="settings-trigger" onclick="toggleSettings()">
-            <i class="fas fa-cog"></i>
-        </button>
+        <button class="settings-trigger" onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
 
         <div class="main-content">
             <header>
@@ -56,39 +51,36 @@
             <section class="glass-card">
                 <h2>✉️ The Note Station</h2>
                 <textarea id="noteInput" placeholder="Write a sweet note..." rows="4"></textarea>
-                <button id="saveNoteBtn" class="add-btn full-width">Pin Note</button>
-                <div id="latestNote" class="note-paper">...</div>
+                <button id="saveNoteBtn" class="add-btn full-width" style="width:100%; margin-top:10px;">Pin Note</button>
+                <div id="latestNote" class="note-paper" style="margin-top:20px; font-family:'Indie Flower'; font-size:1.2rem;">...</div>
             </section>
 
             <section class="binder-container">
                 <div class="binder-rings">
-                    <div class="ring"></div>
-                    <div class="ring"></div>
-                    <div class="ring"></div>
+                    <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
                 </div>
                 <div class="binder-page">
-                    <h2 class="handwritten-title">🎵 Music Binder</h2>
+                    <h2 class="handwritten-title">🎵 Our Playlist</h2>
                     <div class="music-inputs">
-                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                        <input type="text" id="songLyricInput" placeholder="Favorite Lyric...">
-                        <textarea id="songNoteInput" placeholder="Why this song?..." rows="2"></textarea>
-                        <button id="addSongBtn" class="add-btn"><i class="fas fa-music"></i> Add Song</button>
+                        <input type="text" id="songLinkInput" placeholder="Spotify Link...">
+                        <input type="text" id="songLyricInput" placeholder="A special lyric...">
+                        <textarea id="songNoteInput" placeholder="Why this song?"></textarea>
+                        <button id="addSongBtn" class="add-btn">Add to Binder</button>
                     </div>
                     
                     <div id="binder-pages-display"></div>
 
                     <div class="pagination-controls">
-                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
+                        <button id="prevBtn" class="nav-btn"><i class="fas fa-arrow-left"></i></button>
                         <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+                        <button id="nextBtn" class="nav-btn"><i class="fas fa-arrow-right"></i></button>
                     </div>
                 </div>
             </section>
 
             <div id="secretMessage">
                 <h1 class="fancy-title">Merry Christmas!</h1>
-                <p>May the days to come be as beautiful as the Christmas snow. ❄️</p>
-                <div style="font-size: 3rem; margin-top: 20px;">🎄🎁✨</div>
+                <p>You are my favorite gift every single day. 🎁</p>
             </div>
         </div>
     </div>
@@ -96,21 +88,15 @@
     <script type="module" src="script.js"></script>
     <script>
         const SECRET_CODE = "1234"; 
-        
         function checkPasscode() {
-            const val = document.getElementById('passcode-input').value;
-            if (val === SECRET_CODE) { 
+            if (document.getElementById('passcode-input').value === SECRET_CODE) {
                 document.getElementById('login-overlay').style.display = 'none';
                 localStorage.setItem('isUnlocked', 'true');
-            } else { 
-                document.getElementById('error-msg').style.display = 'block'; 
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
             }
         }
-
-        if(localStorage.getItem('isUnlocked') === 'true') { 
-            document.getElementById('login-overlay').style.display = 'none';
-        }
-
+        if(localStorage.getItem('isUnlocked') === 'true') document.getElementById('login-overlay').style.display = 'none';
         function toggleSettings() {
             const m = document.getElementById('settings-modal');
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
