@@ -1,91 +1,155 @@
+/* --- RESET & VARIABLES --- */
+* { box-sizing: border-box; }
+
 :root {
     --primary-pink: #ff9a9e;
-    --deep-rose: #ff6b8d;
-    --font-script: 'Great Vibes', cursive;
-    --font-hand: 'Indie Flower', cursive;
-    --font-body: 'Quicksand', sans-serif;
+    --deep-rose: #ff758c;
+    --soft-white: rgba(255, 255, 255, 0.9);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+    --binder-yellow: #fffdf0; /* Paper color from 2nd code */
 }
 
 body {
-    margin: 0; font-family: var(--font-body);
-    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
-    min-height: 100vh; overflow-x: hidden;
+    margin: 0; 
+    font-family: 'Quicksand', sans-serif;
+    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    min-height: 100vh;
+    color: #555;
+    overflow-x: hidden;
 }
 
-#fireworksCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+/* --- FIREWORKS & SNOW --- */
+#fireworksCanvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 5000;
+}
+.snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+.snowflake { position: absolute; color: white; opacity: 0.8; }
 
+/* --- TYPOGRAPHY --- */
 .fancy-title {
-    font-family: var(--font-script);
+    font-family: 'Great Vibes', cursive;
+    font-size: 3.5rem;
     background: linear-gradient(to right, #ff758c, #ff7eb3);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin: 10px 0;
+    text-shadow: 2px 2px 5px rgba(255, 117, 140, 0.2);
 }
 
+/* --- GLASS CARDS --- */
 .glass-card {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(15px);
-    border-radius: 20px; padding: 25px; margin-bottom: 25px;
-    border: 2px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    background: var(--soft-white);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    border: var(--glass-border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
 .main-content { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
 
-.timer {
-    font-size: 1.5rem; font-weight: 700; background: white; 
-    padding: 15px 40px; border-radius: 50px; display: inline-block;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+/* --- MUSIC BINDER (MERGED FEATURE) --- */
+.binder-container { 
+    display: flex; 
+    background: white; 
+    border-radius: 20px; 
+    overflow: hidden; 
+    margin-top: 20px; 
+    border: 1px solid #eee;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
-/* --- Music Binder Card Style --- */
+.binder-rings { 
+    width: 45px; 
+    background: #e8e8e8; 
+    border-right: 2px solid #ddd; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-around; 
+    padding: 20px 0; 
+}
+
+.ring { width: 18px; height: 18px; border-radius: 50%; border: 3px solid #bbb; background: white; margin: 0 auto; }
+
+.binder-page { flex: 1; padding: 25px; background: #fffdf9; }
+
+/* The Song Entry Card from your 2nd Code */
 .song-entry {
     display: flex;
-    flex-wrap: wrap; /* Wraps on mobile */
-    background: #fff8e1; /* Pastel card color [cite: 60] */
-    border-radius: 12px; /* Rounded corners [cite: 60, 88] */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* [cite: 92] */
-    margin: 10px 0;
+    flex-wrap: wrap; 
+    background: #fff8e1; /* Pastel yellow card */
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    margin: 15px 0;
     padding: 15px;
-    position: relative;
+    border-left: 5px solid var(--primary-pink);
+    transition: transform 0.2s;
 }
+
+.song-entry:hover { transform: scale(1.02); }
 
 .song-entry iframe {
     flex: 0 0 250px;
     height: 80px;
+    margin-right: 15px;
     border-radius: 8px;
     border: none;
-    margin-right: 15px;
 }
 
-.song-info { flex: 1; }
+.song-info { flex: 1; min-width: 200px; }
 
+.song-info h3 { 
+    margin: 0 0 5px; 
+    font-size: 1.1rem; 
+    color: #333; 
+    font-family: 'Quicksand', sans-serif;
+}
+
+/* Handwritten notes from 2nd code */
 .song-info .note {
-    font-family: var(--font-hand); /* Handwritten look [cite: 4, 64] */
-    font-style: italic; /* [cite: 16, 65] */
-    font-size: 1em;
-    margin: 0 0 5px;
+    font-family: 'Indie Flower', cursive;
+    font-size: 1rem;
+    color: #666;
+    margin: 5px 0;
 }
 
 .song-info .lyric {
-    font-family: var(--font-hand);
-    font-weight: bold; /* [cite: 17, 65] */
-    font-size: 1.1em;
-    margin: 0;
+    font-family: 'Indie Flower', cursive;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--deep-rose);
+    border-left: 2px solid #ffcad4;
+    padding-left: 10px;
+    margin: 5px 0;
 }
 
-/* Pagination Styling */
-#pagination { text-align: center; margin-top: 15px; }
+/* --- BUTTONS & INPUTS --- */
+.add-btn {
+    background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+    color: white; border: none; padding: 12px 20px; border-radius: 12px;
+    cursor: pointer; font-weight: 700; transition: 0.3s;
+}
+.add-btn:hover { transform: translateY(-2px); opacity: 0.9; }
 
-/* Secret Message Reveal [cite: 69-72] */
+input, textarea {
+    width: 100%; padding: 12px; border-radius: 12px; margin-bottom: 10px;
+    border: 1px solid #ddd; font-family: 'Quicksand', sans-serif;
+}
+
+/* --- SECRET MESSAGE (The Christmas Surprise) --- */
 #secretMessage {
-    display: none;
+    display: none; /* Hidden until triggered */
     opacity: 0;
-    transition: opacity 1s ease-in;
     text-align: center;
-    font-family: var(--font-script);
-    font-size: 2.5rem;
-    color: var(--deep-rose);
-    margin-top: 20px;
+    padding: 40px;
+    margin-top: 30px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    border: 3px dashed white;
+    transition: opacity 1.5s ease-in;
 }
 
 #secretMessage.visible {
@@ -93,10 +157,9 @@ body {
     opacity: 1;
 }
 
-@media (min-width: 600px) {
-    .song-entry { flex-wrap: nowrap; } /* side-by-side on wide screens [cite: 61, 150] */
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+    .song-entry { flex-direction: column; }
+    .song-entry iframe { width: 100%; margin-bottom: 10px; }
+    .fancy-title { font-size: 2.5rem; }
 }
-
-/* Del button */
-.del-btn-sleek { position: absolute; top: 10px; right: 10px; cursor: pointer; color: #ccc; }
-.del-btn-sleek:hover { color: red; }
