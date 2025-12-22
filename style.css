@@ -1,143 +1,102 @@
-:root{
-    --pink:#ff9a9e;
-    --rose:#ff6b8d;
-    --paper:#fff8ec;
+:root {
+    --primary-pink: #ff9a9e;
+    --deep-rose: #ff6b8d;
+    --font-script: 'Great Vibes', cursive;
+    --font-hand: 'Indie Flower', cursive;
+    --font-body: 'Quicksand', sans-serif;
 }
 
-body{
-    margin:0;
-    font-family:'Quicksand',sans-serif;
-    background:linear-gradient(135deg,#e0c3fc,#8ec5fc);
+body {
+    margin: 0; font-family: var(--font-body);
+    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    min-height: 100vh; overflow-x: hidden;
 }
 
-.main-content{
-    max-width:900px;
-    margin:auto;
-    padding:20px;
+#fireworksCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+
+.fancy-title {
+    font-family: var(--font-script);
+    background: linear-gradient(to right, #ff758c, #ff7eb3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
-.fancy-title{
-    font-family:'Great Vibes',cursive;
-    font-size:3.2rem;
-    text-align:center;
-    background:linear-gradient(to right,#ff758c,#ff7eb3);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+.glass-card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(15px);
+    border-radius: 20px; padding: 25px; margin-bottom: 25px;
+    border: 2px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-.timer{
-    text-align:center;
-    font-size:1.4rem;
-    margin:20px auto;
-    background:white;
-    padding:15px 30px;
-    border-radius:50px;
-    width:max-content;
+.main-content { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
+
+.timer {
+    font-size: 1.5rem; font-weight: 700; background: white; 
+    padding: 15px 40px; border-radius: 50px; display: inline-block;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.secret-msg{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.85);
-    color:#fff;
-    font-family:'Great Vibes';
-    font-size:3rem;
-    text-align:center;
-    padding-top:30vh;
-    z-index:9999;
-}
-.secret-msg span{
-    display:block;
-    font-family:'Indie Flower';
-    font-size:1.4rem;
-    margin-top:20px;
+/* --- Music Binder Card Style --- */
+.song-entry {
+    display: flex;
+    flex-wrap: wrap; /* Wraps on mobile */
+    background: #fff8e1; /* Pastel card color [cite: 60] */
+    border-radius: 12px; /* Rounded corners [cite: 60, 88] */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* [cite: 92] */
+    margin: 10px 0;
+    padding: 15px;
+    position: relative;
 }
 
-.binder-container{
-    display:flex;
-    background:var(--paper);
-    border-radius:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,.1);
-    margin-top:30px;
+.song-entry iframe {
+    flex: 0 0 250px;
+    height: 80px;
+    border-radius: 8px;
+    border: none;
+    margin-right: 15px;
 }
 
-.binder-rings{
-    width:45px;
-    background:#eee;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-around;
-}
-.ring{
-    width:16px;
-    height:16px;
-    border:3px solid #bbb;
-    border-radius:50%;
-    margin:auto;
+.song-info { flex: 1; }
+
+.song-info .note {
+    font-family: var(--font-hand); /* Handwritten look [cite: 4, 64] */
+    font-style: italic; /* [cite: 16, 65] */
+    font-size: 1em;
+    margin: 0 0 5px;
 }
 
-.binder-page{
-    flex:1;
-    padding:20px;
+.song-info .lyric {
+    font-family: var(--font-hand);
+    font-weight: bold; /* [cite: 17, 65] */
+    font-size: 1.1em;
+    margin: 0;
 }
 
-.song-card{
-    display:flex;
-    gap:12px;
-    background:#fff;
-    border-radius:14px;
-    padding:12px;
-    margin-bottom:15px;
-    box-shadow:0 5px 10px rgba(0,0,0,.05);
-    flex-wrap:wrap;
+/* Pagination Styling */
+#pagination { text-align: center; margin-top: 15px; }
+
+/* Secret Message Reveal [cite: 69-72] */
+#secretMessage {
+    display: none;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+    text-align: center;
+    font-family: var(--font-script);
+    font-size: 2.5rem;
+    color: var(--deep-rose);
+    margin-top: 20px;
 }
 
-.song-text{
-    flex:1;
+#secretMessage.visible {
+    display: block;
+    opacity: 1;
 }
 
-.song-title{
-    font-weight:700;
-    color:#ff6b8d;
+@media (min-width: 600px) {
+    .song-entry { flex-wrap: nowrap; } /* side-by-side on wide screens [cite: 61, 150] */
 }
 
-.song-note{
-    font-family:'Indie Flower';
-    font-style:italic;
-}
-
-.song-line{
-    font-family:'Indie Flower';
-    font-weight:bold;
-    margin-top:6px;
-}
-
-.pagination{
-    text-align:center;
-    margin-top:15px;
-}
-
-input,textarea{
-    width:100%;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #ddd;
-    margin-bottom:6px;
-}
-
-.add-btn{
-    background:linear-gradient(45deg,#ff9a9e,#fad0c4);
-    border:none;
-    padding:12px;
-    color:white;
-    font-weight:700;
-    border-radius:12px;
-    cursor:pointer;
-}
-
-.full-width{width:100%;}
-
-@media(max-width:600px){
-    .song-card{flex-direction:column;}
-}
+/* Del button */
+.del-btn-sleek { position: absolute; top: 10px; right: 10px; cursor: pointer; color: #ccc; }
+.del-btn-sleek:hover { color: red; }
