@@ -1,104 +1,108 @@
 :root {
-    --primary-pink: #ffb7c5;
-    --binder-spine: #ff85a2;
-    --handwritten: 'Indie Flower', cursive;
-    --gear-color: #ff4d6d;
+    --primary-pink: #ff9a9e;
+    --deep-rose: #ff6b8d;
+    --ice-blue: #e0c3fc;
+    --glass-border: rgba(255, 255, 255, 0.6);
 }
 
 body {
     margin: 0; font-family: 'Quicksand', sans-serif;
-    background: linear-gradient(135deg, #f0f8ff, #d1e9ff);
+    /* Richer "Winter Sunset" Gradient */
+    background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    background-image: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.4) 0%, transparent 60%),
+                      linear-gradient(180deg, #e6e9f0 0%, #eef1f5 100%);
     min-height: 100vh; overflow-x: hidden;
-    padding: 15px; box-sizing: border-box;
+    color: #555;
 }
 
-.main-content {
-    max-width: 800px; margin: 0 auto;
-}
-
-/* LOCK OVERLAY */
-#login-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #e0f7fa; z-index: 10000;
-    display: flex; justify-content: center; align-items: center;
-}
-.login-box {
-    background: white; padding: 40px; border-radius: 20px;
-    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    width: 90%; max-width: 350px;
+/* PRETTY TITLE */
+h1#vault-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 3.5rem;
+    background: linear-gradient(to right, #ff9a9e, #fecfef, #99f2c8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent; /* Makes the text look like a sunset */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin: 10px 0;
 }
 
 /* SETTINGS GEAR */
 .settings-trigger {
     position: fixed; top: 20px; right: 20px;
-    background: none; border: none; font-size: 1.8rem;
-    color: var(--gear-color); cursor: pointer; z-index: 999;
+    background: white; border-radius: 50%; width: 45px; height: 45px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: none; font-size: 1.5rem; color: var(--deep-rose);
+    cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center;
+    transition: 0.4s;
 }
+.settings-trigger:hover { transform: rotate(180deg); background: var(--deep-rose); color: white; }
 
-/* SPOTIFY CARDS */
-.song-entry {
-    display: flex; align-items: center; margin-bottom: 15px; background: #000;
-    border-radius: 12px; padding-right: 10px;
-}
-.song-card { flex-grow: 1; height: 80px; overflow: hidden; }
-.song-card iframe { border: none; width: 100%; height: 80px; }
-
-/* DECORATIONS */
-.ghost-art { position: fixed; font-size: 8rem; color: rgba(255, 255, 255, 0.4); pointer-events: none; z-index: -1; }
-.snowman { bottom: 5%; left: 5%; }
+/* THE "TASTEFUL" BACKGROUND ART */
+.ghost-art { position: fixed; font-size: 8rem; color: rgba(255, 255, 255, 0.5); pointer-events: none; z-index: -1; filter: blur(2px); }
+.snowman { bottom: 5%; left: 5%; transform: rotate(-10deg); }
 .snowflake-static { top: 10%; right: 5%; }
+.heart { top: 40%; left: -5%; color: rgba(255, 183, 197, 0.3); font-size: 10rem; }
 
+/* GLASS CARDS */
 .glass-card {
-    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
-    border-radius: 20px; padding: 25px; margin-bottom: 25px;
-    border: 1px solid white; box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px);
+    border-radius: 25px; padding: 30px; margin-bottom: 25px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
 }
 
+/* SLEEK TIMER */
 .timer {
-    font-size: 1.3rem; font-weight: 700; background: white;
-    padding: 15px 30px; border-radius: 50px; display: table; margin: 20px auto;
-    text-align: center;
+    font-size: 1.4rem; font-weight: 700; color: #666;
+    background: white; padding: 15px 35px; border-radius: 50px;
+    display: table; margin: 20px auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: 0.5s;
 }
-.timer.intense { color: #ff4757; font-weight: 900; border: 2px solid #ff4757; }
-
-/* SNOW */
-.snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
-.snowflake { position: absolute; color: white; will-change: transform; }
-@keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
-
-/* UI ELEMENTS */
-input, textarea {
-    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;
-    box-sizing: border-box; font-family: inherit; margin-top: 5px;
+.timer.intense { 
+    color: #ff4757; font-size: 2rem; font-weight: 900; 
+    box-shadow: 0 0 30px rgba(255, 71, 87, 0.4); 
+    animation: heartbeat 1s infinite;
 }
+@keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* BUTTONS & INPUTS */
 .add-btn {
-    background: var(--primary-pink); color: white; border: none; padding: 12px;
-    border-radius: 10px; cursor: pointer; font-weight: bold;
+    background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+    color: white; border: none; padding: 12px 20px; border-radius: 12px;
+    cursor: pointer; font-weight: 600; box-shadow: 0 4px 10px rgba(255, 154, 158, 0.3);
+    transition: 0.3s;
 }
-.styled-list { padding: 0; list-style: none; }
-.styled-list li { 
-    background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px; 
-    display: flex; justify-content: space-between; align-items: center;
-}
-.completed span { text-decoration: line-through; opacity: 0.6; }
+.add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 154, 158, 0.5); }
+.full-width { width: 100%; margin-top: 10px; }
 
-.binder-container { display: flex; background: #fffaf0; border-radius: 20px; overflow: hidden; }
-.binder-rings { width: 35px; background: #f0f0f0; border-right: 2px solid #ddd; display: flex; flex-direction: column; justify-content: space-around; padding: 20px 0; }
-.ring { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #bbb; background: #eee; margin: 0 auto; }
+/* THE NEW SLEEK DELETE BUTTON */
+.del-btn-sleek {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    color: #aaa;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.del-btn-sleek:hover { background: #ff4757; color: white; transform: rotate(90deg); }
+
+/* BINDER & SONG LAYOUT */
+.binder-container { display: flex; background: #fffdf9; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+.binder-rings { width: 40px; background: #eee; border-right: 1px solid #ddd; display: flex; flex-direction: column; justify-content: space-around; padding: 20px 0; }
+.ring { width: 15px; height: 15px; border-radius: 50%; border: 3px solid #ccc; background: white; margin: 0 auto; }
 .binder-page { flex: 1; padding: 25px; }
 
-.modal { 
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.6); z-index: 20000; 
-    display: none; justify-content: center; align-items: center; 
+.song-entry { 
+    display: flex; align-items: center; gap: 15px; margin-bottom: 15px; 
+    background: white; padding: 10px; border-radius: 15px;
 }
+.song-card { flex-grow: 1; height: 80px; background: #000; border-radius: 10px; overflow: hidden; }
+.song-card iframe { width: 100%; height: 80px; border: none; }
 
-/* MOBILE OPTIMIZATION */
-@media (max-width: 600px) {
-    .ghost-art { font-size: 4rem; opacity: 0.2; }
-    .timer { font-size: 1rem; width: 90%; }
-    .binder-rings { width: 20px; }
-    .ring { width: 10px; height: 10px; }
-    .binder-page { padding: 15px; }
-    input, textarea { font-size: 16px; } /* Prevents iOS auto-zoom */
-}
+/* MODAL & OVERLAY */
+.modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index: 2000; display:none; justify-content:center; align-items:center; }
+#login-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); z-index: 3000; display:flex; justify-content:center; align-items:center; }
+.login-box { background:white; padding:40px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.1); text-align:center; }
