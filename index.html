@@ -1,91 +1,37 @@
-v<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Our Memory Vault</title>
+    <title>Our Music Binder</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;600;700&family=Indie+Flower&display=swap" rel="stylesheet">
+    <!-- Handwritten font -->
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <!-- Your CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<canvas id="fireworksCanvas"></canvas>
-
-<div id="login-overlay">
-    <div class="login-box glass-card">
-        <h1 class="fancy-title">Our Secret World</h1>
-        <input type="password" id="passcode-input" placeholder="Enter Magic Word">
-        <button onclick="checkPasscode()" class="add-btn">Unlock</button>
-        <p id="error-msg">Wrong password ❤️</p>
-    </div>
-</div>
-
-<div class="main-content">
-
-    <h1 id="vault-title" class="fancy-title">Our Winter Wonderland</h1>
-    <div id="countdown-timer" class="timer">Loading...</div>
-
-    <!-- SECRET MESSAGE -->
-    <div id="secret-message" class="secret-msg">
-        ✨ Merry Christmas My Love ✨
-        <span>
-            I waited for this moment just to tell you…  
-            you are my favorite song forever ❤️ may your days to come be as beautiful as the snow!!!
-        </span>
-    </div>
+    <h1 class="title">Our Music Binder 💖</h1>
 
     <!-- MUSIC BINDER -->
-    <section class="binder-container">
-        <div class="binder-rings">
-            <div class="ring"></div>
-            <div class="ring"></div>
-            <div class="ring"></div>
-        </div>
+    <section id="musicBinder">
+        <div id="binder-pages-display"></div>
 
-        <div class="binder-page">
-            <h2>🎵 Music Binder</h2>
-
-            <input id="songLinkInput" placeholder="Spotify link">
-            <input id="songTitleInput" placeholder="Card title (e.g. In Love)">
-            <textarea id="songNoteInput" placeholder="Short note..."></textarea>
-            <input id="songLineInput" placeholder="Favorite lyric line">
-
-            <button id="addSongBtn" class="add-btn full-width">
-                <i class="fas fa-music"></i> Add Page
-            </button>
-
-            <div id="binder-pages-display"></div>
-
-            <div class="pagination">
-                <button id="prevBtn">◀</button>
-                <span id="pageIndicator">Page 1</span>
-                <button id="nextBtn">▶</button>
-            </div>
+        <div id="pagination">
+            <button id="prevBtn">Previous</button>
+            <span id="pageIndicator">Page 1</span>
+            <button id="nextBtn">Next</button>
         </div>
     </section>
 
-</div>
+    <!-- SECRET MESSAGE -->
+    <div id="secretMessage">
+        🎉 This was worth the wait, wasn’t it? 🎉
+    </div>
 
-<script type="module" src="script.js"></script>
-<script>
-const SECRET_CODE = "MOON";
-function checkPasscode(){
-    if(passcode-input.value === SECRET_CODE){
-        localStorage.setItem("unlocked","true");
-        login-overlay.style.display="none";
-    }else error-msg.style.display="block";
-}
-if(localStorage.getItem("unlocked")==="true"){
-    login-overlay.style.display="none";
-}
-</script>
-
+    <!-- JS -->
+    <script src="script.js"></script>
 </body>
 </html>
-
