@@ -87,7 +87,7 @@
     <script type="module" src="script.js"></script>
     <script>
         function checkPasscode() {
-            if (document.getElementById('passcode-input').value === "1234") { 
+            if (document.getElementById('passcode-input').value === "MOON") { 
                 document.getElementById('login-overlay').style.display = 'none';
                 localStorage.setItem('isUnlocked', 'true');
             } else { document.getElementById('error-msg').style.display = 'block'; }
@@ -102,3 +102,4 @@
     </script>
 </body>
 </html>
+
