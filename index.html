@@ -1,133 +1,120 @@
-/* --- RESET & VARIABLES --- */
-* { box-sizing: border-box; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memory Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="fireworksCanvas"></canvas>
 
-:root {
-    --primary-pink: #ff9a9e;
-    --deep-rose: #ff758c;
-    --soft-white: rgba(255, 255, 255, 0.9);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.6);
-}
+    <div id="settings-modal" class="modal">
+        <div class="modal-content glass-card">
+            <h3 class="fancy-title">Vault Settings</h3>
+            <label>Event Name:</label>
+            <input type="text" id="event-name-input" placeholder="e.g. Christmas Day">
+            <label>Event Date:</label>
+            <input type="date" id="event-date-input">
+            
+            <button id="simulate-btn" class="add-btn" style="background: linear-gradient(45deg, #a18cd1, #fbc2eb); width:100%; margin-top:15px;">
+                ✨ Preview The Surprise (10s)
+            </button>
 
-body {
-    margin: 0; 
-    font-family: 'Quicksand', sans-serif;
-    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-    min-height: 100vh;
-    color: #555;
-    overflow-x: hidden;
-}
+            <div style="margin-top:20px; display:flex; gap:10px;">
+                <button id="save-settings-btn" class="add-btn">Save</button>
+                <button onclick="toggleSettings()" class="add-btn" style="background:#aaa;">Close</button>
+            </div>
+            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Reset Lock</button>
+        </div>
+    </div>
 
-#fireworksCanvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 5000;
-}
+    <div id="login-overlay">
+        <div class="login-box glass-card">
+            <h1 class="fancy-title">❄️ Our Secret World ❄️</h1>
+            <input type="password" id="passcode-input" placeholder="Enter Magic Word...">
+            <button onclick="checkPasscode()" class="add-btn">Unlock Heart</button>
+            <p id="error-msg" style="display:none; color: #ff6b8d; margin-top:10px;">Try again, my love! ❤️</p>
+        </div>
+    </div>
 
-.fancy-title {
-    font-family: 'Great Vibes', cursive;
-    font-size: 3.5rem;
-    background: linear-gradient(to right, #ff758c, #ff7eb3);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 10px 0;
-}
+    <div id="main-app">
+        <div class="snow-container" id="snow-container"></div>
 
-.glass-card {
-    background: var(--soft-white);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 25px;
-    border: var(--glass-border);
-}
+        <button class="settings-trigger" onclick="toggleSettings()">
+            <i class="fas fa-cog"></i>
+        </button>
 
-.main-content { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
+        <div class="main-content">
+            <header>
+                <h1 id="vault-title" class="fancy-title">Our Winter Wonderland</h1>
+                <div id="countdown-timer" class="timer">Loading Love...</div>
+            </header>
 
-.timer {
-    font-size: 1.5rem; font-weight: 700; color: #666;
-    background: white; padding: 15px 40px; border-radius: 50px;
-    display: inline-block; margin: 20px auto;
-    text-align: center;
-}
+            <section class="glass-card">
+                <h2>✉️ The Note Station</h2>
+                <textarea id="noteInput" placeholder="Write a sweet note..." rows="4"></textarea>
+                <button id="saveNoteBtn" class="add-btn full-width">Pin Note</button>
+                <div id="latestNote" class="note-paper">...</div>
+            </section>
 
-/* --- BINDER UI (Handmade Style) --- */
-.binder-container { 
-    display: flex; 
-    background: #fffdf9; /* Creamy paper color */
-    border-radius: 20px; 
-    overflow: hidden; 
-    margin-top: 20px; 
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
-    position: relative;
-}
+            <section class="binder-container">
+                <div class="binder-rings">
+                    <div class="ring"></div>
+                    <div class="ring"></div>
+                    <div class="ring"></div>
+                </div>
+                <div class="binder-page">
+                    <h2 class="handwritten-title">🎵 Music Binder</h2>
+                    <div class="music-inputs">
+                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                        <input type="text" id="songLyricInput" placeholder="Favorite Lyric...">
+                        <textarea id="songNoteInput" placeholder="Why this song?..." rows="2"></textarea>
+                        <button id="addSongBtn" class="add-btn"><i class="fas fa-music"></i> Add Song</button>
+                    </div>
+                    
+                    <div id="binder-pages-display"></div>
 
-.binder-rings { 
-    width: 60px; 
-    background: #f0f0f0; 
-    border-right: 1px solid #ddd; 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-around; 
-    padding: 40px 0; 
-}
+                    <div class="pagination-controls">
+                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
+                        <span id="pageIndicator">Page 1</span>
+                        <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
 
-.ring { 
-    width: 40px; 
-    height: 40px; 
-    border-radius: 50%; 
-    border: 4px solid #bbb; 
-    background: transparent; 
-    margin-left: 10px;
-}
+            <div id="secretMessage">
+                <h1 class="fancy-title">Merry Christmas!</h1>
+                <p>May the days to come be as beautiful as the Christmas snow. ❄️</p>
+                <div style="font-size: 3rem; margin-top: 20px;">🎄🎁✨</div>
+            </div>
+        </div>
+    </div>
 
-.binder-page { 
-    flex: 1; 
-    padding: 30px; 
-    background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
-    background-size: 25px 25px; /* Dot grid paper effect */
-}
+    <script type="module" src="script.js"></script>
+    <script>
+        const SECRET_CODE = "1234"; 
+        
+        function checkPasscode() {
+            const val = document.getElementById('passcode-input').value;
+            if (val === SECRET_CODE) { 
+                document.getElementById('login-overlay').style.display = 'none';
+                localStorage.setItem('isUnlocked', 'true');
+            } else { 
+                document.getElementById('error-msg').style.display = 'block'; 
+            }
+        }
 
-/* --- SONG CARDS (Polaroid Style) --- */
-.song-entry { 
-    margin-bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+        if(localStorage.getItem('isUnlocked') === 'true') { 
+            document.getElementById('login-overlay').style.display = 'none';
+        }
 
-.song-card { 
-    width: 250px; 
-    height: 250px; 
-    border-radius: 10px; 
-    overflow: hidden; 
-    background: #000; 
-    border: 10px solid white; /* Polaroid frame */
-    box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
-    transition: 0.3s;
-}
-
-.song-card iframe { width: 100%; height: 100%; border: none; }
-
-.song-handwritten-note {
-    font-family: 'Indie Flower', cursive;
-    text-align: center;
-    margin-top: 15px;
-    max-width: 280px;
-}
-
-.lyric-text { color: #ff758c; font-weight: bold; font-size: 1.2rem; display: block; margin-bottom: 5px; }
-.personal-note { color: #666; font-size: 1rem; }
-
-.del-btn-sleek {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: #eee; color: #888;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; margin-top: 10px;
-}
-
-/* --- UI ELEMENTS --- */
-.add-btn {
-    background: linear-gradient(45deg, #ff9a9e, #fad0c4);
-    color: white; border: none; padding: 12px 20px; border-radius: 12px;
-    cursor: pointer; font-weight: 700;
-}
-input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 10px; }
+        function toggleSettings() {
+            const m = document.getElementById('settings-modal');
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        }
+    </script>
+</body>
+</html>
