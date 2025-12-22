@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Memory Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,24 +12,34 @@
 
     <div id="settings-modal" class="modal">
         <div class="modal-content glass-card">
-            <h3>⚙️ Vault Settings</h3>
+            <h3 style="color:var(--primary-pink); font-family:'Great Vibes'; font-size:2rem;">Vault Settings</h3>
+            
             <label>Event Name:</label>
             <input type="text" id="event-name-input">
+            
             <label>Event Date:</label>
             <input type="date" id="event-date-input">
+            
+            <button id="simulate-btn" class="add-btn" style="background:#6c5ce7; margin-top:15px; width:100%;">
+                ✨ Preview Surprise (10s left)
+            </button>
+
             <div style="margin-top:20px; display:flex; gap:10px;">
-                <button id="save-settings-btn" class="add-btn">Save</button>
+                <button id="save-settings-btn" class="add-btn">Save Changes</button>
                 <button onclick="toggleSettings()" class="add-btn" style="background:#888;">Close</button>
             </div>
-            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer; font-size:0.8rem;">Clear Cache / Relock</button>
+            
+            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:#ff6b8d; cursor:pointer; font-size:0.8rem;">
+                Reset App Lock
+            </button>
         </div>
     </div>
 
     <div id="login-overlay">
         <div class="login-box">
             <h1>❄️ Our Secret World ❄️</h1>
-            <input type="password" id="passcode-input" placeholder="Passcode">
-            <button onclick="checkPasscode()" class="add-btn">Unlock</button>
+            <input type="password" id="passcode-input" placeholder="Enter Passcode">
+            <button onclick="checkPasscode()" class="add-btn">Open Heart</button>
             <p id="error-msg" style="display:none; color: #ff6b8d; margin-top:10px;">Wrong code! ❤️</p>
         </div>
     </div>
@@ -37,7 +47,7 @@
     <div id="main-app">
         <div class="ghost-art snowman">⛄</div>
         <div class="ghost-art snowflake-static">❄</div>
-        <div class="ghost-art reindeer">🦌</div>
+        <div class="ghost-art heart">💖</div>
         
         <div class="snow-container" id="snow-container"></div>
 
@@ -48,18 +58,18 @@
         <div class="main-content">
             <header>
                 <h1 id="vault-title">Our Winter Wonderland</h1>
-                <div id="countdown-timer" class="timer">Calculating...</div>
+                <div id="countdown-timer" class="timer">Loading Love...</div>
             </header>
 
             <section class="glass-card">
                 <h2>✉️ The Note Station</h2>
                 <textarea id="noteInput" placeholder="Write a sweet note..." rows="4"></textarea>
-                <button id="saveNoteBtn" class="add-btn" style="width:100%; margin-top:10px;">Pin Note</button>
+                <button id="saveNoteBtn" class="add-btn full-width">Pin Note</button>
                 <div id="latestNote" class="note-paper">Loading...</div>
             </section>
 
             <section class="glass-card">
-                <h2>✈️ Our Future Bucket List</h2>
+                <h2>✈️ Our Bucket List</h2>
                 <div class="input-group">
                     <input type="text" id="bucketInput" placeholder="New adventure?">
                     <button id="addBucketBtn" class="add-btn"><i class="fas fa-plus"></i></button>
@@ -72,16 +82,16 @@
                     <div class="ring"></div><div class="ring"></div><div class="ring"></div>
                 </div>
                 <div class="binder-page">
-                    <h2>🎵 Music Memory Binder</h2>
+                    <h2>🎵 Music Memories</h2>
                     <div class="input-group">
-                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                        <input type="text" id="songLinkInput" placeholder="Spotify Link...">
                         <button id="addSongBtn" class="add-btn"><i class="fas fa-music"></i></button>
                     </div>
                     <div id="binder-pages-display"></div>
                     <div class="pagination-controls">
                         <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
                         <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
+                        <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
             </section>
@@ -90,14 +100,12 @@
 
     <script type="module" src="script.js"></script>
     <script>
-        const SECRET_CODE = "1234"; 
+        const SECRET_CODE = "MOON"; 
         function checkPasscode() {
             if (document.getElementById('passcode-input').value === SECRET_CODE) { 
                 document.getElementById('login-overlay').style.display = 'none';
                 localStorage.setItem('isUnlocked', 'true');
-            } else { 
-                document.getElementById('error-msg').style.display = 'block'; 
-            }
+            } else { document.getElementById('error-msg').style.display = 'block'; }
         }
         if(localStorage.getItem('isUnlocked') === 'true') { 
             document.getElementById('login-overlay').style.display = 'none';
