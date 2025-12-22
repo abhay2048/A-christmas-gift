@@ -1,171 +1,133 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Memory Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .music-inputs, .add-song {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        input, textarea, button {
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-family: 'Quicksand', sans-serif;
-        }
-        .binder {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .binder-page.left, .binder-page.right {
-            background: rgba(255,255,255,0.15);
-            padding: 15px;
-            border-radius: 15px;
-            width: 300px;
-        }
-        .song-square {
-            background: rgba(255,255,255,0.25);
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 10px;
-        }
-        .song-square p { margin: 5px 0; }
-        .note { margin-top: 10px; font-family: 'Indie Flower', cursive; color: #333; }
-        #secretMessage {
-            display: none;
-            text-align: center;
-            padding: 40px 20px;
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 2px dashed #fff;
-            animation: fadeIn 2s ease-in;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
-</head>
-<body>
+/* --- RESET & VARIABLES --- */
+* { box-sizing: border-box; }
 
-    <canvas id="fireworksCanvas"></canvas>
+:root {
+    --primary-pink: #ff9a9e;
+    --deep-rose: #ff758c;
+    --soft-white: rgba(255, 255, 255, 0.9);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+}
 
-    <div id="login-overlay">
-        <div class="login-box glass-card">
-            <h1 class="fancy-title">❄️ Our Secret World ❄️</h1>
-            <input type="password" id="passcode-input" placeholder="Enter Magic Word...">
-            <button onclick="checkPasscode()" class="add-btn">Unlock Heart</button>
-            <p id="error-msg" style="display:none; color: #ff6b8d; margin-top:10px;">Try again, my love! ❤️</p>
-        </div>
-    </div>
+body {
+    margin: 0; 
+    font-family: 'Quicksand', sans-serif;
+    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    min-height: 100vh;
+    color: #555;
+    overflow-x: hidden;
+}
 
-    <div id="main-app">
-        <button class="settings-trigger" onclick="toggleSettings()">
-            <i class="fas fa-cog"></i>
-        </button>
+#fireworksCanvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 5000;
+}
 
-        <div class="main-content">
-            <header>
-                <h1 id="vault-title" class="fancy-title">Our Winter Wonderland</h1>
-            </header>
+.fancy-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 3.5rem;
+    background: linear-gradient(to right, #ff758c, #ff7eb3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 10px 0;
+}
 
-            <section class="glass-card">
-                <h2>🎵 Music Binder</h2>
+.glass-card {
+    background: var(--soft-white);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    border: var(--glass-border);
+}
 
-                <!-- Dynamic add-song inputs -->
-                <div class="add-song">
-                    <input id="spotifyLink" placeholder="Paste Spotify link here">
-                    <input id="noteText" placeholder="Write your note">
-                    <button onclick="addSong()">Add to Binder</button>
-                </div>
+.main-content { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
 
-                <!-- Binder display -->
-                <div id="binder-pages-display">
-                    <div class="binder">
+.timer {
+    font-size: 1.5rem; font-weight: 700; color: #666;
+    background: white; padding: 15px 40px; border-radius: 50px;
+    display: inline-block; margin: 20px auto;
+    text-align: center;
+}
 
-                        <div class="binder-page left">
-                            <div class="note">
-                                all the love songs<br>
-                                remind me of you
-                            </div>
+/* --- BINDER UI (Handmade Style) --- */
+.binder-container { 
+    display: flex; 
+    background: #fffdf9; /* Creamy paper color */
+    border-radius: 20px; 
+    overflow: hidden; 
+    margin-top: 20px; 
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+    position: relative;
+}
 
-                            <div class="song-square">
-                                <p class="song-title">Kisses Like Pink Cotton Candy</p>
-                                <p class="song-lyric">“Every kiss tastes like a dream”</p>
-                                <iframe src="https://open.spotify.com/embed/track/XXXXXXXX" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                            </div>
-                        </div>
+.binder-rings { 
+    width: 60px; 
+    background: #f0f0f0; 
+    border-right: 1px solid #ddd; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-around; 
+    padding: 40px 0; 
+}
 
-                        <div class="binder-page right">
-                            <div class="song-square">
-                                <p class="song-title">In Love</p>
-                                <p class="song-lyric">“You live in my dreams”</p>
-                                <iframe src="https://open.spotify.com/embed/track/YYYYYYYY" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                            </div>
+.ring { 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    border: 4px solid #bbb; 
+    background: transparent; 
+    margin-left: 10px;
+}
 
-                            <div class="note">
-                                meeting you was like<br>
-                                finding home
-                            </div>
-                        </div>
+.binder-page { 
+    flex: 1; 
+    padding: 30px; 
+    background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+    background-size: 25px 25px; /* Dot grid paper effect */
+}
 
-                    </div>
-                </div>
-            </section>
+/* --- SONG CARDS (Polaroid Style) --- */
+.song-entry { 
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-            <div id="secretMessage">
-                <h1 class="fancy-title" style="font-size: 3rem; color: #ff6b8d; margin-bottom: 10px;">Merry Christmas!</h1>
-            </div>
+.song-card { 
+    width: 250px; 
+    height: 250px; 
+    border-radius: 10px; 
+    overflow: hidden; 
+    background: #000; 
+    border: 10px solid white; /* Polaroid frame */
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
 
-        </div>
-    </div>
+.song-card iframe { width: 100%; height: 100%; border: none; }
 
-    <script>
-        function checkPasscode() {
-            const val = document.getElementById('passcode-input').value;
-            if (val === "1234") { 
-                document.getElementById('login-overlay').style.display = 'none';
-                localStorage.setItem('isUnlocked', 'true');
-            } else { 
-                document.getElementById('error-msg').style.display = 'block'; 
-            }
-        }
-        if(localStorage.getItem('isUnlocked') === 'true') { 
-            document.getElementById('login-overlay').style.display = 'none';
-        }
+.song-handwritten-note {
+    font-family: 'Indie Flower', cursive;
+    text-align: center;
+    margin-top: 15px;
+    max-width: 280px;
+}
 
-        function toggleSettings() { /* placeholder */ }
+.lyric-text { color: #ff758c; font-weight: bold; font-size: 1.2rem; display: block; margin-bottom: 5px; }
+.personal-note { color: #666; font-size: 1rem; }
 
-        // Function to dynamically add song to binder
-        function addSong() {
-            const link = document.getElementById('spotifyLink').value;
-            const note = document.getElementById('noteText').value;
+.del-btn-sleek {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #eee; color: #888;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; margin-top: 10px;
+}
 
-            if(!link) return alert("Paste a Spotify link!");
-
-            const binder = document.querySelector('#binder-pages-display .binder');
-            const newPage = document.createElement('div');
-            newPage.className = 'binder-page left';
-
-            newPage.innerHTML = `
-                <div class="note">${note || 'New memory'}</div>
-                <div class="song-square">
-                    <iframe src="${link}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                </div>
-            `;
-            binder.appendChild(newPage);
-
-            document.getElementById('spotifyLink').value = '';
-            document.getElementById('noteText').value = '';
-        }
-    </script>
-</body>
-</html>
+/* --- UI ELEMENTS --- */
+.add-btn {
+    background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+    color: white; border: none; padding: 12px 20px; border-radius: 12px;
+    cursor: pointer; font-weight: 700;
+}
+input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 10px; }
