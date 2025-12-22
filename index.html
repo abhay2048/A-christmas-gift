@@ -8,34 +8,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Essential inline styles for the new features */
-        .music-inputs {
+        .music-inputs, .add-song {
             display: flex;
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
         }
-        .music-inputs input, .music-inputs textarea {
+        input, textarea, button {
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #ddd;
             font-family: 'Quicksand', sans-serif;
         }
-        .song-entry {
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 12px;
+        .binder {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .binder-page.left, .binder-page.right {
+            background: rgba(255,255,255,0.15);
             padding: 15px;
-            margin-bottom: 20px;
-            border-left: 5px solid #a18cd1;
+            border-radius: 15px;
+            width: 300px;
         }
-        .song-info {
-            font-family: 'Indie Flower', cursive;
+        .song-square {
+            background: rgba(255,255,255,0.25);
+            padding: 10px;
             margin-top: 10px;
+            border-radius: 10px;
         }
-        .song-info h3 { margin: 5px 0; color: #333; }
-        .song-info .lyric { font-style: italic; color: #ff6b8d; font-weight: bold; }
-        .song-info .note { color: #555; font-size: 0.95rem; }
-        
+        .song-square p { margin: 5px 0; }
+        .note { margin-top: 10px; font-family: 'Indie Flower', cursive; color: #333; }
         #secretMessage {
             display: none;
             text-align: center;
@@ -54,26 +58,6 @@
 
     <canvas id="fireworksCanvas"></canvas>
 
-    <div id="settings-modal" class="modal">
-        <div class="modal-content glass-card">
-            <h3 class="fancy-title">Vault Settings</h3>
-            <label>Event Name:</label>
-            <input type="text" id="event-name-input" placeholder="e.g. Christmas Day">
-            <label>Event Date:</label>
-            <input type="date" id="event-date-input">
-            
-            <button id="simulate-btn" class="add-btn" style="background: linear-gradient(45deg, #a18cd1, #fbc2eb); width:100%; margin-top:15px;">
-                ✨ Preview The Surprise (10s)
-            </button>
-
-            <div style="margin-top:20px; display:flex; gap:10px;">
-                <button id="save-settings-btn" class="add-btn">Save</button>
-                <button onclick="toggleSettings()" class="add-btn" style="background:#aaa;">Close</button>
-            </div>
-            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Reset Lock</button>
-        </div>
-    </div>
-
     <div id="login-overlay">
         <div class="login-box glass-card">
             <h1 class="fancy-title">❄️ Our Secret World ❄️</h1>
@@ -84,10 +68,6 @@
     </div>
 
     <div id="main-app">
-        <div class="ghost-art snowman">⛄</div>
-        <div class="ghost-art snowflake-static">❄</div>
-        <div class="snow-container" id="snow-container"></div>
-
         <button class="settings-trigger" onclick="toggleSettings()">
             <i class="fas fa-cog"></i>
         </button>
@@ -95,102 +75,97 @@
         <div class="main-content">
             <header>
                 <h1 id="vault-title" class="fancy-title">Our Winter Wonderland</h1>
-                <div id="countdown-timer" class="timer">Loading Love...</div>
             </header>
 
             <section class="glass-card">
-                <h2>✉️ The Note Station</h2>
-                <textarea id="noteInput" placeholder="Write a sweet note..." rows="4"></textarea>
-                <button id="saveNoteBtn" class="add-btn full-width">Pin Note</button>
-                <div id="latestNote" class="note-paper">...</div>
-            </section>
+                <h2>🎵 Music Binder</h2>
 
-            <section class="glass-card">
-                <h2>✈️ Bucket List</h2>
-                <div class="input-group">
-                    <input type="text" id="bucketInput" placeholder="New adventure?">
-                    <button id="addBucketBtn" class="add-btn"><i class="fas fa-plus"></i></button>
+                <!-- Dynamic add-song inputs -->
+                <div class="add-song">
+                    <input id="spotifyLink" placeholder="Paste Spotify link here">
+                    <input id="noteText" placeholder="Write your note">
+                    <button onclick="addSong()">Add to Binder</button>
                 </div>
-                <ul id="bucketList" class="styled-list"></ul>
-            </section>
 
-            <section class="binder-container">
-                <div class="binder-rings">
-                    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
-                </div>
-                <div class="binder-page">
-                    <h2>🎵 Music Binder</h2>
-                    <div class="music-inputs">
-                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                        <input type="text" id="songMoodInput" placeholder="Mood (e.g. Cozy/Happy)">
-                        <input type="text" id="songLyricInput" placeholder="Favorite Lyric...">
-                        <textarea id="songNoteInput" placeholder="Why this song?..." rows="2"></textarea>
-                        <button id="addSongBtn" class="add-btn"><i class="fas fa-music"></i> Add Song</button>
-                    </div>
-                    
-                    <div id="binder-pages-display">
+                <!-- Binder display -->
+                <div id="binder-pages-display">
+                    <div class="binder">
+
+                        <div class="binder-page left">
+                            <div class="note">
+                                all the love songs<br>
+                                remind me of you
+                            </div>
+
+                            <div class="song-square">
+                                <p class="song-title">Kisses Like Pink Cotton Candy</p>
+                                <p class="song-lyric">“Every kiss tastes like a dream”</p>
+                                <iframe src="https://open.spotify.com/embed/track/XXXXXXXX" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                            </div>
                         </div>
 
-                    <div class="pagination-controls">
-                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
-                        <span id="pageIndicator">1</span>
-                        <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+                        <div class="binder-page right">
+                            <div class="song-square">
+                                <p class="song-title">In Love</p>
+                                <p class="song-lyric">“You live in my dreams”</p>
+                                <iframe src="https://open.spotify.com/embed/track/YYYYYYYY" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                            </div>
+
+                            <div class="note">
+                                meeting you was like<br>
+                                finding home
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </section>
 
             <div id="secretMessage">
                 <h1 class="fancy-title" style="font-size: 3rem; color: #ff6b8d; margin-bottom: 10px;">Merry Christmas!</h1>
-                <p style="font-family: 'Indie Flower', cursive; font-size: 1.8rem; color: #2c3e50; line-height: 1.4;">
-                    May the days to come be as beautiful as the Christmas snow. ❄️
-                </p>
-                <div style="font-size: 3rem; margin-top: 20px;">🎄🎁✨</div>
             </div>
 
         </div>
     </div>
 
-    <script type="module" src="script.js"></script>
     <script>
-        const SECRET_CODE = "1234"; 
-        
         function checkPasscode() {
             const val = document.getElementById('passcode-input').value;
-            if (val === SECRET_CODE) { 
+            if (val === "1234") { 
                 document.getElementById('login-overlay').style.display = 'none';
                 localStorage.setItem('isUnlocked', 'true');
             } else { 
                 document.getElementById('error-msg').style.display = 'block'; 
             }
         }
-
         if(localStorage.getItem('isUnlocked') === 'true') { 
             document.getElementById('login-overlay').style.display = 'none';
         }
 
-        function toggleSettings() {
-            const m = document.getElementById('settings-modal');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        }
+        function toggleSettings() { /* placeholder */ }
 
-        // Logic to show the secret message
-        function showChristmasSurprise() {
-            const msg = document.getElementById('secretMessage');
-            if(msg) {
-                msg.style.display = 'block';
-                msg.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
+        // Function to dynamically add song to binder
+        function addSong() {
+            const link = document.getElementById('spotifyLink').value;
+            const note = document.getElementById('noteText').value;
 
-        // Connect the preview button
-        document.getElementById('simulate-btn')?.addEventListener('click', () => {
-            toggleSettings();
-            showChristmasSurprise();
-            // Optional: Hide it again after 10 seconds for preview mode
-            setTimeout(() => {
-                document.getElementById('secretMessage').style.display = 'none';
-            }, 10000);
-        });
+            if(!link) return alert("Paste a Spotify link!");
+
+            const binder = document.querySelector('#binder-pages-display .binder');
+            const newPage = document.createElement('div');
+            newPage.className = 'binder-page left';
+
+            newPage.innerHTML = `
+                <div class="note">${note || 'New memory'}</div>
+                <div class="song-square">
+                    <iframe src="${link}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                </div>
+            `;
+            binder.appendChild(newPage);
+
+            document.getElementById('spotifyLink').value = '';
+            document.getElementById('noteText').value = '';
+        }
     </script>
 </body>
 </html>
