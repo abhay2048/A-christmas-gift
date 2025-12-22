@@ -1,135 +1,113 @@
-/* --- RESET & VARIABLES --- */
-* { box-sizing: border-box; }
-
+/* --- VARIABLES --- */
 :root {
     --primary-pink: #ff9a9e;
-    --deep-rose: #ff758c;
-    --soft-white: rgba(255, 255, 255, 0.9);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+    --deep-rose: #ff6b8d;
+    --glass-bg: rgba(255, 255, 255, 0.92); /* More opaque for better readability */
+    --font-script: 'Great Vibes', cursive;
+    --font-body: 'Quicksand', sans-serif;
 }
 
 body {
-    margin: 0; 
-    font-family: 'Quicksand', sans-serif; /* The Clean Font */
-    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-    /* A subtle pink gradient overlay */
-    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-    min-height: 100vh;
-    color: #555;
-    overflow-x: hidden;
+    margin: 0; font-family: var(--font-body);
+    /* Your "Perfect" Background + Subtle Gradient */
+    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    min-height: 100vh; color: #555; overflow-x: hidden;
 }
 
-/* --- FIREWORKS CANVAS --- */
+/* --- FIREWORKS --- */
 #fireworksCanvas {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 5000; /* On top of everything */
+    pointer-events: none; z-index: 9999;
 }
 
 /* --- TYPOGRAPHY --- */
 .fancy-title {
-    font-family: 'Great Vibes', cursive; /* The Pretty Script Font */
-    font-size: 3.5rem;
+    font-family: var(--font-script);
     background: linear-gradient(to right, #ff758c, #ff7eb3);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     margin: 10px 0;
-    text-shadow: 2px 2px 5px rgba(255, 117, 140, 0.2);
+    line-height: 1.2;
 }
+#vault-title { font-size: 3.5rem; }
 
-h2 { color: #888; font-weight: 500; font-size: 1.2rem; margin-top: 0; }
-
-/* --- GLASS CARDS (The Boxes) --- */
+/* --- GLASS CARDS (BEAUTIFIED FOREGROUND) --- */
 .glass-card {
-    background: var(--soft-white);
-    backdrop-filter: blur(10px);
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
     border-radius: 20px;
-    padding: 30px;
+    padding: 25px;
     margin-bottom: 25px;
-    border: var(--glass-border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 2px solid white; /* Glowing border */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 .main-content { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
 
-/* --- TIMER --- */
+/* --- TIMER & SUSPENSE --- */
 .timer {
     font-size: 1.5rem; font-weight: 700; color: #666;
     background: white; padding: 15px 40px; border-radius: 50px;
     display: inline-block; margin: 20px auto;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     transition: 0.5s;
-    text-align: center;
 }
 
-/* THE SURPRISE STYLE */
-.timer.celebrate {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.5);
+/* The Secret Message Style */
+.secret-msg-style {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 90%; max-width: 500px;
     background: rgba(255, 255, 255, 0.95);
-    color: #ff4757;
-    z-index: 6000;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 0 50px rgba(255, 71, 87, 0.5);
-    animation: pulse 1s infinite;
+    padding: 40px; border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(255, 107, 141, 0.6);
+    z-index: 10000;
+    font-family: var(--font-script);
+    font-size: 2.5rem;
+    color: var(--deep-rose);
+    animation: popIn 0.8s ease forwards;
 }
-@keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1.5); } 50% { transform: translate(-50%, -50%) scale(1.6); } 100% { transform: translate(-50%, -50%) scale(1.5); } }
+@keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0.5); opacity:0; } 100% { transform: translate(-50%, -50%) scale(1); opacity:1; } }
 
 /* --- INPUTS & BUTTONS --- */
 input, textarea {
     width: 100%; padding: 12px; border-radius: 12px;
-    border: 1px solid #ddd; outline: none; font-family: 'Quicksand', sans-serif;
-    background: rgba(255,255,255,0.8);
-    transition: 0.3s;
+    border: 1px solid #ddd; outline: none; font-family: var(--font-body);
+    background: #fff;
+    font-size: 0.95rem;
 }
-input:focus, textarea:focus { border-color: var(--primary-pink); box-shadow: 0 0 8px rgba(255, 154, 158, 0.3); }
-
-.input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+input:focus, textarea:focus { border-color: var(--primary-pink); }
 
 .add-btn {
     background: linear-gradient(45deg, #ff9a9e, #fad0c4);
     color: white; border: none; padding: 12px 20px; border-radius: 12px;
-    cursor: pointer; font-weight: 700; transition: 0.3s;
-    box-shadow: 0 4px 10px rgba(255, 154, 158, 0.4);
+    cursor: pointer; font-weight: 700; box-shadow: 0 4px 10px rgba(255, 154, 158, 0.4);
 }
-.add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 154, 158, 0.6); }
-.full-width { width: 100%; margin-top: 10px; }
+.full-width { width: 100%; }
 
-/* --- BUCKET LIST & SONGS --- */
-.styled-list li {
-    background: white; padding: 12px 15px; margin-bottom: 8px; border-radius: 10px;
-    display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-}
-
-.song-entry { 
-    background: white; padding: 10px; border-radius: 12px; 
-    display: flex; align-items: center; gap: 15px; margin-bottom: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-}
-.song-card { flex-grow: 1; height: 80px; border-radius: 8px; overflow: hidden; background: #000; }
-.song-card iframe { width: 100%; height: 80px; border: none; }
-
-/* Sleek Delete Button */
-.del-btn-sleek {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: #f0f0f0; color: #888;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: 0.3s;
-}
-.del-btn-sleek:hover { background: #ff6b8d; color: white; transform: rotate(90deg); }
-
-/* --- BINDER LAYOUT --- */
-.binder-container { display: flex; background: #fffcf5; border-radius: 20px; overflow: hidden; margin-top: 20px; border: 1px solid #eee; }
-.binder-rings { width: 40px; background: #f4f4f4; border-right: 1px solid #ddd; display: flex; flex-direction: column; justify-content: space-around; padding: 20px 0; }
+/* --- SONG BINDER STYLES --- */
+.binder-container { display: flex; background: #fffcf5; border-radius: 20px; border: 4px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+.binder-rings { width: 40px; background: #eee; border-right: 1px solid #ddd; display: flex; flex-direction: column; justify-content: space-around; padding: 20px 0; }
 .ring { width: 15px; height: 15px; border-radius: 50%; border: 3px solid #ccc; background: white; margin: 0 auto; }
 .binder-page { flex: 1; padding: 25px; }
 
-/* --- MODAL & SETTINGS --- */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 3000; display: none; justify-content: center; align-items: center; }
-.settings-trigger { position: fixed; top: 20px; right: 20px; background: white; width: 40px; height: 40px; border-radius: 50%; border:none; color: var(--deep-rose); cursor: pointer; z-index: 2000; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-#login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e0f7fa; z-index: 4000; display: flex; justify-content: center; align-items: center; }
-.note-paper { font-family: 'Indie Flower', cursive; font-size: 1.2rem; color: #555; background: #fffdf0; padding: 15px; border-radius: 5px; margin-top: 15px; border: 1px solid #eee; }
+.song-entry { 
+    background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f0f0f0;
+}
+.song-details { margin-top: 10px; font-size: 0.9rem; }
+.fav-line { font-family: 'Indie Flower', cursive; color: #ff6b8d; font-size: 1.1rem; }
+.song-note { color: #888; font-style: italic; margin-top: 5px; }
+
+/* --- UTILS --- */
+.del-btn-sleek { width: 30px; height: 30px; border-radius: 50%; background: #f0f0f0; color: #888; display: flex; align-items: center; justify-content: center; cursor: pointer; float: right; }
+.del-btn-sleek:hover { background: #ff6b8d; color: white; }
+
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; display: none; justify-content: center; align-items: center; }
+#login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); z-index: 5000; display: flex; justify-content: center; align-items: center; }
+
 /* Snow */
 .snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-.snowflake { position: absolute; color: white; opacity: 0.8; }
+.snowflake { position: absolute; color: white; }
 @keyframes fall { to { transform: translateY(105vh); } }
