@@ -1,5 +1,5 @@
 :root {
-    /* Festive Glass Palette */
+    /* Updated Festive Palette */
     --glass: rgba(255, 255, 255, 0.1);
     --glass-border: rgba(255, 255, 255, 0.2);
     --accent: #ff4d4d; /* Bright Christmas Red */
@@ -18,6 +18,7 @@
 body {
     margin: 0;
     font-family: 'Quicksand', sans-serif;
+    /* Deep Winter Night Gradient */
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
                 url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070') no-repeat center center fixed;
     background-size: cover;
@@ -50,7 +51,7 @@ body {
 .login-overlay {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle, #ff4d4d, #8b0000); /* Festive Red Gradient */
+    background: radial-gradient(circle, #1a472a, #051a0d); /* Forest Green Gradient */
     z-index: 10000;
     display: flex;
     justify-content: center;
@@ -58,16 +59,18 @@ body {
 }
 
 .login-box {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
     padding: 40px;
     border-radius: 30px;
     text-align: center;
     width: 90%;
     max-width: 350px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--glass-border);
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
+
+.login-box h2 { font-family: var(--spotify-font); font-weight: 700; color: white; }
 
 /* --- MAIN LAYOUT --- */
 .main-content {
@@ -103,7 +106,7 @@ body {
     color: white;
 }
 
-/* --- GLASS CARD --- */
+/* --- GLASS CARD (Generic Container) --- */
 .glass-card {
     background: var(--glass);
     backdrop-filter: blur(12px);
@@ -112,144 +115,104 @@ body {
     margin-bottom: 40px;
     border: 1px solid var(--glass-border);
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
 }
 
-/* --- NOTE STATION --- */
+.glass-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- IMPROVED NOTE STATION --- */
 .pinned-note {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(15px);
-    color: #ffffff;
-    padding: 45px 30px 30px;
-    border-radius: 20px;
+    background: #fffdf0; /* Creamy paper color */
+    background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
+    background-size: 20px 20px; /* Subtle paper texture */
+    color: #444;
+    padding: 40px 30px;
+    border-radius: 5px;
     font-family: var(--handwritten);
     font-size: 1.8rem;
-    line-height: 1.5;
+    line-height: 1.4;
     margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 1px 1px rgba(0,0,0,0.1), 
+        0 10px 0 -5px #eee, 
+        0 10px 1px -4px rgba(0,0,0,0.1), 
+        0 20px 0 -10px #eee, 
+        0 20px 1px -9px rgba(0,0,0,0.1),
+        0 30px 20px rgba(0,0,0,0.2); /* Layered paper effect */
+    transform: rotate(-1deg);
     position: relative;
-    transition: all 0.4s ease;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
 }
 
+.pinned-note:hover {
+    transform: rotate(0deg) scale(1.02);
+}
+
+/* Custom Wax Seal / Pin */
 .pinned-note::before {
-    content: '❤️';
+    content: '';
     position: absolute;
-    top: -20px;
+    top: -15px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 2rem;
-    animation: heartPulse 2s infinite;
+    width: 40px;
+    height: 40px;
+    background: #d42426; /* Deep Red Wax */
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 2;
+    background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
 }
 
-@keyframes heartPulse {
-    0% { transform: translateX(-50%) scale(1); }
-    50% { transform: translateX(-50%) scale(1.15); }
-    100% { transform: translateX(-50%) scale(1); }
+/* --- IMPROVED BUCKET LIST --- */
+.custom-list {
+    padding: 0;
+    list-style: none;
 }
 
-/* --- BUCKET LIST --- */
-.custom-list { padding: 0; list-style: none; }
 .custom-list li {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
     margin-bottom: 15px;
     padding: 20px;
     border-radius: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: all 0.3s ease;
     border-left: 5px solid var(--accent);
 }
 
-/* --- MUSIC BINDER (SWAPPED LAYOUT) --- */
-.binder-wrapper {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(15px);
-    border-radius: 30px;
-    border: 1px solid var(--glass-border);
-    margin-top: 40px;
-    padding: 20px;
+.custom-list li:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(10px);
+    border-left: 5px solid #1db954; /* Change to green on hover */
 }
 
-.song-entry {
-    display: grid;
-    grid-template-columns: 0.8fr 1.2fr; /* Swapped: Smaller Left, Larger Right */
-    gap: 30px;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 25px;
-    border-radius: 20px;
-    margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    align-items: start;
-}
-
-/* Left Side: Visuals */
-.song-visual-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-}
-
-.music-box {
-    width: 100%;
-    aspect-ratio: 1 / 1; 
-    max-width: 300px; 
-    margin: 0 auto;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-
-.favorite-line-box {
-    background: var(--accent);
-    padding: 18px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
-    box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3);
-}
-
-.favorite-line-box input.fav-line {
-    font-size: 1.1rem !important;
-    font-weight: 900 !important;
-    text-transform: uppercase;
-    color: white;
-    background: transparent !important;
-    border: none !important;
-    padding: 0;
-}
-
-/* Right Side: Memory Text Area */
-.song-memory {
-    width: 100%;
-    text-align: left;
-}
-
-.song-memory h3 {
-    font-size: 1rem;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-}
-
-.song-meta-input.side-note {
-    background: transparent !important;
-    border: none !important;
-    font-size: 1.4rem !important; 
-    line-height: 1.5;
-    color: #fff;
-    padding: 0;
-    width: 100%;
-    resize: none;
-    min-height: 120px;
+.custom-list li span {
     font-family: var(--spotify-font);
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    color: #fff;
 }
 
-/* --- INPUTS & BUTTONS --- */
+/* Strike-through effect for completed items */
+.custom-list li.done {
+    opacity: 0.6;
+    border-left: 5px solid #1db954;
+    background: rgba(29, 185, 84, 0.1);
+}
+
+.custom-list li.done span {
+    text-decoration: line-through red 2px;
+}
+
+/* --- PRETTIER INPUTS --- */
 .input-row {
     display: flex;
     gap: 10px;
@@ -257,53 +220,103 @@ body {
     padding: 10px;
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
 }
 
-input[type="text"], input[type="password"], textarea {
-    background: transparent;
-    border: none;
+.input-row input {
+    background: transparent !important;
+    border: none !important;
+    flex: 1;
     color: white;
-    font-family: var(--spotify-font);
     padding: 10px;
-    width: 100%;
 }
 
-.icon-btn, .primary-btn {
+.icon-btn {
     background: var(--accent);
     color: white;
     border: none;
-    border-radius: 50px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 1.5rem;
     cursor: pointer;
-    animation: breathingGlow 3s infinite ease-in-out;
+    box-shadow: 0 4px 15px rgba(212, 36, 38, 0.4);
+    transition: transform 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-@keyframes breathingGlow {
-    0% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.4); }
-    50% { box-shadow: 0 0 20px rgba(255, 77, 77, 0.8); }
-    100% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.4); }
+.icon-btn:hover {
+    transform: rotate(90deg) scale(1.1);
 }
 
-/* --- MOBILE RESPONSIVE TWEAKS --- */
+/* --- MUSIC BINDER LAYOUT --- */
+.binder-wrapper {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+    margin-top: 40px;
+}
+
+.binder-content { padding: 40px; }
+
+.song-entry {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 30px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 25px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.song-memory h3 {
+    font-weight: 900;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.song-visual-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.music-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #000;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.favorite-line-box {
+    font-family: var(--spotify-font);
+    font-weight: 900;
+    font-size: 1.3rem;
+    background: var(--accent);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    line-height: 1.2;
+    text-align: left;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
-    .song-entry {
-        grid-template-columns: 1fr; /* Stack vertically */
-        gap: 20px;
-        padding: 20px;
-    }
-
-    .song-memory {
-        text-align: center;
-        order: 2; /* Keeps memory below music for mobile scrolling */
-    }
-
-    .song-visual-stack {
-        order: 1; /* Music on top */
-    }
-
-    .song-meta-input.side-note {
-        text-align: center;
-        font-size: 1.2rem !important;
-    }
+    .song-entry { grid-template-columns: 1fr; }
+    .song-memory { text-align: center; order: 2; }
+    .song-visual-stack { order: 1; }
+    .main-title { font-size: 3rem; }
 }
 
 .hidden { display: none !important; }
