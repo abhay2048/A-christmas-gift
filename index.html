@@ -4,92 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Winter Wonderland</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- 1. Password Lock Screen -->
+    <!-- Aurora Background Animation -->
+    <div class="aurora-bg"></div>
+    <div class="snow-container" id="snow-container"></div>
+    <div class="hearts-container" id="hearts-container"></div>
+
+    <!-- Password Lock -->
     <div id="login-screen" class="login-overlay">
-        <div class="login-box">
-            <h1>❄️</h1>
-            <h2>Our Private Space</h2>
-            <p>Enter our special date (MMDD)</p>
-            <input type="password" id="passwordInput" placeholder="••••">
-            <button id="loginBtn" class="primary-btn">Unlock Wonderland</button>
+        <div class="scrapbook-login">
+            <h1 class="handmade-text">Restricted Area</h1>
+            <p>Our Special Date (MMDD)</p>
+            <input type="password" id="passwordInput" placeholder="••••" class="doodle-input">
+            <button id="loginBtn" class="marker-btn">Open Gift</button>
         </div>
     </div>
 
-    <!-- 2. The Grand Reveal Overlay (Hidden by default) -->
+    <!-- The Dramatic Reveal Overlay -->
     <div id="reveal-overlay" class="reveal-overlay hidden">
         <div class="reveal-content">
-            <h2 class="reveal-text">Merry Christmas my love...</h2>
-            <p class="reveal-subtext">May your days to come be as pretty as the Christmas snow.</p>
-            <div class="sparkles">✨🎁✨</div>
+            <div class="reveal-paper">
+                <h2 class="reveal-text">Merry Christmas, my love...</h2>
+                <p class="reveal-subtext">May your days to come be as pretty as the Christmas snow.</p>
+                <div class="reveal-decor">❤️❄️❤️</div>
+            </div>
         </div>
     </div>
 
-    <div class="snow-container" id="snow-container"></div>
-
     <main class="main-content">
-        <header class="hero-section">
+        <header>
             <h1 class="main-title">Our Winter Wonderland</h1>
-            <div class="countdown-container">
-                <div id="countdown-timer" class="timer-display">Calculating...</div>
-                <button id="previewTimer" class="preview-pill">✨ Preview The Magic</button>
+            <div class="countdown-box">
+                <div id="countdown-timer" class="timer-text">...</div>
+                <button id="previewTimer" class="preview-tag">✨ Preview The Magic</button>
             </div>
         </header>
 
-        <!-- 3. Note Station (Pinned Note FIRST) -->
-        <section class="glass-card">
-            <div class="card-header">
-                <h2>✉️ The Note Station</h2>
-                <span class="card-tag">Latest Message</span>
-            </div>
-            
-            <div id="latestNote" class="pinned-note">Loading note...</div>
-
-            <div class="note-input-area">
-                <textarea id="noteInput" placeholder="Leave a new note for me to find..." rows="3"></textarea>
-                <button id="saveNoteBtn" class="secondary-btn">Pin New Note</button>
+        <!-- Note Station -->
+        <section class="paper-section">
+            <div class="paper-header">✉️ The Note Station</div>
+            <div id="latestNote" class="scrapbook-note">Loading...</div>
+            <div class="input-area">
+                <textarea id="noteInput" class="doodle-input" placeholder="Write me something sweet..." rows="3"></textarea>
+                <button id="saveNoteBtn" class="marker-btn">Pin Note</button>
             </div>
         </section>
 
-        <!-- 4. Bucket List -->
-        <section class="glass-card">
-            <div class="card-header">
-                <h2>✈️ Our Bucket List</h2>
+        <!-- Bucket List -->
+        <section class="paper-section">
+            <div class="paper-header">✈️ Our Next Adventures</div>
+            <div class="doodle-group">
+                <input type="text" id="bucketInput" class="doodle-input" placeholder="What's next for us?">
+                <button id="addBucketBtn" class="add-circle">+</button>
             </div>
-            <div class="input-row">
-                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
-                <button id="addBucketBtn" class="icon-btn">+</button>
-            </div>
-            <ul id="bucketList" class="custom-list"></ul>
+            <ul id="bucketList" class="scrapbook-list"></ul>
         </section>
 
-        <!-- 5. Music Binder (Fully Responsive) -->
+        <!-- THE SCRAPBOOK BINDER -->
         <div class="binder-wrapper">
-            <div class="binder-spine mobile-hidden">
-                <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+            <!-- Actual Metal Rings -->
+            <div class="binder-rings-container">
+                <div class="metal-ring"></div>
+                <div class="metal-ring"></div>
+                <div class="metal-ring"></div>
+                <div class="metal-ring"></div>
             </div>
-            <div class="binder-content">
-                <div class="card-header center">
-                    <h2 class="handwritten-title">🎵 Music & Memories</h2>
-                </div>
+
+            <div class="binder-page">
+                <h2 class="handmade-title">🎵 Music Memories</h2>
                 
-                <div class="song-upload-bar">
-                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                    <button id="addSongBtn" class="primary-btn">Add to Binder</button>
+                <div class="song-upload-zone">
+                    <input type="text" id="songLinkInput" class="doodle-input" placeholder="Paste Spotify Link...">
+                    <button id="addSongBtn" class="marker-btn">Tape to Binder</button>
                 </div>
 
-                <div id="binder-pages-display" class="songs-grid">
-                    <!-- Songs load here -->
+                <div id="binder-pages-display" class="cards-stack">
+                    <!-- Cards load here -->
                 </div>
 
-                <div class="pagination">
-                    <button id="prevBtn" disabled>«</button>
-                    <span id="pageIndicator">Page 1</span>
-                    <button id="nextBtn">»</button>
+                <div class="binder-nav">
+                    <button id="prevBtn" class="nav-btn">«</button>
+                    <span id="pageIndicator">Pg. 1</span>
+                    <button id="nextBtn" class="nav-btn">»</button>
                 </div>
             </div>
         </div>
