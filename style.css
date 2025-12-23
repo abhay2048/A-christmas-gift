@@ -1,250 +1,296 @@
 :root {
-    /* Festive Glass Palette */
-    --glass: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --accent: #ff4d4d; /* Bright Christmas Red */
-    --spotify-green: #1db954;
-    --text: #ffffff;
-    --soft-pink: #ffb7c5;
-    --handwritten: 'Indie Flower', cursive;
-    --spotify-font: 'Montserrat', sans-serif;
+    /* Festive Glass Palette */
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --accent: #ff4d4d; /* Bright Christmas Red */
+    --spotify-green: #1db954;
+    --text: #ffffff;
+    --soft-pink: #ffb7c5;
+    --handwritten: 'Indie Flower', cursive;
+    --spotify-font: 'Montserrat', sans-serif;
 }
 
-* { 
-    box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent; 
+* { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
 }
 
 body {
-    margin: 0;
-    font-family: 'Quicksand', sans-serif;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070') no-repeat center center fixed;
-    background-size: cover;
-    color: var(--text);
-    overflow-x: hidden;
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    /* Deep Winter Night Gradient */
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070') no-repeat center center fixed;
+    background-size: cover;
+    color: var(--text);
+    overflow-x: hidden;
 }
 
 /* --- REVEAL OVERLAY --- */
 .reveal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(20px);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
 }
 
 .reveal-text {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
-    color: white;
-    text-shadow: 0 0 20px var(--accent);
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: white;
+    text-shadow: 0 0 20px var(--accent);
 }
 
 /* --- LOGIN SCREEN --- */
 .login-overlay {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle, #1a472a, #051a0d); 
-    z-index: 10000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #1a472a, #051a0d); 
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .login-box {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    padding: 40px;
-    border-radius: 30px;
-    text-align: center;
-    width: 90%;
-    max-width: 350px;
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    width: 90%;
+    max-width: 350px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
 /* --- MAIN LAYOUT --- */
 .main-content {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-    position: relative;
-    z-index: 5;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 5;
 }
 
 .hero-section {
-    text-align: center;
-    padding: 80px 0 40px;
+    text-align: center;
+    padding: 80px 0 40px;
 }
 
 .main-title {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(3rem, 12vw, 5.5rem);
-    color: white;
-    margin: 0 0 15px;
-    text-shadow: 0 0 30px rgba(255,255,255,0.4);
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(3rem, 12vw, 5.5rem);
+    color: white;
+    margin: 0 0 15px;
+    text-shadow: 0 0 30px rgba(255,255,255,0.4);
 }
 
 .timer-display {
-    background: var(--glass);
-    backdrop-filter: blur(10px);
-    padding: 15px 40px;
-    border-radius: 50px;
-    display: inline-block;
-    font-weight: 700;
-    font-family: var(--spotify-font);
-    border: 1px solid var(--glass-border);
-    color: white;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+    border-radius: 50px;
+    display: inline-block;
+    font-weight: 700;
+    font-family: var(--spotify-font);
+    border: 1px solid var(--glass-border);
+    color: white;
 }
 
-/* --- GLASS CARD --- */
+/* --- GLASS CARD (Generic Container) --- */
 .glass-card {
-    background: var(--glass);
-    backdrop-filter: blur(12px);
-    border-radius: 25px;
-    padding: 30px;
-    margin-bottom: 40px;
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border-radius: 25px;
+    padding: 30px;
+    margin-bottom: 40px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-/* --- REDESIGNED NOTE STATION --- */
+/* --- REDESIGNED NOTE STATION (GLASS STYLE) --- */
 .pinned-note {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(15px);
-    color: #ffffff;
-    padding: 45px 30px 30px;
-    border-radius: 20px;
-    font-family: var(--handwritten);
-    font-size: 1.8rem;
-    line-height: 1.5;
-    margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    transform: rotate(-0.5deg);
-    position: relative;
-    transition: all 0.4s ease;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    color: #ffffff;
+    padding: 45px 30px 30px;
+    border-radius: 20px;
+    font-family: var(--handwritten);
+    font-size: 1.8rem;
+    line-height: 1.5;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    transform: rotate(-0.5deg);
+    position: relative;
+    transition: all 0.4s ease;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.pinned-note:hover {
+    transform: rotate(0deg) translateY(-5px);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent);
+}
+
+.pinned-note::before {
+    content: '❤️';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+    z-index: 2;
+    animation: heartPulse 2s infinite;
+}
+
+@keyframes heartPulse {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.15); }
+    100% { transform: translateX(-50%) scale(1); }
 }
 
 /* --- BUCKET LIST --- */
 .custom-list {
-    padding: 0;
-    list-style: none;
+    padding: 0;
+    list-style: none;
 }
 
 .custom-list li {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
-    margin-bottom: 15px;
-    padding: 20px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-left: 5px solid var(--accent);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-left: 5px solid var(--accent);
 }
 
-/* --- UPDATED MUSIC BINDER (COMPACT & WRAPPING TEXT) --- */
+.custom-list li:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(10px);
+}
+
+.custom-list li.done {
+    opacity: 0.6;
+    border-left: 5px solid var(--spotify-green);
+    background: rgba(29, 185, 84, 0.1);
+}
+
+.custom-list li.done span {
+    text-decoration: line-through rgba(255,255,255,0.5) 2px;
+}
+
+/* --- MUSIC BINDER --- */
 .binder-wrapper {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(15px);
-    border-radius: 30px;
-    border: 1px solid var(--glass-border);
-    margin-top: 40px;
-    padding: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    border: 1px solid var(--glass-border);
+    margin-top: 40px;
+    padding: 40px;
 }
 
 .song-entry {
-    display: grid;
-    grid-template-columns: 0.7fr 1.3fr; /* Shrunk the memory text side */
-    gap: 20px;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    border-radius: 20px;
-    margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    align-items: start;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 30px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 25px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .music-box {
-    width: 100%;
-    max-width: 250px; /* Smaller song profile */
-    aspect-ratio: 1 / 1;
-    border-radius: 15px;
-    overflow: hidden;
-    background: #000;
-    margin: 0 auto;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #000;
 }
 
 .favorite-line-box {
-    font-family: var(--spotify-font);
-    font-weight: 800;
-    font-size: 1.1rem;
-    background: var(--accent);
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-top: 15px;
-    
-    /* FIX FOR SCROLLING: */
-    word-wrap: break-word;      /* Forces long words to break */
-    white-space: normal;        /* Allows text to wrap to next line */
-    overflow: visible;          /* Ensures no scrollbar */
-    line-height: 1.4;           /* Better spacing for multiple lines */
-    text-align: center;
-    text-transform: uppercase;  /* Keeps your style from the screenshot */
-    min-height: 60px;           /* Ensures it has height even for short lines */
-}
-
-/* Shrunk the memory text area height */
-.song-entry textarea {
-    height: 120px; 
-    font-size: 1rem;
+    font-family: var(--spotify-font);
+    font-weight: 900;
+    font-size: 1.2rem;
+    background: var(--accent);
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 15px;
 }
 
 /* --- INPUTS & BUTTONS --- */
 .input-row {
-    display: flex;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 20px;
 }
 
 input[type="text"], input[type="password"], textarea {
-    background: transparent;
-    border: none;
-    color: white;
-    font-family: var(--spotify-font);
-    padding: 10px;
-    width: 100%;
+    background: transparent;
+    border: none;
+    color: white;
+    font-family: var(--spotify-font);
+    padding: 10px;
+    width: 100%;
 }
 
 input:focus { outline: none; }
 
+.icon-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1) rotate(10deg);
+}
+
 .primary-btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 50px;
-    font-weight: 800;
-    cursor: pointer;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 /* --- RESPONSIVENESS --- */
 @media (max-width: 768px) {
-    .song-entry { grid-template-columns: 1fr; }
-    .music-box { max-width: 100%; }
+    .song-entry { grid-template-columns: 1fr; }
+    .main-title { font-size: 2.5rem; }
+    .binder-wrapper { padding: 20px; }
 }
 
-.hidden { display: none !important; }
+.hidden { display: none !important; } 
