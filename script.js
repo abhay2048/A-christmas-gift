@@ -88,7 +88,7 @@ document.getElementById('saveNoteBtn').addEventListener('click', () => {
     input.value = '';
 });
 
-// --- 4. BUCKET LIST (UPDATED) ---
+// --- 4. BUCKET LIST ---
 const bucketRef = ref(db, 'bucketList');
 
 document.getElementById('addBucketBtn').addEventListener('click', () => {
@@ -117,12 +117,10 @@ onValue(bucketRef, (snapshot) => {
                 <button class="del-btn" style="background:none; border:none; cursor:pointer; font-size: 1.2rem; opacity: 0.5;">❄️</button>
             `;
             
-            // Toggle Done
             li.querySelector('.item-text').addEventListener('click', () => {
                 update(ref(db, `bucketList/${key}`), { done: !item.done });
             });
 
-            // Delete
             li.querySelector('.del-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 if(confirm("Remove this adventure?")) remove(ref(db, `bucketList/${key}`));
@@ -133,7 +131,7 @@ onValue(bucketRef, (snapshot) => {
     }
 });
 
-// --- 5. MUSIC BINDER ---
+// --- 5. MUSIC BINDER (UPDATED LAYOUT) ---
 const songsRef = ref(db, 'binderSongs');
 let allSongs = [];
 let currentPage = 1;
@@ -168,16 +166,16 @@ function renderBinder() {
         const div = document.createElement('div');
         div.className = 'song-entry';
 
+        // Memory on Left (1/3), Visuals on Right (2/3)
         div.innerHTML = `
             <div class="song-memory">
                 <h3>Our Memory</h3>
                 <textarea class="song-meta-input side-note" 
-                    placeholder="Why does this song remind you of us?" 
-                    style="height: 180px; width: 100%; font-family: 'Quicksand', sans-serif;">${song.sideNote}</textarea>
+                    placeholder="Why does this song remind you of us?">${song.sideNote}</textarea>
             </div>
             <div class="song-visual-stack">
-                <div style="display:flex; justify-content:flex-end;">
-                    <button class="del-song" style="background:none; border:none; color:rgba(255,255,255,0.4); cursor:pointer;">Remove ×</button>
+                <div style="display:flex; justify-content:flex-end; width: 100%; max-width: 260px;">
+                    <button class="del-song" style="background:none; border:none; color:rgba(255,255,255,0.4); cursor:pointer; font-size: 0.8rem;">Remove ×</button>
                 </div>
                 <div class="music-box">
                     <iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0" allow="encrypted-media"></iframe>
@@ -185,8 +183,7 @@ function renderBinder() {
                 <div class="favorite-line-box">
                     <input type="text" class="fav-line" 
                         value="${song.favLine}" 
-                        placeholder="♥ Add favorite line..." 
-                        style="background:transparent; border:none; width: 100%; color: white; font-weight: 900; font-family: 'Montserrat', sans-serif;">
+                        placeholder="♥ Add favorite line...">
                 </div>
             </div>
         `;
@@ -242,6 +239,5 @@ style.textContent = `
     @keyframes fall { 
         to { transform: translateY(110vh) rotate(360deg); } 
     }
-    .done span { text-decoration: line-through; opacity: 0.6; }
 `;
 document.head.appendChild(style);
