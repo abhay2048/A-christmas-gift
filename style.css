@@ -1,255 +1,146 @@
 :root {
-    --glass: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.4);
+    --bg-warm: #fdf5e6;
+    --paper: #fffef0;
     --accent: #d42426;
-    --text: #2c3e50;
-    --soft-pink: #ffb7c5;
-    --handwritten: 'Indie Flower', cursive;
+    --ink: #333;
+    --pink: #ffb7c5;
 }
-
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
     margin: 0;
     font-family: 'Quicksand', sans-serif;
-    background: linear-gradient(135deg, #e0f2f1 0%, #fce4ec 100%);
-    background-attachment: fixed;
-    color: var(--text);
+    color: var(--ink);
+    background-color: var(--bg-warm);
     overflow-x: hidden;
+    min-height: 100vh;
 }
 
-/* --- REVEAL OVERLAY (THE CLIMAX) --- */
-.reveal-overlay {
+/* --- ANIMATED BACKGROUNDS --- */
+.aurora-bg {
     position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(15px);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
-    animation: fadeIn 1s ease-out;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(125deg, #fce4ec, #e0f2f1, #fce4ec);
+    background-size: 400% 400%;
+    animation: auroraFlow 15s ease infinite;
+    z-index: -2;
+}
+@keyframes auroraFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+.snow-container, .hearts-container {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
 }
 
-.reveal-text {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
-    color: white;
-    margin-bottom: 20px;
-    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+/* --- REVEAL OVERLAY --- */
+.reveal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000;
+    display: flex; justify-content: center; align-items: center;
 }
-
-.reveal-subtext {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: clamp(1.1rem, 4vw, 1.5rem);
-    color: var(--soft-pink);
+.reveal-paper {
+    background: white; padding: 40px; border-radius: 2px;
+    box-shadow: 0 0 50px rgba(255,255,255,0.2);
+    transform: rotate(-2deg); max-width: 90%; text-align: center;
 }
-
-.sparkles { font-size: 2rem; margin-top: 30px; animation: bounce 2s infinite; }
-
-@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+.reveal-text { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--accent); }
+.reveal-subtext { font-family: 'Indie Flower'; font-size: 1.5rem; }
 
 /* --- LOGIN SCREEN --- */
 .login-overlay {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle, #1a472a, #0a2e1a);
-    z-index: 10000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: fixed; inset: 0; background: #1a472a; z-index: 10001;
+    display: flex; justify-content: center; align-items: center;
+}
+.scrapbook-login {
+    background: var(--paper); padding: 40px; border-radius: 10px;
+    box-shadow: 10px 10px 0px #0a2e1a; text-align: center;
 }
 
-.login-box {
-    background: white;
-    padding: 40px;
-    border-radius: 30px;
-    text-align: center;
-    width: 90%;
-    max-width: 350px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-}
-
-/* --- MAIN LAYOUT --- */
-.main-content {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    position: relative;
-    z-index: 5;
-}
-
-.hero-section {
-    text-align: center;
-    padding: 60px 0 40px;
-}
-
+/* --- TEXT STYLES --- */
 .main-title {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(2.5rem, 10vw, 4.5rem);
-    color: var(--accent);
-    margin: 0 0 15px;
+    font-family: 'Dancing Script', cursive; font-size: 4rem;
+    text-align: center; color: var(--accent); margin-top: 60px;
+}
+.handmade-text { font-family: 'Indie Flower'; }
+
+/* --- PAPER CARDS --- */
+.paper-section {
+    background: var(--paper); padding: 30px; margin-bottom: 40px;
+    border-radius: 5px; box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
+    border: 1px solid #eee; position: relative;
+    max-width: 800px; width: 100%; margin-left: auto; margin-right: auto;
+}
+.paper-header {
+    font-family: 'Indie Flower'; font-size: 1.8rem; color: var(--accent);
+    border-bottom: 2px dashed var(--pink); margin-bottom: 20px;
 }
 
-.timer-display {
-    background: var(--glass);
-    backdrop-filter: blur(5px);
-    padding: 12px 30px;
-    border-radius: 50px;
-    display: inline-block;
-    font-weight: 700;
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+.scrapbook-note {
+    font-family: 'Indie Flower'; font-size: 1.5rem; padding: 20px;
+    background: #fffdf0; margin-bottom: 20px; border-left: 5px solid var(--pink);
 }
 
-/* --- CARDS & UI --- */
-.glass-card {
-    background: var(--glass);
-    backdrop-filter: blur(10px);
-    border-radius: 25px;
-    padding: 25px;
-    margin-bottom: 30px;
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+/* --- PRETTY INPUTS --- */
+.doodle-input {
+    width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 15px 5px 15px 5px;
+    font-family: 'Indie Flower'; font-size: 1.2rem; background: white;
+    transition: 0.3s;
 }
+.doodle-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 10px var(--pink); }
 
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.card-header h2 { font-size: 1.2rem; margin: 0; opacity: 0.8; }
-.card-tag { font-size: 0.7rem; background: var(--accent); color: white; padding: 4px 10px; border-radius: 10px; text-transform: uppercase; }
-
-/* NOTE STATION SPECIFIC */
-.pinned-note {
-    background: #fffdf0;
-    padding: 25px;
-    border-radius: 15px;
-    font-family: var(--handwritten);
-    font-size: 1.4rem;
-    line-height: 1.6;
-    margin-bottom: 25px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.02), 5px 5px 15px rgba(0,0,0,0.05);
-    position: relative;
+.marker-btn {
+    background: var(--accent); color: white; border: none; padding: 10px 25px;
+    border-radius: 50px; font-family: 'Indie Flower'; font-size: 1.3rem;
+    cursor: pointer; margin-top: 10px; transform: rotate(1deg);
 }
+.marker-btn:hover { transform: scale(1.05) rotate(-1deg); }
 
-.pinned-note::before {
-    content: '📌';
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.note-input-area textarea {
-    width: 100%;
-    border-radius: 15px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    font-family: inherit;
-    resize: none;
-    margin-bottom: 10px;
-}
-
-/* --- BINDER (MOBILE OPTIMIZED) --- */
+/* --- BINDER (PHOTO ACCURATE) --- */
 .binder-wrapper {
-    display: flex;
-    background: #fffaf0;
-    border-radius: 25px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-    overflow: hidden;
-    margin-top: 40px;
+    display: flex; max-width: 850px; margin: 50px auto; position: relative;
 }
 
-.binder-spine { width: 60px; background: #f1f1f1; display: flex; flex-direction: column; justify-content: space-around; align-items: center; padding: 40px 0; border-right: 2px solid #ddd; }
-.ring { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #ccc, #eee); border: 2px solid #bbb; }
+.binder-rings-container {
+    width: 60px; display: flex; flex-direction: column; justify-content: space-around;
+    padding: 60px 0; background: #e0e0e0; border-radius: 15px 0 0 15px; border-right: 2px solid #ccc;
+}
+.metal-ring {
+    width: 45px; height: 45px; border-radius: 50%;
+    border: 6px solid #b0b0b0; background: transparent;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.2), inset 2px 2px 5px #fff;
+}
 
-.binder-content { flex: 1; padding: 30px; }
+.binder-page {
+    flex: 1; background: var(--paper); padding: 40px;
+    background-image: radial-gradient(#dcdcdc 1px, transparent 1px);
+    background-size: 25px 25px; box-shadow: 10px 10px 30px rgba(0,0,0,0.1);
+}
 
-/* SONG CARD */
-.song-entry {
-    background: white;
-    padding: 15px;
-    border-radius: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+/* SONG CARDS (SCRAPBOOK STYLE) */
+.song-card-handmade {
+    background: white; padding: 15px; border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    margin-bottom: 30px; position: relative;
+    transform: rotate(var(--rot)); transition: 0.3s;
     border: 1px solid #f0f0f0;
 }
+.song-card-handmade:nth-child(even) { --rot: -1.5deg; }
+.song-card-handmade:nth-child(odd) { --rot: 1.5deg; }
 
-.song-meta-input {
-    font-family: var(--handwritten);
-    width: 100%;
-    border: none;
-    border-bottom: 1px dotted #ccc;
-    padding: 10px 0;
-    font-size: 1.1rem;
-    margin-top: 10px;
+/* "Tape" effect */
+.song-card-handmade::before {
+    content: ''; position: absolute; top: -15px; left: 50%;
+    width: 100px; height: 30px; background: rgba(255, 255, 255, 0.4);
+    transform: translateX(-50%); border: 1px solid rgba(0,0,0,0.05);
 }
 
-/* --- BUTTONS & INPUTS --- */
-.primary-btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-}
+.spotify-embed { border-radius: 12px; margin-bottom: 10px; }
 
-.secondary-btn {
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-}
-
-.icon-btn { background: var(--accent); color: white; border: none; width: 45px; height: 45px; border-radius: 12px; font-size: 1.5rem; cursor: pointer; }
-
-.preview-pill {
-    background: none;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    margin-top: 15px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.preview-pill:hover { background: var(--accent); color: white; }
-
-/* --- BUCKET LIST --- */
-.custom-list { list-style: none; padding: 0; }
-.custom-list li {
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-}
-
-.custom-list li.done span { text-decoration: line-through; opacity: 0.5; }
-
-/* --- MOBILE RESPONSIVENESS --- */
+/* --- MOBILE --- */
 @media (max-width: 600px) {
-    .main-content { padding: 15px; }
-    .hero-section { padding: 40px 0 20px; }
-    .binder-spine { display: none; } /* Hide rings on mobile to save space */
-    .binder-content { padding: 20px; }
-    .song-entry { padding: 10px; }
-    .login-box { padding: 30px 20px; }
-    .glass-card { padding: 20px; border-radius: 20px; }
-    
-    .input-row { display: flex; flex-direction: column; gap: 10px; }
-    .input-row input { width: 100%; }
+    .binder-wrapper { flex-direction: column; }
+    .binder-rings-container { 
+        width: 100%; height: 60px; flex-direction: row; 
+        border-right: none; border-bottom: 2px solid #ccc; padding: 0 20px;
+    }
+    .main-title { font-size: 2.5rem; }
 }
 
 .hidden { display: none !important; }
