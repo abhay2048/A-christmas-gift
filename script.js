@@ -1,7 +1,8 @@
+// Import the functions you need from the SDKs (Using CDN for GitHub Pages compatibility)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// Your Firebase configuration
+// Your specific Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
     authDomain: "a-christmas-gift.firebaseapp.com",
@@ -21,130 +22,104 @@ const SONGS_PER_PAGE = 3;
 let currentPage = 1;
 let allSongs = [];
 
-// --- WAIT FOR UNLOCK EVENT ---
-window.addEventListener('app-unlocked', () => {
-    initializeAppLogic();
+// --- 1. COUNTDOWN TIMER ---
+const targetDate = new Date("December 25, 2025 00:00:00").getTime();
+setInterval(() => {
+    const now = new Date().getTime();
+    const gap = targetDate - now;
+    const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+    const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    const timerElement = document.getElementById('countdown-timer');
+    if (timerElement) {
+        timerElement.innerText = d > 0 ? `${d} Days, ${h} Hours until Christmas! 🎄` : "Merry Christmas! 🎁";
+    }
+}, 1000);
+
+// --- 2. NOTE STATION (Shared) ---
+const noteRef = ref(db, 'notes/currentNote');
+
+document.getElementById('saveNoteBtn').addEventListener('click', () => {
+    const note = document.getElementById('noteInput').value;
+    if (note.trim() !== "") {
+        set(noteRef, note);
+        document.getElementById('noteInput').value = ""; // Clear input after pinning
+    }
 });
 
-// Main Function that runs only after password is correct
-function initializeAppLogic() {
-    console.log("App Unlocked! Connecting to Memory Database...");
+onValue(noteRef, (snapshot) => {
+    const data = snapshot.val();
+    document.getElementById('latestNote').innerText = data ? data : "No notes yet... Write something for me!";
+});
 
-    // 1. COUNTDOWN
-    const targetDate = new Date("December 25, 2025 00:00:00").getTime();
-    setInterval(() => {
-        const now = new Date().getTime();
-        const gap = targetDate - now;
-        const d = Math.floor(gap / (1000 * 60 * 60 * 24));
-        const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        
-        const timerElement = document.getElementById('countdown-timer');
-        if (timerElement) {
-            timerElement.innerText = d > 0 ? `${d} Days, ${h} Hours until Christmas! 🎄` : "Merry Christmas! 🎁";
-        }
-    }, 1000);
+// --- 3. BUCKET LIST (Shared & Click to Cross Out) ---
+const bucketRef = ref(db, 'bucketList');
 
-    // 2. NOTE STATION
-    const noteRef = ref(db, 'notes/currentNote');
+document.getElementById('addBucketBtn').addEventListener('click', () => {
+    const input = document.getElementById('bucketInput');
+    if (!input.value) return;
     
-    document.getElementById('saveNoteBtn').addEventListener('click', () => {
-        const note = document.getElementById('noteInput').value;
-        if (note.trim() !== "") {
-            set(noteRef, note);
-            document.getElementById('noteInput').value = ""; 
-        }
+    push(bucketRef, {
+        text: input.value,
+        done: false
     });
+    input.value = '';
+});
 
-    onValue(noteRef, (snapshot) => {
-        const data = snapshot.val();
-        document.getElementById('latestNote').innerText = data ? data : "No notes yet... Write something for me!";
-    });
+onValue(bucketRef, (snapshot) => {
+    const list = document.getElementById('bucketList');
+    list.innerHTML = '';
+    const data = snapshot.val();
 
-    // 3. BUCKET LIST
-    const bucketRef = ref(db, 'bucketList');
-
-    document.getElementById('addBucketBtn').addEventListener('click', () => {
-        const input = document.getElementById('bucketInput');
-        if (!input.value) return;
-        
-        push(bucketRef, {
-            text: input.value,
-            done: false
-        });
-        input.value = '';
-    });
-
-    onValue(bucketRef, (snapshot) => {
-        const list = document.getElementById('bucketList');
-        list.innerHTML = '';
-        const data = snapshot.val();
-
-        if (data) {
-            Object.entries(data).forEach(([key, item]) => {
-                const li = document.createElement('li');
-                li.innerHTML = item.text;
-                if (item.done) li.classList.add('completed');
-                
-                li.addEventListener('click', () => {
-                    update(ref(db, `bucketList/${key}`), { done: !item.done });
-                });
-                list.appendChild(li);
+    if (data) {
+        Object.entries(data).forEach(([key, item]) => {
+            const li = document.createElement('li');
+            li.innerHTML = item.text;
+            if (item.done) li.classList.add('completed');
+            
+            li.addEventListener('click', () => {
+                update(ref(db, `bucketList/${key}`), { done: !item.done });
             });
-        }
-    });
-
-    // 4. MUSIC BINDER
-    const songsRef = ref(db, 'binderSongs');
-
-    document.getElementById('addSongBtn').addEventListener('click', () => {
-        const input = document.getElementById('songLinkInput');
-        const rawLink = input.value.trim();
-        if (!rawLink) return;
-
-        const match = rawLink.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-        if (!match) return alert("Please use a valid Spotify link!");
-        
-        const embedUrl = `https://open.spotify.com/embed/${match[1]}/${match[2]}`;
-
-        push(songsRef, {
-            embedUrl: embedUrl,
-            favoriteLine: "",
-            sideNote: "",
-            timestamp: Date.now()
+            list.appendChild(li);
         });
-        input.value = '';
-    });
-
-    onValue(songsRef, (snapshot) => {
-        const data = snapshot.val();
-        allSongs = [];
-        if (data) {
-            Object.entries(data).forEach(([key, song]) => {
-                allSongs.push({ ...song, id: key });
-            });
-            allSongs.sort((a, b) => b.timestamp - a.timestamp);
-        }
-        renderBinderPage();
-    });
-
-    // 5. SNOWFALL (Starts only after unlock)
-    function createSnow() {
-        const container = document.getElementById('snow-container');
-        if (!container) return;
-        const flake = document.createElement('div');
-        flake.classList.add('snowflake');
-        flake.innerHTML = '❄';
-        flake.style.left = Math.random() * 100 + 'vw';
-        flake.style.fontSize = Math.random() * 10 + 10 + 'px';
-        flake.style.opacity = Math.random();
-        flake.style.animationDuration = Math.random() * 3 + 2 + 's';
-        container.appendChild(flake);
-        setTimeout(() => flake.remove(), 5000);
     }
-    setInterval(createSnow, 300);
-}
+});
 
-// Helper: Render Pages
+// --- 4. MUSIC BINDER (Shared & Auto-Player) ---
+const songsRef = ref(db, 'binderSongs');
+
+document.getElementById('addSongBtn').addEventListener('click', () => {
+    const input = document.getElementById('songLinkInput');
+    const rawLink = input.value.trim();
+    if (!rawLink) return;
+
+    // Convert regular Spotify link to Embed URL
+    const match = rawLink.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+    if (!match) return alert("Please use a valid Spotify link!");
+    
+    const embedUrl = `https://open.spotify.com/embed/${match[1]}/${match[2]}`;
+
+    push(songsRef, {
+        embedUrl: embedUrl,
+        favoriteLine: "",
+        sideNote: "",
+        timestamp: Date.now()
+    });
+    input.value = '';
+});
+
+onValue(songsRef, (snapshot) => {
+    const data = snapshot.val();
+    allSongs = [];
+    if (data) {
+        Object.entries(data).forEach(([key, song]) => {
+            allSongs.push({ ...song, id: key });
+        });
+        allSongs.sort((a, b) => b.timestamp - a.timestamp);
+    }
+    renderBinderPage();
+});
+
 function renderBinderPage() {
     const displayContainer = document.getElementById('binder-pages-display');
     displayContainer.innerHTML = ''; 
@@ -175,6 +150,7 @@ function renderBinderPage() {
                 </div>
             `;
 
+            // Auto-save fields as they type
             div.querySelector('.fav-input').addEventListener('change', (e) => {
                 update(ref(db, `binderSongs/${song.id}`), { favoriteLine: e.target.value });
             });
@@ -200,3 +176,19 @@ document.getElementById('nextBtn').addEventListener('click', () => {
     currentPage++;
     renderBinderPage();
 });
+
+// --- 5. VISUAL SNOW ---
+function createSnow() {
+    const container = document.getElementById('snow-container');
+    if (!container) return;
+    const flake = document.createElement('div');
+    flake.classList.add('snowflake');
+    flake.innerHTML = '❄';
+    flake.style.left = Math.random() * 100 + 'vw';
+    flake.style.fontSize = Math.random() * 10 + 10 + 'px';
+    flake.style.opacity = Math.random();
+    flake.style.animationDuration = Math.random() * 3 + 2 + 's';
+    container.appendChild(flake);
+    setTimeout(() => flake.remove(), 5000);
+}
+setInterval(createSnow, 300);
