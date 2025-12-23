@@ -14,10 +14,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Login
+// --- 1. Login ---
 const loginScreen = document.getElementById('login-screen');
 if (localStorage.getItem('wonderlandUnlocked') === 'true') loginScreen.classList.add('hidden');
-
 document.getElementById('loginBtn').onclick = () => {
     if (document.getElementById('passwordInput').value.toUpperCase() === "MOON") {
         localStorage.setItem('wonderlandUnlocked', 'true');
@@ -25,7 +24,7 @@ document.getElementById('loginBtn').onclick = () => {
     } else { alert("Incorrect word, my love. ❤️"); }
 };
 
-// Countdown
+// --- 2. Countdown ---
 let targetDate = new Date("December 25, 2025 00:00:00").getTime();
 setInterval(() => {
     const now = new Date().getTime();
@@ -43,7 +42,7 @@ setInterval(() => {
     }
 }, 1000);
 
-// Note Station
+// --- 3. Notes ---
 const noteRef = ref(db, 'notes/currentNote');
 onValue(noteRef, (s) => document.getElementById('latestNote').innerText = s.val() || "No notes yet...");
 document.getElementById('saveNoteBtn').onclick = () => {
@@ -52,30 +51,31 @@ document.getElementById('saveNoteBtn').onclick = () => {
     document.getElementById('noteInput').value = '';
 };
 
-// Bucket List
+// --- 4. Bucket List ---
 const bucketRef = ref(db, 'bucketList');
 document.getElementById('addBucketBtn').onclick = () => {
     const val = document.getElementById('bucketInput').value;
     if (val) push(bucketRef, { text: val, done: false });
     document.getElementById('bucketInput').value = '';
 };
-onValue(bucketRef, (s) => {
+onValue(bucketRef, (snapshot) => {
     const list = document.getElementById('bucketList');
     list.innerHTML = '';
-    const data = s.val();
+    const data = snapshot.val();
     if (data) {
         Object.entries(data).forEach(([key, item]) => {
             const li = document.createElement('li');
             li.className = item.done ? 'done' : '';
-            li.innerHTML = `<span style="cursor:pointer;">${item.done ? '✅' : '🌟'} ${item.text}</span> <button class="del-btn" style="background:none; border:none; cursor:pointer;">❄️</button>`;
-            li.querySelector('span').onclick = () => update(ref(db, `bucketList/${key}`), { done: !item.done });
-            li.querySelector('.del-btn').onclick = () => remove(ref(db, `bucketList/${key}`));
+            li.innerHTML = `<div><span>${item.done ? '✅' : '🌟'}</span> ${item.text}</div>
+                            <button class="del-btn" style="background:none; border:none; color:white; cursor:pointer;">❄️</button>`;
+            li.onclick = () => update(ref(db, `bucketList/${key}`), { done: !item.done });
+            li.querySelector('.del-btn').onclick = (e) => { e.stopPropagation(); remove(ref(db, `bucketList/${key}`)); };
             list.appendChild(li);
         });
     }
 });
 
-// Music Binder Rendering
+// --- 5. Music Binder ---
 const songsRef = ref(db, 'binderSongs');
 let allSongs = [];
 let currentPage = 1;
@@ -104,16 +104,18 @@ function renderBinder() {
         div.className = 'song-entry';
         div.innerHTML = `
             <div class="song-memory">
-                <h3>Our Memory</h3>
-                <textarea class="side-note" placeholder="Write our story here...">${song.sideNote}</textarea>
+                <h3>The Memory</h3>
+                <textarea class="side-note" placeholder="Write our story...">${song.sideNote}</textarea>
             </div>
             <div class="song-visual-stack">
-                <div style="width:100%; display:flex; justify-content:flex-end;"><button class="del-song" style="background:none; border:none; color:rgba(255,255,255,0.3); cursor:pointer;">Remove ×</button></div>
+                <div style="display:flex; width:100%; justify-content:flex-end;">
+                    <button class="del-song" style="background:none; border:none; color:rgba(255,255,255,0.3); cursor:pointer;">×</button>
+                </div>
                 <div class="music-box">
-                    <iframe src="${song.embedUrl}" width="100%" height="380" frameBorder="0" allow="encrypted-media"></iframe>
+                    <iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0" allow="encrypted-media"></iframe>
                 </div>
                 <div class="favorite-line-box">
-                    <input type="text" class="fav-line" value="${song.favLine}" placeholder="♥ ADD FAVORITE LINE...">
+                    <input type="text" class="fav-line" value="${song.favLine}" placeholder="♥ LYRIC LINE...">
                 </div>
             </div>
         `;
@@ -122,6 +124,7 @@ function renderBinder() {
         div.querySelector('.del-song').onclick = () => remove(ref(db, `binderSongs/${song.id}`));
         display.appendChild(div);
     });
+    
     document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
     document.getElementById('prevBtn').disabled = currentPage === 1;
     document.getElementById('nextBtn').disabled = currentPage * 3 >= allSongs.length;
@@ -130,16 +133,17 @@ function renderBinder() {
 document.getElementById('prevBtn').onclick = () => { currentPage--; renderBinder(); };
 document.getElementById('nextBtn').onclick = () => { currentPage++; renderBinder(); };
 
-// Snowfall
-setInterval(() => {
+// --- 6. Snow ---
+function createSnow() {
     const container = document.getElementById('snow-container');
     const flake = document.createElement('div');
-    flake.innerHTML = ['❄', '✨', '🤍'][Math.floor(Math.random()*3)];
+    const icons = ['❄', '✨', '🤍'];
+    flake.innerHTML = icons[Math.floor(Math.random()*3)];
     flake.style.cssText = `position:fixed; top:-10%; left:${Math.random()*100}vw; font-size:${Math.random()*15+10}px; opacity:${Math.random()}; pointer-events:none; z-index:1; animation: fall ${Math.random()*4+4}s linear forwards;`;
     container.appendChild(flake);
     setTimeout(() => flake.remove(), 7000);
-}, 300);
-
-const style = document.createElement('style');
-style.textContent = `@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }`;
-document.head.appendChild(style);
+}
+setInterval(createSnow, 300);
+const snowStyle = document.createElement('style');
+snowStyle.textContent = `@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }`;
+document.head.appendChild(snowStyle);
