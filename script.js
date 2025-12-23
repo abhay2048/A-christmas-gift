@@ -1,121 +1,67 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+// ... [KEEP YOUR FIREBASE CONFIG AT THE TOP] ...
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
-    authDomain: "a-christmas-gift.firebaseapp.com",
-    databaseURL: "https://a-christmas-gift-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "a-christmas-gift",
-    storageBucket: "a-christmas-gift.firebasestorage.app",
-    messagingSenderId: "560215769128",
-    appId: "1:560215769128:web:331327bdc0417b4056351d"
-};
+let allSongs = [];
+let currentPage = 1;
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-let targetDate, eventName, simulationMode = false;
-
-// --- INITIALIZE ALL FEATURES ---
-initSettings();
-initTimer();
-initNotes();
-initBucket();
-initBinder();
-startSnow();
-
-function initSettings() {
-    onValue(ref(db, 'vaultConfig'), (snap) => {
-        const data = snap.val() || { eventName: "Christmas", date: "2025-12-25" };
-        if(!simulationMode) {
-            eventName = data.eventName;
-            targetDate = new Date(data.date + "T00:00:00").getTime();
-            document.getElementById('vault-title').innerText = `Our ${eventName} Wonderland`;
-        }
-    });
-}
-
+// --- TIMER & 10s DELAY LOGIC ---
 function initTimer() {
-    const box = document.getElementById('countdown-timer');
+    const timerBox = document.getElementById('countdown-timer');
+    const secretBox = document.getElementById('secret-message-box');
+    let messageTriggered = false;
+
     setInterval(() => {
-        const diff = targetDate - new Date().getTime();
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+
         if (diff <= 0) {
-            box.innerHTML = `✨ Merry Christmas!`;
-            startFireworks();
-            return;
+            timerBox.innerText = "The Wait is Over! ❤️";
+            
+            if (!messageTriggered) {
+                messageTriggered = true;
+                // Wait 10 seconds before showing secret message
+                setTimeout(() => {
+                    timerBox.style.display = 'none';
+                    secretBox.classList.add('reveal');
+                    secretBox.innerHTML = `✨ Merry Christmas My Love! ✨<br><span style="font-size:1.5rem">I love you!</span>`;
+                    startFireworks();
+                }, 10000);
+            }
+        } else {
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            timerBox.innerText = `${d} Days Remaining`;
         }
-        const d = Math.floor(diff / 86400000), s = Math.floor((diff % 60000) / 1000);
-        box.innerText = d > 0 ? `${d} Days until ${eventName}` : `${s} Seconds...`;
     }, 1000);
 }
 
-function initNotes() {
-    const r = ref(db, 'notes/currentNote');
-    document.getElementById('saveNoteBtn').onclick = () => set(r, document.getElementById('noteInput').value);
-    onValue(r, s => document.getElementById('latestNote').innerText = s.val() || "...");
-}
-
-function initBucket() {
-    const r = ref(db, 'bucketList');
-    document.getElementById('addBucketBtn').onclick = () => {
-        const el = document.getElementById('bucketInput');
-        if(el.value) push(r, { text: el.value }); el.value = '';
-    };
-    onValue(r, s => {
-        const list = document.getElementById('bucketList'); list.innerHTML = '';
-        if(s.val()) Object.entries(s.val()).forEach(([k, v]) => {
-            const li = document.createElement('li'); li.innerHTML = `<span>${v.text}</span> <button onclick="deleteItem('${k}')">X</button>`;
-            list.appendChild(li);
-        });
+// --- RENDER 3 SONGS PER PAGE ---
+function renderSongs() {
+    const display = document.getElementById('binder-pages-display');
+    display.innerHTML = '';
+    
+    const start = (currentPage - 1) * 3;
+    const end = start + 3;
+    
+    allSongs.slice(start, end).forEach(song => {
+        const div = document.createElement('div');
+        div.className = 'song-entry';
+        div.innerHTML = `
+            <i class="fas fa-trash del-btn" onclick="deleteSong('${song.id}')"></i>
+            <iframe src="${song.embedUrl}"></iframe>
+            <div class="song-info">
+                <div class="lyric">"${song.line}"</div>
+                <div class="note">${song.note}</div>
+            </div>
+        `;
+        display.appendChild(div);
     });
+
+    document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
 }
 
-// --- NEW SCRAPBOOK BINDER LOGIC ---
-function initBinder() {
-    const r = ref(db, 'binderSongs');
-    const addBtn = document.getElementById('binder-add-btn');
-
-    addBtn.onclick = async () => {
-        const url = document.getElementById('binder-spotify-url').value;
-        const lyric = document.getElementById('binder-lyric').value;
-        const side = document.getElementById('binder-page-select').value;
-        if(!url) return;
-
-        // Simplified: push metadata directly to Firebase
-        push(r, { url, lyric, side, timestamp: Date.now() });
-        document.getElementById('binder-spotify-url').value = '';
-        document.getElementById('binder-lyric').value = '';
-    };
-
-    onValue(r, snap => {
-        document.getElementById('left-page-content').innerHTML = '';
-        document.getElementById('right-page-content').innerHTML = '';
-        if(snap.val()) {
-            Object.entries(snap.val()).forEach(([id, song]) => {
-                const card = document.createElement('div');
-                card.className = 'song-square';
-                card.style.background = 'linear-gradient(135deg, #ffdbe8, #f7dff0)';
-                card.innerHTML = `
-                    <div class="song-thumb" style="background-color:#ccc;"></div>
-                    <div class="song-meta">
-                        <span class="song-title">Song Card</span>
-                        ${song.lyric ? `<span class="song-lyric">"${song.lyric}"</span>` : ''}
-                    </div>
-                `;
-                const target = song.side === 'left' ? 'left-page-content' : 'right-page-content';
-                document.getElementById(target).appendChild(card);
-            });
-        }
-    });
-}
-
-function startSnow() {
-    const c = document.getElementById('snow-container');
-    for(let i=0; i<30; i++) {
-        const f = document.createElement('div'); f.className = 'snowflake'; f.innerHTML = '❄';
-        f.style.left = Math.random()*100+'vw';
-        f.style.animation = `fall ${Math.random()*5+5}s linear infinite`; c.appendChild(f);
-    }
-}
-
-window.deleteItem = (id) => remove(ref(db, `bucketList/${id}`));
+// Pagination
+document.getElementById('nextBtn').onclick = () => {
+    if (currentPage * 3 < allSongs.length) { currentPage++; renderSongs(); }
+};
+document.getElementById('prevBtn').onclick = () => {
+    if (currentPage > 1) { currentPage--; renderSongs(); }
+};
