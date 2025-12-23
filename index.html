@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Winter Wonderland</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <!-- Fonts: Adding Montserrat for that Spotify Lyric Look -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&family=Playfair+Display:ital@1&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,7 +13,7 @@
     <!-- 1. Password Lock Screen -->
     <div id="login-screen" class="login-overlay">
         <div class="login-box">
-            <h1>❄️</h1>
+            <h1 class="festive-icon">❄️</h1>
             <h2>Our Private Space</h2>
             <p>Enter the secret word to the moon...</p>
             <input type="password" id="passwordInput" placeholder="Secret Word">
@@ -20,7 +21,7 @@
         </div>
     </div>
 
-    <!-- 2. The Grand Reveal Overlay (Hidden by default) -->
+    <!-- 2. The Grand Reveal Overlay -->
     <div id="reveal-overlay" class="reveal-overlay hidden">
         <div class="reveal-content">
             <h2 class="reveal-text">Merry Christmas my love...</h2>
@@ -40,7 +41,7 @@
             </div>
         </header>
 
-        <!-- 3. Note Station (Pinned Note FIRST) -->
+        <!-- 3. Note Station -->
         <section class="glass-card">
             <div class="card-header">
                 <h2>✉️ The Note Station</h2>
@@ -67,7 +68,7 @@
             <ul id="bucketList" class="custom-list"></ul>
         </section>
 
-        <!-- 5. Music Binder (Fully Responsive) -->
+        <!-- 5. Music Binder (Redesigned Layout) -->
         <div class="binder-wrapper">
             <div class="binder-spine mobile-hidden">
                 <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
@@ -79,11 +80,27 @@
                 
                 <div class="song-upload-bar">
                     <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                    <!-- Adding extra inputs so you can add memory and lyrics at once if your script allows -->
                     <button id="addSongBtn" class="primary-btn">Add to Binder</button>
                 </div>
 
+                <!-- This is the container where your JS will inject the songs -->
                 <div id="binder-pages-display" class="songs-grid">
-                    <!-- Songs load here -->
+                    <!-- 
+                         NOTE: Your JavaScript should generate the following structure 
+                         for each song to match the new UI:
+                         
+                         <div class="song-card-container">
+                            <div class="song-memory-side">
+                                <h3>Why this song?</h3>
+                                <p>Memory goes here...</p>
+                            </div>
+                            <div class="song-visual-side">
+                                <div class="music-box-square"> [IFRAME HERE] </div>
+                                <div class="spotify-lyrics-box"> Favorite Line Here </div>
+                            </div>
+                         </div>
+                    -->
                 </div>
 
                 <div class="pagination">
