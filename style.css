@@ -12,9 +12,7 @@
 
 * { 
     box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent;
-    /* Custom Snowflake Cursor */
-    cursor: url('https://img.icons8.com/ios-filled/20/ffffff/snowflake.png'), auto;
+    -webkit-tap-highlight-color: transparent; 
 }
 
 body {
@@ -27,11 +25,32 @@ body {
     overflow-x: hidden;
 }
 
-/* --- FESTIVE RED LOGIN SCREEN --- */
+/* --- REVEAL OVERLAY --- */
+.reveal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.reveal-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: white;
+    text-shadow: 0 0 20px var(--accent);
+}
+
+/* --- LOGIN SCREEN --- */
 .login-overlay {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle, #ff4d4d, #8b0000); 
+    background: radial-gradient(circle, #ff4d4d, #8b0000); /* Festive Red Gradient */
     z-index: 10000;
     display: flex;
     justify-content: center;
@@ -48,12 +67,6 @@ body {
     max-width: 350px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-
-.login-box h2 {
-    font-family: 'Dancing Script', cursive;
-    font-size: 2rem;
-    margin-bottom: 20px;
 }
 
 /* --- MAIN LAYOUT --- */
@@ -74,6 +87,7 @@ body {
     font-family: 'Dancing Script', cursive;
     font-size: clamp(3rem, 12vw, 5.5rem);
     color: white;
+    margin: 0 0 15px;
     text-shadow: 0 0 30px rgba(255,255,255,0.4);
 }
 
@@ -86,6 +100,18 @@ body {
     font-weight: 700;
     font-family: var(--spotify-font);
     border: 1px solid var(--glass-border);
+    color: white;
+}
+
+/* --- GLASS CARD --- */
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border-radius: 25px;
+    padding: 30px;
+    margin-bottom: 40px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
 /* --- NOTE STATION --- */
@@ -102,6 +128,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     transition: all 0.4s ease;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .pinned-note::before {
@@ -134,7 +161,7 @@ body {
     border-left: 5px solid var(--accent);
 }
 
-/* --- SWAPPED MUSIC BINDER (Visuals Left, Memory Right) --- */
+/* --- MUSIC BINDER (SWAPPED LAYOUT) --- */
 .binder-wrapper {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(15px);
@@ -146,7 +173,7 @@ body {
 
 .song-entry {
     display: grid;
-    grid-template-columns: 0.8fr 1.2fr; /* Left side smaller for music, Right side larger for text */
+    grid-template-columns: 0.8fr 1.2fr; /* Swapped: Smaller Left, Larger Right */
     gap: 30px;
     background: rgba(0, 0, 0, 0.4);
     padding: 25px;
@@ -156,7 +183,7 @@ body {
     align-items: start;
 }
 
-/* LEFT SIDE: Music & Lyrics */
+/* Left Side: Visuals */
 .song-visual-stack {
     display: flex;
     flex-direction: column;
@@ -194,7 +221,7 @@ body {
     padding: 0;
 }
 
-/* RIGHT SIDE: Memory Note */
+/* Right Side: Memory Text Area */
 .song-memory {
     width: 100%;
     text-align: left;
@@ -205,6 +232,7 @@ body {
     color: var(--accent);
     text-transform: uppercase;
     margin-bottom: 12px;
+    letter-spacing: 1px;
 }
 
 .song-meta-input.side-note {
@@ -221,7 +249,25 @@ body {
     font-weight: 500;
 }
 
-/* --- BREATHING GLOW BUTTONS --- */
+/* --- INPUTS & BUTTONS --- */
+.input-row {
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+input[type="text"], input[type="password"], textarea {
+    background: transparent;
+    border: none;
+    color: white;
+    font-family: var(--spotify-font);
+    padding: 10px;
+    width: 100%;
+}
+
 .icon-btn, .primary-btn {
     background: var(--accent);
     color: white;
@@ -237,20 +283,21 @@ body {
     100% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.4); }
 }
 
-/* --- MOBILE RESPONSIVE --- */
+/* --- MOBILE RESPONSIVE TWEAKS --- */
 @media (max-width: 768px) {
     .song-entry {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr; /* Stack vertically */
         gap: 20px;
+        padding: 20px;
+    }
+
+    .song-memory {
+        text-align: center;
+        order: 2; /* Keeps memory below music for mobile scrolling */
     }
 
     .song-visual-stack {
         order: 1; /* Music on top */
-    }
-
-    .song-memory {
-        order: 2; /* Memory below */
-        text-align: center;
     }
 
     .song-meta-input.side-note {
@@ -258,3 +305,5 @@ body {
         font-size: 1.2rem !important;
     }
 }
+
+.hidden { display: none !important; }
