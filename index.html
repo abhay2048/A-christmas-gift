@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Winter Wonderland</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,79 +12,88 @@
     <!-- 1. Password Lock Screen -->
     <div id="login-screen" class="login-overlay">
         <div class="login-box">
-            <h2 style="font-family: 'Dancing Script'; font-size: 2.5rem; color: #d42426;">🎄 For Your Eyes Only 🎁</h2>
-            <p>Enter our special date to open your gift (MMDD)</p>
-            <input type="password" id="passwordInput" placeholder="Password...">
-            <button id="loginBtn" class="add-btn" style="margin-top: 20px; width: 100%;">Open Wonderland</button>
+            <h1>❄️</h1>
+            <h2>Our Private Space</h2>
+            <p>Enter our special date (MMDD)</p>
+            <input type="password" id="passwordInput" placeholder="••••">
+            <button id="loginBtn" class="primary-btn">Unlock Wonderland</button>
+        </div>
+    </div>
+
+    <!-- 2. The Grand Reveal Overlay (Hidden by default) -->
+    <div id="reveal-overlay" class="reveal-overlay hidden">
+        <div class="reveal-content">
+            <h2 class="reveal-text">Merry Christmas my love...</h2>
+            <p class="reveal-subtext">May your days to come be as pretty as the Christmas snow.</p>
+            <div class="sparkles">✨🎁✨</div>
         </div>
     </div>
 
     <div class="snow-container" id="snow-container"></div>
 
-    <!-- Decorative Christmas Lights -->
-    <ul class="lightrope">
-        <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
-    </ul>
-
-    <div class="main-content">
-        <header>
-            <h1>Our Winter Wonderland</h1>
-            <div id="countdown-timer" class="timer">Loading our countdown...</div>
-            <div id="special-message" class="special-msg hidden"></div>
-            <button id="previewTimer" class="preview-btn">✨ Preview Christmas Morning</button>
+    <main class="main-content">
+        <header class="hero-section">
+            <h1 class="main-title">Our Winter Wonderland</h1>
+            <div class="countdown-container">
+                <div id="countdown-timer" class="timer-display">Calculating...</div>
+                <button id="previewTimer" class="preview-pill">✨ Preview The Magic</button>
+            </div>
         </header>
 
-        <!-- Note Station -->
-        <section class="glass-card full-width">
-            <h2>✉️ The Note Station</h2>
-            <p class="subtitle">Leave a message for me to find...</p>
-            <textarea id="noteInput" placeholder="Write a sweet note here..." rows="4"></textarea>
-            <button id="saveNoteBtn" class="full-btn add-btn" style="margin-top: 10px;">Pin Note</button>
-            <div id="latestNote" class="note-paper">Loading note...</div>
+        <!-- 3. Note Station (Pinned Note FIRST) -->
+        <section class="glass-card">
+            <div class="card-header">
+                <h2>✉️ The Note Station</h2>
+                <span class="card-tag">Latest Message</span>
+            </div>
+            
+            <div id="latestNote" class="pinned-note">Loading note...</div>
+
+            <div class="note-input-area">
+                <textarea id="noteInput" placeholder="Leave a new note for me to find..." rows="3"></textarea>
+                <button id="saveNoteBtn" class="secondary-btn">Pin New Note</button>
+            </div>
         </section>
 
-        <!-- Bucket List -->
-        <section class="glass-card full-width">
-            <h2>✈️ Our Future Bucket List</h2>
-            <p class="subtitle">Click text to cross off, or icon to remove!</p>
-            <div class="input-group">
+        <!-- 4. Bucket List -->
+        <section class="glass-card">
+            <div class="card-header">
+                <h2>✈️ Our Bucket List</h2>
+            </div>
+            <div class="input-row">
                 <input type="text" id="bucketInput" placeholder="What's our next adventure?">
-                <button id="addBucketBtn" class="add-btn">Add</button>
+                <button id="addBucketBtn" class="icon-btn">+</button>
             </div>
-            <ul id="bucketList" class="styled-list"></ul>
+            <ul id="bucketList" class="custom-list"></ul>
         </section>
 
-        <!-- Music Binder -->
-        <section class="binder-container">
-            <div class="binder-rings">
-                <div class="ring"></div>
-                <div class="ring"></div>
-                <div class="ring"></div>
-                <div class="ring"></div>
+        <!-- 5. Music Binder (Fully Responsive) -->
+        <div class="binder-wrapper">
+            <div class="binder-spine mobile-hidden">
+                <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
             </div>
-            <div class="binder-page">
-                <h2>🎵 Our Music Memory Binder</h2>
+            <div class="binder-content">
+                <div class="card-header center">
+                    <h2 class="handwritten-title">🎵 Music & Memories</h2>
+                </div>
                 
-                <div class="add-song-section full-width">
-                    <div class="input-group">
-                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                        <button id="addSongBtn" class="add-btn">Add Song</button>
-                    </div>
+                <div class="song-upload-bar">
+                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                    <button id="addSongBtn" class="primary-btn">Add to Binder</button>
                 </div>
 
-                <div id="binder-pages-display">
+                <div id="binder-pages-display" class="songs-grid">
                     <!-- Songs load here -->
                 </div>
 
-                <div class="pagination-controls">
-                    <button id="prevBtn" disabled>« Prev</button>
+                <div class="pagination">
+                    <button id="prevBtn" disabled>«</button>
                     <span id="pageIndicator">Page 1</span>
-                    <button id="nextBtn">Next »</button>
+                    <button id="nextBtn">»</button>
                 </div>
             </div>
-        </section>
-
-    </div>
+        </div>
+    </main>
 
     <script type="module" src="script.js"></script>
 </body>
