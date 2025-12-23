@@ -42,7 +42,7 @@ setInterval(() => {
     }
 }, 1000);
 
-// --- 3. Notes ---
+// --- 3. Note Station ---
 const noteRef = ref(db, 'notes/currentNote');
 onValue(noteRef, (s) => document.getElementById('latestNote').innerText = s.val() || "No notes yet...");
 document.getElementById('saveNoteBtn').onclick = () => {
@@ -65,8 +65,7 @@ onValue(bucketRef, (snapshot) => {
     if (data) {
         Object.entries(data).forEach(([key, item]) => {
             const li = document.createElement('li');
-            li.className = item.done ? 'done' : '';
-            li.innerHTML = `<div><span>${item.done ? '✅' : '🌟'}</span> ${item.text}</div>
+            li.innerHTML = `<div style="cursor:pointer;">${item.done ? '✅' : '🌟'} ${item.text}</div>
                             <button class="del-btn" style="background:none; border:none; color:white; cursor:pointer;">❄️</button>`;
             li.onclick = () => update(ref(db, `bucketList/${key}`), { done: !item.done });
             li.querySelector('.del-btn').onclick = (e) => { e.stopPropagation(); remove(ref(db, `bucketList/${key}`)); };
@@ -75,7 +74,7 @@ onValue(bucketRef, (snapshot) => {
     }
 });
 
-// --- 5. Music Binder ---
+// --- 5. MUSIC BINDER (SCRAPBOOK RENDER) ---
 const songsRef = ref(db, 'binderSongs');
 let allSongs = [];
 let currentPage = 1;
@@ -104,18 +103,18 @@ function renderBinder() {
         div.className = 'song-entry';
         div.innerHTML = `
             <div class="song-memory">
-                <h3>The Memory</h3>
-                <textarea class="side-note" placeholder="Write our story...">${song.sideNote}</textarea>
+                <h3>Suddenly...</h3>
+                <textarea class="side-note" placeholder="Write our memory here...">${song.sideNote}</textarea>
             </div>
             <div class="song-visual-stack">
-                <div style="display:flex; width:100%; justify-content:flex-end;">
-                    <button class="del-song" style="background:none; border:none; color:rgba(255,255,255,0.3); cursor:pointer;">×</button>
+                <div style="width:100%; text-align:right;">
+                    <button class="del-song" style="background:none; border:none; cursor:pointer; opacity:0.3;">×</button>
                 </div>
                 <div class="music-box">
                     <iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0" allow="encrypted-media"></iframe>
                 </div>
                 <div class="favorite-line-box">
-                    <input type="text" class="fav-line" value="${song.favLine}" placeholder="♥ LYRIC LINE...">
+                    <input type="text" class="fav-line" value="${song.favLine}" placeholder="♥ Your lyric here...">
                 </div>
             </div>
         `;
