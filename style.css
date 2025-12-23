@@ -194,29 +194,33 @@ body {
     text-decoration: line-through rgba(255,255,255,0.5) 2px;
 }
 
-/* --- MUSIC BINDER --- */
+/* --- UPDATED MUSIC BINDER SECTION --- */
 .binder-wrapper {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(15px);
     border-radius: 30px;
     border: 1px solid var(--glass-border);
-    margin-top: 40px;
-    padding: 40px;
+    margin: 40px auto;
+    padding: 30px;
+    max-width: 850px; /* Narrowed the container slightly */
 }
 
 .song-entry {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 30px;
+    grid-template-columns: 0.8fr 1fr; /* Memory box (left) is now smaller than Song box (right) */
+    gap: 20px;
     background: rgba(0, 0, 0, 0.3);
-    padding: 25px;
+    padding: 20px;
     border-radius: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    align-items: start;
 }
 
 .music-box {
     width: 100%;
+    max-width: 280px; /* Prevents the song profile from getting too huge */
+    margin: 0 auto;
     aspect-ratio: 1 / 1;
     border-radius: 15px;
     overflow: hidden;
@@ -226,12 +230,22 @@ body {
 .favorite-line-box {
     font-family: var(--spotify-font);
     font-weight: 900;
-    font-size: 1.2rem;
+    font-size: 1.4rem; /* Increased font size for emphasis */
     background: var(--accent);
     color: white;
-    padding: 15px;
+    padding: 20px; /* Increased padding to make it larger */
     border-radius: 12px;
     margin-top: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+}
+
+/* Small adjustments to textarea for better fit */
+.song-entry textarea {
+    height: 150px; /* Fixed smaller height for memory text */
+    font-size: 1.1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
 }
 
 /* --- INPUTS & BUTTONS --- */
@@ -252,6 +266,7 @@ input[type="text"], input[type="password"], textarea {
     font-family: var(--spotify-font);
     padding: 10px;
     width: 100%;
+    resize: none;
 }
 
 input:focus { outline: none; }
@@ -291,6 +306,7 @@ input:focus { outline: none; }
     .song-entry { grid-template-columns: 1fr; }
     .main-title { font-size: 2.5rem; }
     .binder-wrapper { padding: 20px; }
+    .music-box { max-width: 100%; }
 }
 
 .hidden { display: none !important; }
