@@ -1,80 +1,104 @@
-/* --- RESET & VARIABLES --- */
-* { box-sizing: border-box; }
 :root {
-    --primary-pink: #ff9a9e;
-    --deep-rose: #ff758c;
-    --soft-white: rgba(255, 255, 255, 0.9);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+    --primary-pink: #ffb7c5;
+    --binder-spine: #ff85a2;
+    --handwritten: 'Indie Flower', cursive;
+    --gear-color: #ff4d6d;
 }
 
 body {
     margin: 0; font-family: 'Quicksand', sans-serif;
-    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-    min-height: 100vh; color: #555; overflow-x: hidden;
+    background: linear-gradient(135deg, #f0f8ff, #d1e9ff);
+    min-height: 100vh; overflow-x: hidden;
+    padding: 15px; box-sizing: border-box;
 }
 
-#fireworksCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5000; }
-
-.fancy-title {
-    font-family: 'Great Vibes', cursive; font-size: 3.5rem;
-    background: linear-gradient(to right, #ff758c, #ff7eb3);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    text-shadow: 2px 2px 5px rgba(255, 117, 140, 0.2);
+.main-content {
+    max-width: 800px; margin: 0 auto;
 }
+
+/* LOCK OVERLAY */
+#login-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #e0f7fa; z-index: 10000;
+    display: flex; justify-content: center; align-items: center;
+}
+.login-box {
+    background: white; padding: 40px; border-radius: 20px;
+    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 90%; max-width: 350px;
+}
+
+/* SETTINGS GEAR */
+.settings-trigger {
+    position: fixed; top: 20px; right: 20px;
+    background: none; border: none; font-size: 1.8rem;
+    color: var(--gear-color); cursor: pointer; z-index: 999;
+}
+
+/* SPOTIFY CARDS */
+.song-entry {
+    display: flex; align-items: center; margin-bottom: 15px; background: #000;
+    border-radius: 12px; padding-right: 10px;
+}
+.song-card { flex-grow: 1; height: 80px; overflow: hidden; }
+.song-card iframe { border: none; width: 100%; height: 80px; }
+
+/* DECORATIONS */
+.ghost-art { position: fixed; font-size: 8rem; color: rgba(255, 255, 255, 0.4); pointer-events: none; z-index: -1; }
+.snowman { bottom: 5%; left: 5%; }
+.snowflake-static { top: 10%; right: 5%; }
 
 .glass-card {
-    background: var(--soft-white); backdrop-filter: blur(10px);
-    border-radius: 20px; padding: 30px; margin-bottom: 25px;
-    border: var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
+    border-radius: 20px; padding: 25px; margin-bottom: 25px;
+    border: 1px solid white; box-shadow: 0 8px 32px rgba(0,0,0,0.05);
 }
-
-.main-content { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
 
 .timer {
-    font-size: 1.5rem; font-weight: 700; color: #666; background: white;
-    padding: 15px 40px; border-radius: 50px; display: inline-block;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center;
+    font-size: 1.3rem; font-weight: 700; background: white;
+    padding: 15px 30px; border-radius: 50px; display: table; margin: 20px auto;
+    text-align: center;
 }
+.timer.intense { color: #ff4757; font-weight: 900; border: 2px solid #ff4757; }
 
+/* SNOW */
+.snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+.snowflake { position: absolute; color: white; will-change: transform; }
+@keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+
+/* UI ELEMENTS */
 input, textarea {
-    width: 100%; padding: 12px; border-radius: 12px;
-    border: 1px solid #ddd; outline: none; transition: 0.3s;
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;
+    box-sizing: border-box; font-family: inherit; margin-top: 5px;
 }
-
 .add-btn {
-    background: linear-gradient(45deg, #ff9a9e, #fad0c4);
-    color: white; border: none; padding: 12px 20px; border-radius: 12px;
-    cursor: pointer; font-weight: 700;
+    background: var(--primary-pink); color: white; border: none; padding: 12px;
+    border-radius: 10px; cursor: pointer; font-weight: bold;
+}
+.styled-list { padding: 0; list-style: none; }
+.styled-list li { 
+    background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px; 
+    display: flex; justify-content: space-between; align-items: center;
+}
+.completed span { text-decoration: line-through; opacity: 0.6; }
+
+.binder-container { display: flex; background: #fffaf0; border-radius: 20px; overflow: hidden; }
+.binder-rings { width: 35px; background: #f0f0f0; border-right: 2px solid #ddd; display: flex; flex-direction: column; justify-content: space-around; padding: 20px 0; }
+.ring { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #bbb; background: #eee; margin: 0 auto; }
+.binder-page { flex: 1; padding: 25px; }
+
+.modal { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.6); z-index: 20000; 
+    display: none; justify-content: center; align-items: center; 
 }
 
-/* --- SCRAPBOOK BINDER --- */
-.binder { display: flex; justify-content: center; margin: 20px 0; }
-.binder-page {
-    background: #fffcf5; background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
-    background-size: 20px 20px; box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
-    padding: 25px; width: 45%; min-height: 400px; position: relative; border: 1px solid #efefef;
+/* MOBILE OPTIMIZATION */
+@media (max-width: 600px) {
+    .ghost-art { font-size: 4rem; opacity: 0.2; }
+    .timer { font-size: 1rem; width: 90%; }
+    .binder-rings { width: 20px; }
+    .ring { width: 10px; height: 10px; }
+    .binder-page { padding: 15px; }
+    input, textarea { font-size: 16px; } /* Prevents iOS auto-zoom */
 }
-.binder-page.left { border-radius: 15px 5px 5px 15px; }
-.binder-page.right { border-radius: 5px 15px 15px 5px; }
-
-.spine { position: relative; height: 100%; width: 40px; display: flex; flex-direction: column; align-items: center; }
-.ring { width: 40px; height: 40px; border-radius: 50%; border: 4px solid #d1d1d1; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); }
-
-.note { font-family: 'Indie Flower', cursive; font-size: 1.2rem; color: #ff758c; margin-bottom: 15px; }
-.scribble { font-family: 'Indie Flower', cursive; font-size: 0.9rem; color: #999; position: absolute; }
-.s1 { bottom: 15px; left: 15px; transform: rotate(-5deg); }
-.s2 { bottom: 15px; right: 15px; transform: rotate(5deg); }
-
-.song-square {
-    width: 100%; border-radius: 15px; padding: 12px; margin-bottom: 10px;
-    display: flex; gap: 10px; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.song-thumb { width: 50px; height: 50px; border-radius: 10px; background-size: cover; border: 2px solid white; flex-shrink: 0; }
-.song-title { font-weight: 700; font-size: 0.85rem; display: block; }
-.song-artist { font-size: 0.75rem; color: #777; }
-.song-lyric { font-family: 'Indie Flower', cursive; font-size: 0.9rem; color: #444; margin-top: 3px; }
-
-/* Snow */
-.snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-.snowflake { position: absolute; color: white; opacity: 0.8; }
-@keyframes fall { to { transform: translateY(105vh); } }
