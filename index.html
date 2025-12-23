@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Our Winter Wonderland</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Winter Wonderland</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,14 +12,14 @@
     <div id="login-overlay">
         <div class="login-box">
             <h1>❄️ Our Secret World ❄️</h1>
-            <p>Enter our special code:</p>
+            <p>Enter our special code to enter:</p>
             <input type="password" id="passcode-input" placeholder="Passcode">
             <button onclick="checkPasscode()">Unlock</button>
-            <p id="error-msg">Wrong code, try again! ❤️</p>
+            <p id="error-msg" style="color: #ff6b8d; display: none;">Wrong code, try again! ❤️</p>
         </div>
     </div>
 
-    <div id="main-app">
+    <div id="main-app" style="display:none;">
         
         <div class="snow-container" id="snow-container"></div>
 
@@ -30,16 +30,16 @@
             </header>
 
             <section class="glass-card full-width">
-                <div class="section-header">
-                    <h2>✉️ The Note Station</h2>
-                </div>
+                <h2>✉️ The Note Station</h2>
+                <p style="text-align:center; margin-bottom:15px; font-style:italic; font-size:0.9rem;">Leave a message for me to find...</p>
                 <textarea id="noteInput" placeholder="Write a sweet note here..." rows="4"></textarea>
-                <button id="saveNoteBtn" class="full-btn add-btn">Pin Note</button>
+                <button id="saveNoteBtn" class="full-btn add-btn" style="margin-top: 10px;">Pin Note</button>
                 <div id="latestNote" class="note-paper">Loading note...</div>
             </section>
 
             <section class="glass-card full-width">
                 <h2>✈️ Our Future Bucket List</h2>
+                <p style="text-align:center; margin-bottom:15px; font-style:italic; font-size:0.9rem;">Click an item to cross it off!</p>
                 <div class="input-group">
                     <input type="text" id="bucketInput" placeholder="What's our next adventure?">
                     <button id="addBucketBtn" class="add-btn">Add</button>
@@ -49,7 +49,10 @@
 
             <section class="binder-container">
                 <div class="binder-rings">
-                    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+                    <div class="ring"></div>
+                    <div class="ring"></div>
+                    <div class="ring"></div>
+                    <div class="ring"></div>
                 </div>
                 <div class="binder-page">
                     <h2>🎵 Our Music Memory Binder</h2>
@@ -57,16 +60,16 @@
                     <div class="add-song-section full-width">
                         <div class="input-group">
                             <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                            <button id="addSongBtn" class="add-btn">Add Page</button>
+                            <button id="addSongBtn" class="add-btn">Add Song Page</button>
                         </div>
                     </div>
 
                     <div id="binder-pages-display"></div>
 
                     <div class="pagination-controls">
-                        <button id="prevBtn" disabled>« Prev</button>
+                        <button id="prevBtn" disabled>« Prev Page</button>
                         <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn">Next »</button>
+                        <button id="nextBtn">Next Page »</button>
                     </div>
                 </div>
             </section>
@@ -76,30 +79,30 @@
     <script type="module" src="script.js"></script>
     
     <script>
-        const SECRET_CODE = "1234"; // CHANGE THIS
+        // CHANGE THIS TO YOUR SECRET PASSWORD
+        const SECRET_CODE = "1234"; 
 
         function checkPasscode() {
             const input = document.getElementById('passcode-input').value;
             if (input === SECRET_CODE) {
-                unlockApp();
+                // Unlock
+                document.getElementById('login-overlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'block';
+                    // Trigger the start event for the main script
+                    window.dispatchEvent(new Event('app-unlocked'));
+                }, 500);
+                localStorage.setItem('isUnlocked', 'true');
             } else {
                 document.getElementById('error-msg').style.display = 'block';
             }
         }
 
-        function unlockApp() {
-            document.getElementById('login-overlay').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('main-app').style.opacity = '1';
-                window.dispatchEvent(new Event('app-unlocked'));
-            }, 500);
-            localStorage.setItem('isUnlocked', 'true');
-        }
-
+        // Auto-unlock if already entered previously
         if(localStorage.getItem('isUnlocked') === 'true') {
             document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('main-app').style.opacity = '1';
+            document.getElementById('main-app').style.display = 'block';
             setTimeout(() => window.dispatchEvent(new Event('app-unlocked')), 100);
         }
     </script>
