@@ -18,44 +18,11 @@ body {
     padding-bottom: 50px;
 }
 
-/* --- LOCK SCREEN STYLES --- */
-#login-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(135deg, #f0f8ff, #d1e9ff);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.5s ease;
-}
-
-.login-box {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 40px;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    max-width: 90%;
-}
-
-.login-box h1 {
-    font-family: 'Dancing Script', cursive;
-    color: var(--binder-spine-color);
-    margin-bottom: 20px;
-}
-
-.login-box input {
-    display: block;
-    margin: 20px auto;
-    width: 200px;
-    text-align: center;
-    font-size: 1.2rem;
-    letter-spacing: 5px; /* Hides the password nicely */
-}
-
 /* Helper Classes */
-.full-width { width: 100%; box-sizing: border-box; }
+.full-width {
+    width: 100%;
+    box-sizing: border-box;
+}
 
 /* Snowfall Animation */
 .snow-container {
@@ -88,7 +55,10 @@ body {
     align-items: center;
 }
 
-header { text-align: center; margin-bottom: 40px; }
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
 
 h1 {
     font-family: 'Dancing Script', cursive;
@@ -111,7 +81,7 @@ h1 {
     background-color: var(--paper-color);
     border-radius: 20px;
     box-shadow: 10px 10px 30px rgba(0,0,0,0.15);
-    margin-top: 30px;
+    margin-top: 30px; /* Added spacing */
     margin-bottom: 50px;
     position: relative;
     width: 100%;
@@ -145,7 +115,7 @@ h1 {
     flex-grow: 1;
     padding: 40px;
     background-image: radial-gradient(#e6e6e6 1px, transparent 1px);
-    background-size: 20px 20px; 
+    background-size: 20px 20px; /* Dots pattern */
 }
 
 .binder-page h2 {
@@ -165,6 +135,7 @@ h1 {
     border: 2px dashed var(--primary-pink);
 }
 
+/* Song Entry Layout */
 .song-entry {
     display: flex;
     gap: 25px;
@@ -174,31 +145,40 @@ h1 {
     align-items: flex-start;
 }
 
+/* Song Card Style */
 .song-card {
     background: #fff;
     padding: 15px;
     border-radius: 12px;
     box-shadow: 5px 5px 15px rgba(0,0,0,0.08);
-    width: 280px; 
+    width: 280px; /* Slightly wider to fit player */
     flex-shrink: 0;
     transform: rotate(-1deg);
     transition: transform 0.3s;
     border: 1px solid #f0f0f0;
 }
 
-.song-card:hover { transform: rotate(0deg) scale(1.02); }
+.song-card:hover {
+    transform: rotate(0deg) scale(1.02);
+}
 
+/* Spotify Player Container */
 .spotify-embed-container {
     width: 100%;
-    height: 152px;
+    height: 152px; /* Standard height for compact spotify player */
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 12px;
     background: #000;
 }
 
-.spotify-embed-container iframe { width: 100%; height: 100%; border: none; }
+.spotify-embed-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
 
+/* Favorite Line & Side Note */
 .favorite-line-container {
     margin-top: 10px;
     padding-top: 10px;
@@ -226,7 +206,9 @@ h1 {
     outline: none;
 }
 
-.handwritten-input:focus { border-bottom: 2px solid var(--primary-pink); }
+.handwritten-input:focus {
+    border-bottom: 2px solid var(--primary-pink);
+}
 
 .side-note-area {
     flex-grow: 1;
@@ -237,7 +219,7 @@ h1 {
     border: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
-    min-height: 250px; 
+    min-height: 250px; /* Matches card height roughly */
 }
 
 .side-note-textarea {
@@ -255,6 +237,7 @@ h1 {
     padding: 0;
 }
 
+/* Pagination */
 .pagination-controls {
     display: flex;
     justify-content: center;
@@ -269,6 +252,7 @@ h1 {
     font-size: 1.3rem;
 }
 
+/* --- Sections --- */
 .glass-card {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(5px);
@@ -279,7 +263,11 @@ h1 {
     border: 1px solid rgba(255,255,255,0.5);
 }
 
-.input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
 input, textarea {
     flex-grow: 1;
@@ -290,7 +278,10 @@ input, textarea {
     font-size: 1rem;
     transition: border-color 0.3s;
 }
-input:focus, textarea:focus { border-color: var(--primary-pink); outline: none; }
+input:focus, textarea:focus {
+    border-color: var(--primary-pink);
+    outline: none;
+}
 
 button.add-btn {
     background: var(--binder-spine-color);
@@ -304,12 +295,23 @@ button.add-btn {
     transition: background 0.3s, transform 0.2s;
 }
 
-button.add-btn:hover { background: #ff6b8d; transform: translateY(-2px); }
+button.add-btn:hover {
+    background: #ff6b8d;
+    transform: translateY(-2px);
+}
 
-button:disabled { background: #ccc; cursor: not-allowed; transform: none !important; }
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none !important;
+}
 
-.styled-list { list-style: none; padding: 0; }
+.styled-list {
+    list-style: none;
+    padding: 0;
+}
 
+/* Bucket List Items */
 .styled-list li {
     background: white;
     padding: 15px;
@@ -322,11 +324,26 @@ button:disabled { background: #ccc; cursor: not-allowed; transform: none !import
     transition: 0.2s;
 }
 
-.styled-list li:hover { background: #f9f9f9; }
-.styled-list li::before { content: '⬜'; margin-right: 15px; }
-.styled-list li.completed { text-decoration: line-through; color: #aaa; background: #f0f0f0; }
-.styled-list li.completed::before { content: '✅'; }
+.styled-list li:hover {
+    background: #f9f9f9;
+}
 
+.styled-list li::before {
+    content: '⬜'; /* Empty checkbox */
+    margin-right: 15px;
+}
+
+.styled-list li.completed {
+    text-decoration: line-through;
+    color: #aaa;
+    background: #f0f0f0;
+}
+
+.styled-list li.completed::before {
+    content: '✅'; /* Checked box */
+}
+
+/* Notes */
 .note-paper {
     background: #fffdf0;
     padding: 25px;
@@ -338,7 +355,7 @@ button:disabled { background: #ccc; cursor: not-allowed; transform: none !import
     box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
     border: 1px solid #eee;
     position: relative;
-    white-space: pre-wrap;
+    white-space: pre-wrap; /* Preserves line breaks in notes */
 }
 .note-paper::before {
     content: '';
