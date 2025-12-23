@@ -1,127 +1,151 @@
 :root {
+    --accent: #ff4d4d;
     --glass: rgba(255, 255, 255, 0.1);
     --glass-border: rgba(255, 255, 255, 0.2);
-    --accent: #ff4d4d;
-    --spotify-green: #1db954;
     --spotify-font: 'Montserrat', sans-serif;
+    --handwritten: 'Indie Flower', cursive;
 }
 
 body {
     margin: 0;
     font-family: 'Quicksand', sans-serif;
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), 
                 url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070') no-repeat center center fixed;
     background-size: cover;
     color: white;
     overflow-x: hidden;
 }
 
-/* Glass UI */
-.glass-card, .binder-wrapper, .login-box {
-    background: var(--glass);
-    backdrop-filter: blur(15px);
-    border: 1px solid var(--glass-border);
-    border-radius: 25px;
-    padding: 30px;
-    margin-bottom: 30px;
+/* --- REVEAL & LOGIN --- */
+.reveal-overlay, .login-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; justify-content: center; align-items: center; text-align: center;
 }
+.reveal-overlay { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px); }
+.login-overlay { background: radial-gradient(circle, #1a472a, #051a0d); }
+.login-box { background: var(--glass); backdrop-filter: blur(15px); padding: 40px; border-radius: 30px; border: 1px solid var(--glass-border); width: 90%; max-width: 350px; }
 
-.main-title {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
-    text-align: center;
-    text-shadow: 0 0 20px var(--accent);
-}
+/* --- MAIN CONTENT --- */
+.main-content { max-width: 900px; margin: 0 auto; padding: 20px; }
+.main-title { font-family: 'Dancing Script', cursive; font-size: clamp(2.5rem, 8vw, 4.5rem); text-shadow: 0 0 20px var(--accent); text-align: center; }
+.timer-display { background: var(--glass); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 50px; display: block; width: fit-content; margin: 0 auto 20px; font-weight: 700; border: 1px solid var(--glass-border); }
 
-/* Pinned Note Styling */
+/* --- GLASS CARDS --- */
+.glass-card { background: var(--glass); backdrop-filter: blur(12px); border-radius: 25px; padding: 25px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
+
+/* --- NOTE STATION (PAPER STYLE) --- */
 .pinned-note {
     background: rgba(255, 255, 255, 0.08);
-    padding: 40px 30px;
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    padding: 35px 25px;
     border-radius: 20px;
-    font-family: 'Indie Flower', cursive;
-    font-size: 1.8rem;
+    font-family: var(--handwritten);
+    font-size: 1.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.2);
-    margin-bottom: 20px;
 }
+.pinned-note::before { content: '❤️'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 1.5rem; }
 
-/* Music Binder Grid FIX */
+/* --- BUCKET LIST --- */
+.custom-list { list-style: none; padding: 0; }
+.custom-list li {
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid var(--accent);
+}
+.custom-list li.done { opacity: 0.5; border-left-color: #1db954; }
+
+/* --- MUSIC BINDER (COMPACT FIX) --- */
+.binder-wrapper { background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(15px); border-radius: 30px; padding: 20px; border: 1px solid var(--glass-border); }
+
 .song-entry {
     display: grid;
-    grid-template-columns: 0.6fr 1fr; /* Memory box 1/3rd width */
-    gap: 30px;
+    grid-template-columns: 0.8fr 1.2fr; /* 1/3 Memory, 2/3 Music */
+    gap: 25px;
     background: rgba(0, 0, 0, 0.4);
-    padding: 30px;
+    padding: 20px;
     border-radius: 20px;
-    margin-bottom: 40px;
-    align-items: center; /* Vertical alignment */
+    margin-bottom: 25px;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.song-memory { text-align: left; }
-.song-memory h3 { 
-    font-family: var(--spotify-font); 
-    color: var(--accent); 
-    font-weight: 900; 
-    text-transform: uppercase; 
+.song-memory h3 {
+    font-family: var(--spotify-font);
+    color: var(--accent);
     font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
 }
 
 .song-memory textarea {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     width: 100%;
-    height: 180px;
-    border-radius: 12px;
-    padding: 15px;
-    font-family: var(--spotify-font);
+    height: 120px;
+    font-size: 0.95rem;
+    padding: 12px;
+    border-radius: 10px;
+    resize: none;
+    font-family: 'Quicksand', sans-serif;
 }
 
-/* Right Side Visual Stack */
 .song-visual-stack {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
     align-items: center;
 }
 
 .music-box {
-    width: 300px; /* Smaller Square Picture */
-    height: 380px; /* INCREASED to prevent cutoff */
+    width: 210px; /* SHRUNK SIZE */
+    height: 210px; /* PERFECT SQUARE */
     background: #000;
-    border-radius: 15px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
-.music-box iframe { width: 100%; height: 100%; border: none; }
-
 .favorite-line-box {
-    width: 300px; /* Matches music box width */
     background: var(--accent);
-    padding: 30px 15px; /* TWICE AS BIG */
+    padding: 20px; /* THICK BOLD LOOK */
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(255, 77, 77, 0.4);
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
 }
 
 .favorite-line-box input {
     background: transparent !important;
     border: none !important;
     color: white !important;
+    width: 100%;
     font-family: var(--spotify-font);
     font-weight: 900;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    text-transform: uppercase;
     text-align: center;
-    width: 100%;
+    outline: none;
 }
 
-/* UI Elements */
-.primary-btn { background: var(--accent); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; }
-input[type="text"], input[type="password"], textarea { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px; border-radius: 10px; }
+/* --- BUTTONS --- */
+.primary-btn { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+.primary-btn:hover { transform: scale(1.05); }
+.icon-btn { background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
 
 @media (max-width: 768px) {
     .song-entry { grid-template-columns: 1fr; }
-    .music-box, .favorite-line-box { width: 100%; }
+    .music-box { width: 100%; max-width: 250px; height: 250px; }
 }
 
 .hidden { display: none !important; }
