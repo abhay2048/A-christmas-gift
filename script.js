@@ -33,9 +33,21 @@ loginBtn.addEventListener('click', () => {
     }
 });
 
-// --- 2. COUNTDOWN & REVEAL ---
+passwordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') loginBtn.click();
+});
+
+// --- 2. THE MAGICAL COUNTDOWN & REVEAL ---
 let targetDate = new Date("December 25, 2025 00:00:00").getTime();
 let revealTriggered = false;
+
+function handleReveal() {
+    if (revealTriggered) return;
+    revealTriggered = true;
+    const overlay = document.getElementById('reveal-overlay');
+    overlay.classList.remove('hidden');
+    setTimeout(() => { overlay.classList.add('hidden'); }, 15000);
+}
 
 function updateCountdown() {
     const now = new Date().getTime();
@@ -44,10 +56,7 @@ function updateCountdown() {
 
     if (gap <= 0) {
         timerDiv.innerText = "Merry Christmas! 🎁";
-        if (!revealTriggered) {
-            document.getElementById('reveal-overlay').classList.remove('hidden');
-            revealTriggered = true;
-        }
+        handleReveal();
         return;
     }
 
@@ -55,37 +64,38 @@ function updateCountdown() {
     const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
     const s = Math.floor((gap % (1000 * 60)) / 1000);
+
     timerDiv.innerText = `${d}d : ${h}h : ${m}m : ${s}s`;
 }
+
 setInterval(updateCountdown, 1000);
 
 document.getElementById('previewTimer').addEventListener('click', () => {
-    targetDate = new Date().getTime() + 5000;
     revealTriggered = false;
+    targetDate = new Date().getTime() + 6000;
 });
 
 // --- 3. NOTE STATION ---
 const noteRef = ref(db, 'notes/currentNote');
 onValue(noteRef, (s) => {
-    document.getElementById('latestNote').innerText = s.val() || "Write a note for me... ✉️";
+    document.getElementById('latestNote').innerText = s.val() || "No notes yet... Write something for me! 👇";
 });
 
 document.getElementById('saveNoteBtn').addEventListener('click', () => {
     const input = document.getElementById('noteInput');
-    if (input.value.trim()) {
-        set(noteRef, input.value);
-        input.value = '';
-    }
+    if (!input.value.trim()) return;
+    set(noteRef, input.value);
+    input.value = '';
 });
 
-// --- 4. BUCKET LIST ---
+// --- 4. BUCKET LIST (UPDATED) ---
 const bucketRef = ref(db, 'bucketList');
+
 document.getElementById('addBucketBtn').addEventListener('click', () => {
     const input = document.getElementById('bucketInput');
-    if (input.value) {
-        push(bucketRef, { text: input.value, done: false });
-        input.value = '';
-    }
+    if (!input.value) return;
+    push(bucketRef, { text: input.value, done: false });
+    input.value = '';
 });
 
 onValue(bucketRef, (snapshot) => {
@@ -96,18 +106,28 @@ onValue(bucketRef, (snapshot) => {
         Object.entries(data).forEach(([key, item]) => {
             const li = document.createElement('li');
             li.className = item.done ? 'done' : '';
-            const icon = item.done ? '✅' : '🌟';
+            
+            const statusIcon = item.done ? '✅' : '🌟';
+            
             li.innerHTML = `
-                <div style="display:flex; align-items:center; gap:12px; cursor:pointer;" class="text-wrap">
-                    <span>${icon}</span>
+                <div style="display:flex; align-items:center; gap:15px; cursor:pointer;" class="item-text">
+                    <span>${statusIcon}</span>
                     <span>${item.text}</span>
                 </div>
-                <button class="del-btn" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">❄️</button>
+                <button class="del-btn" style="background:none; border:none; cursor:pointer; font-size: 1.2rem; opacity: 0.5;">❄️</button>
             `;
-            li.querySelector('.text-wrap').addEventListener('click', () => {
+            
+            // Toggle Done
+            li.querySelector('.item-text').addEventListener('click', () => {
                 update(ref(db, `bucketList/${key}`), { done: !item.done });
             });
-            li.querySelector('.del-btn').addEventListener('click', () => remove(ref(db, `bucketList/${key}`)));
+
+            // Delete
+            li.querySelector('.del-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(confirm("Remove this adventure?")) remove(ref(db, `bucketList/${key}`));
+            });
+            
             list.appendChild(li);
         });
     }
@@ -122,11 +142,13 @@ const SONGS_PER_PAGE = 3;
 document.getElementById('addSongBtn').addEventListener('click', () => {
     const input = document.getElementById('songLinkInput');
     const match = input.value.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-    if (!match) return alert("Paste a Spotify link!");
+    if (!match) return alert("Paste a valid Spotify link, my love! ❤️");
     
     push(songsRef, {
         embedUrl: `https://open.spotify.com/embed/${match[1]}/${match[2]}`,
-        favLine: "", sideNote: "", timestamp: Date.now()
+        favLine: "", 
+        sideNote: "", 
+        timestamp: Date.now()
     });
     input.value = '';
 });
@@ -145,24 +167,40 @@ function renderBinder() {
     songs.forEach(song => {
         const div = document.createElement('div');
         div.className = 'song-entry';
+
         div.innerHTML = `
             <div class="song-memory">
                 <h3>Our Memory</h3>
-                <textarea class="side-note" placeholder="Why this song?" style="height:150px;">${song.sideNote}</textarea>
+                <textarea class="song-meta-input side-note" 
+                    placeholder="Why does this song remind you of us?" 
+                    style="height: 180px; width: 100%; font-family: 'Quicksand', sans-serif;">${song.sideNote}</textarea>
             </div>
             <div class="song-visual-stack">
-                <div style="text-align:right;"><button class="del-song" style="background:none; border:none; color:white; opacity:0.3; cursor:pointer;">Remove ×</button></div>
+                <div style="display:flex; justify-content:flex-end;">
+                    <button class="del-song" style="background:none; border:none; color:rgba(255,255,255,0.4); cursor:pointer;">Remove ×</button>
+                </div>
                 <div class="music-box">
                     <iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0" allow="encrypted-media"></iframe>
                 </div>
                 <div class="favorite-line-box">
-                    <input type="text" class="fav-line" value="${song.favLine}" placeholder="♥ Favorite Line..." style="font-weight:900;">
+                    <input type="text" class="fav-line" 
+                        value="${song.favLine}" 
+                        placeholder="♥ Add favorite line..." 
+                        style="background:transparent; border:none; width: 100%; color: white; font-weight: 900; font-family: 'Montserrat', sans-serif;">
                 </div>
             </div>
         `;
-        div.querySelector('.fav-line').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {favLine: e.target.value}));
-        div.querySelector('.side-note').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value}));
-        div.querySelector('.del-song').addEventListener('click', () => remove(ref(db, `binderSongs/${song.id}`)));
+
+        div.querySelector('.fav-line').addEventListener('change', (e) => {
+            update(ref(db, `binderSongs/${song.id}`), {favLine: e.target.value});
+        });
+        div.querySelector('.side-note').addEventListener('change', (e) => {
+            update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value});
+        });
+        div.querySelector('.del-song').addEventListener('click', () => {
+            if(confirm("Remove this song from our binder?")) remove(ref(db, `binderSongs/${song.id}`));
+        });
+
         display.appendChild(div);
     });
 
@@ -174,23 +212,36 @@ function renderBinder() {
 document.getElementById('prevBtn').addEventListener('click', () => { currentPage--; renderBinder(); });
 document.getElementById('nextBtn').addEventListener('click', () => { currentPage++; renderBinder(); });
 
-// --- 6. SNOW ---
+// --- 6. VISUAL SNOW ---
 function createSnow() {
     const container = document.getElementById('snow-container');
+    if (!container) return;
+    
     const flake = document.createElement('div');
-    const icons = ['❄', '✨', '🤍'];
+    const icons = ['❄', '✨', '🤍', '❄️'];
     flake.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+    
     flake.style.cssText = `
-        position: fixed; top: -10%; left: ${Math.random() * 100}vw;
-        font-size: ${Math.random() * 10 + 10}px; opacity: ${Math.random()};
-        z-index: 1; pointer-events: none;
-        animation: fall ${Math.random() * 3 + 4}s linear forwards;
+        position: fixed; 
+        top: -10%; 
+        left: ${Math.random() * 100}vw;
+        font-size: ${Math.random() * 15 + 10}px;
+        opacity: ${Math.random() * 0.7 + 0.3};
+        pointer-events: none;
+        z-index: 1;
+        filter: blur(${Math.random() * 1}px);
+        animation: fall ${Math.random() * 4 + 5}s linear forwards;
     `;
     container.appendChild(flake);
-    setTimeout(() => flake.remove(), 6000);
+    setTimeout(() => flake.remove(), 7000);
 }
 setInterval(createSnow, 300);
 
-const styleTag = document.createElement('style');
-styleTag.textContent = `@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }`;
-document.head.appendChild(styleTag);
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fall { 
+        to { transform: translateY(110vh) rotate(360deg); } 
+    }
+    .done span { text-decoration: line-through; opacity: 0.6; }
+`;
+document.head.appendChild(style);
