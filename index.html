@@ -4,44 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Memory Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <canvas id="fireworksCanvas"></canvas>
-
     <div id="settings-modal" class="modal">
         <div class="modal-content glass-card">
-            <h3 class="fancy-title">Vault Settings</h3>
+            <h3>⚙️ Vault Settings</h3>
             <label>Event Name:</label>
-            <input type="text" id="event-name-input" placeholder="e.g. Christmas Day">
+            <input type="text" id="event-name-input">
             <label>Event Date:</label>
             <input type="date" id="event-date-input">
-            
-            <button id="simulate-btn" class="add-btn" style="background: linear-gradient(45deg, #a18cd1, #fbc2eb); width:100%; margin-top:15px;">
-                ✨ Preview The Surprise (10s)
-            </button>
-
             <div style="margin-top:20px; display:flex; gap:10px;">
                 <button id="save-settings-btn" class="add-btn">Save</button>
-                <button onclick="toggleSettings()" class="add-btn" style="background:#aaa;">Close</button>
+                <button onclick="toggleSettings()" class="add-btn" style="background:#888;">Close</button>
             </div>
-            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Reset Lock</button>
+            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer; font-size:0.8rem;">Clear Cache / Relock</button>
         </div>
     </div>
 
     <div id="login-overlay">
-        <div class="login-box glass-card">
-            <h1 class="fancy-title">❄️ Our Secret World ❄️</h1>
-            <input type="password" id="passcode-input" placeholder="Enter Magic Word...">
-            <button onclick="checkPasscode()" class="add-btn">Unlock Heart</button>
-            <p id="error-msg" style="display:none; color: #ff6b8d; margin-top:10px;">Try again, my love! ❤️</p>
+        <div class="login-box">
+            <h1>❄️ Our Secret World ❄️</h1>
+            <input type="password" id="passcode-input" placeholder="Passcode">
+            <button onclick="checkPasscode()" class="add-btn">Unlock</button>
+            <p id="error-msg" style="display:none; color: #ff6b8d; margin-top:10px;">Wrong code! ❤️</p>
         </div>
     </div>
 
     <div id="main-app">
+        <div class="ghost-art snowman">⛄</div>
+        <div class="ghost-art snowflake-static">❄</div>
+        <div class="ghost-art reindeer">🦌</div>
+        
         <div class="snow-container" id="snow-container"></div>
 
         <button class="settings-trigger" onclick="toggleSettings()">
@@ -50,19 +47,19 @@
 
         <div class="main-content">
             <header>
-                <h1 id="vault-title" class="fancy-title">Our Winter Wonderland</h1>
-                <div id="countdown-timer" class="timer">Loading Love...</div>
+                <h1 id="vault-title">Our Winter Wonderland</h1>
+                <div id="countdown-timer" class="timer">Calculating...</div>
             </header>
 
             <section class="glass-card">
                 <h2>✉️ The Note Station</h2>
                 <textarea id="noteInput" placeholder="Write a sweet note..." rows="4"></textarea>
-                <button id="saveNoteBtn" class="add-btn full-width">Pin Note</button>
-                <div id="latestNote" class="note-paper">...</div>
+                <button id="saveNoteBtn" class="add-btn" style="width:100%; margin-top:10px;">Pin Note</button>
+                <div id="latestNote" class="note-paper">Loading...</div>
             </section>
 
             <section class="glass-card">
-                <h2>✈️ Bucket List</h2>
+                <h2>✈️ Our Future Bucket List</h2>
                 <div class="input-group">
                     <input type="text" id="bucketInput" placeholder="New adventure?">
                     <button id="addBucketBtn" class="add-btn"><i class="fas fa-plus"></i></button>
@@ -70,61 +67,41 @@
                 <ul id="bucketList" class="styled-list"></ul>
             </section>
 
-            <section id="music-binder-section" class="glass-card">
-                <h2>🎵 Music Binder</h2>
-                <div class="binder">
-                    <div class="binder-page left" id="binder-left">
-                        <div class="note">all the love songs<br>remind me of you</div>
-                        <div id="left-page-content"></div>
-                        <div class="scribble s1">and suddenly —</div>
-                    </div>
-
-                    <div class="binder-center">
-                        <div class="spine">
-                            <div class="ring"></div>
-                            <div class="ring" style="margin-top: 60px;"></div>
-                            <div class="ring" style="margin-top: 60px;"></div>
-                        </div>
-                    </div>
-
-                    <div class="binder-page right" id="binder-right">
-                        <div class="note">you're the loveliest</div>
-                        <div id="right-page-content"></div>
-                        <div class="scribble s2">were about you</div>
-                    </div>
+            <section class="binder-container">
+                <div class="binder-rings">
+                    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
                 </div>
-
-                <div class="binder-controls">
-                    <input id="binder-spotify-url" type="text" placeholder="Paste Spotify Track URL...">
-                    <input id="binder-lyric" type="text" placeholder="Favorite lyric...">
-                    <div class="control-row" style="display:flex; gap:10px; margin-top:10px;">
-                        <select id="binder-page-select" style="padding:10px; border-radius:12px; border:1px solid #ddd;">
-                            <option value="left">Left Page</option>
-                            <option value="right">Right Page</option>
-                        </select>
-                        <button id="binder-add-btn" class="add-btn">Add Song</button>
+                <div class="binder-page">
+                    <h2>🎵 Music Memory Binder</h2>
+                    <div class="input-group">
+                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                        <button id="addSongBtn" class="add-btn"><i class="fas fa-music"></i></button>
+                    </div>
+                    <div id="binder-pages-display"></div>
+                    <div class="pagination-controls">
+                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
+                        <span id="pageIndicator">Page 1</span>
+                        <button id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
             </section>
-
-            <div id="secretMessage" style="display:none;">
-                <h1 class="fancy-title">Merry Christmas!</h1>
-                <p>May the days to come be as beautiful as the Christmas snow. ❄️</p>
-            </div>
         </div>
     </div>
 
     <script type="module" src="script.js"></script>
     <script>
-        const SECRET_CODE = "MOON"; 
+        const SECRET_CODE = "1234"; 
         function checkPasscode() {
-            const val = document.getElementById('passcode-input').value;
-            if (val === SECRET_CODE) { 
+            if (document.getElementById('passcode-input').value === SECRET_CODE) { 
                 document.getElementById('login-overlay').style.display = 'none';
                 localStorage.setItem('isUnlocked', 'true');
-            } else { document.getElementById('error-msg').style.display = 'block'; }
+            } else { 
+                document.getElementById('error-msg').style.display = 'block'; 
+            }
         }
-        if(localStorage.getItem('isUnlocked') === 'true') document.getElementById('login-overlay').style.display = 'none';
+        if(localStorage.getItem('isUnlocked') === 'true') { 
+            document.getElementById('login-overlay').style.display = 'none';
+        }
         function toggleSettings() {
             const m = document.getElementById('settings-modal');
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
