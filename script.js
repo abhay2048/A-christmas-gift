@@ -14,44 +14,50 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- 1. LOGIN LOGIC ---
+// --- 1. LOGIN SYSTEM ---
+const loginScreen = document.getElementById('login-screen');
 const loginBtn = document.getElementById('loginBtn');
 const passwordInput = document.getElementById('passwordInput');
-const loginScreen = document.getElementById('login-screen');
 
-if(localStorage.getItem('isUnlocked') === 'true') {
+if (localStorage.getItem('wonderlandUnlocked') === 'true') {
     loginScreen.classList.add('hidden');
 }
 
 loginBtn.addEventListener('click', () => {
-    if(passwordInput.value === "1225") { // SET YOUR PASSWORD HERE
-        localStorage.setItem('isUnlocked', 'true');
+    if (passwordInput.value === "1225") {
+        localStorage.setItem('wonderlandUnlocked', 'true');
         loginScreen.classList.add('hidden');
     } else {
-        alert("Wrong password, my love! ❤️");
+        alert("Incorrect password, my love. ❤️");
     }
 });
 
-// --- 2. ADVANCED COUNTDOWN ---
+// --- 2. THE MAGICAL COUNTDOWN & REVEAL ---
 let targetDate = new Date("December 25, 2025 00:00:00").getTime();
-let isPreview = false;
+let revealTriggered = false;
 
-function updateTimer() {
+function handleReveal() {
+    if (revealTriggered) return;
+    revealTriggered = true;
+    
+    const overlay = document.getElementById('reveal-overlay');
+    overlay.classList.remove('hidden');
+    
+    // Auto-hide the reveal after 15 seconds
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+    }, 15000);
+}
+
+function updateCountdown() {
     const now = new Date().getTime();
     const gap = targetDate - now;
 
-    const timerElement = document.getElementById('countdown-timer');
-    const msgElement = document.getElementById('special-message');
+    const timerDiv = document.getElementById('countdown-timer');
 
     if (gap <= 0) {
-        timerElement.innerText = "Merry Christmas! 🎁";
-        msgElement.classList.remove('hidden');
-        msgElement.innerText = "Merry Christmas my love, may your days to come be as pretty as the Christmas snow... ❤️";
-        
-        // After 15 seconds, hide the big message but keep the header text
-        setTimeout(() => {
-            msgElement.classList.add('hidden');
-        }, 15000);
+        timerDiv.innerText = "Merry Christmas! 🎁";
+        handleReveal();
         return;
     }
 
@@ -59,17 +65,32 @@ function updateTimer() {
     const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
     const s = Math.floor((gap % (1000 * 60)) / 1000);
-    
-    timerElement.innerText = `${d}d ${h}h ${m}m ${s}s until Christmas! 🎄`;
+
+    timerDiv.innerText = `${d}d : ${h}h : ${m}m : ${s}s`;
 }
 
-setInterval(updateTimer, 1000);
+setInterval(updateCountdown, 1000);
 
 document.getElementById('previewTimer').addEventListener('click', () => {
-    targetDate = new Date().getTime() + 11000; // Set timer to 11 seconds from now
+    // Climax Preview: Start a 5-second countdown for excitement
+    revealTriggered = false;
+    targetDate = new Date().getTime() + 6000;
 });
 
-// --- 3. BUCKET LIST (With Delete) ---
+// --- 3. NOTE STATION (Pinned Note First) ---
+const noteRef = ref(db, 'notes/currentNote');
+onValue(noteRef, (s) => {
+    document.getElementById('latestNote').innerText = s.val() || "No notes yet... Write something for me! 👇";
+});
+
+document.getElementById('saveNoteBtn').addEventListener('click', () => {
+    const input = document.getElementById('noteInput');
+    if (!input.value.trim()) return;
+    set(noteRef, input.value);
+    input.value = '';
+});
+
+// --- 4. BUCKET LIST (Delete Functionality) ---
 const bucketRef = ref(db, 'bucketList');
 document.getElementById('addBucketBtn').addEventListener('click', () => {
     const input = document.getElementById('bucketInput');
@@ -85,14 +106,17 @@ onValue(bucketRef, (snapshot) => {
     if (data) {
         Object.entries(data).forEach(([key, item]) => {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${item.text}</span> <button class="delete-btn">🗑️</button>`;
-            if (item.done) li.classList.add('completed');
+            li.className = item.done ? 'done' : '';
+            li.innerHTML = `
+                <span onclick="this.parentElement.dataset.key='${key}'">${item.text}</span>
+                <button class="del-btn" style="background:none; border:none; cursor:pointer;">🗑️</button>
+            `;
             
             li.querySelector('span').addEventListener('click', () => {
                 update(ref(db, `bucketList/${key}`), { done: !item.done });
             });
-            
-            li.querySelector('.delete-btn').addEventListener('click', (e) => {
+
+            li.querySelector('.del-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 remove(ref(db, `bucketList/${key}`));
             });
@@ -101,7 +125,7 @@ onValue(bucketRef, (snapshot) => {
     }
 });
 
-// --- 4. MUSIC BINDER (With Delete) ---
+// --- 5. MUSIC BINDER ---
 const songsRef = ref(db, 'binderSongs');
 let allSongs = [];
 let currentPage = 1;
@@ -110,11 +134,11 @@ const SONGS_PER_PAGE = 3;
 document.getElementById('addSongBtn').addEventListener('click', () => {
     const input = document.getElementById('songLinkInput');
     const match = input.value.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-    if (!match) return alert("Invalid Link!");
+    if (!match) return alert("Paste a Spotify link!");
     
     push(songsRef, {
         embedUrl: `https://open.spotify.com/embed/${match[1]}/${match[2]}`,
-        favoriteLine: "", sideNote: "", timestamp: Date.now()
+        favLine: "", sideNote: "", timestamp: Date.now()
     });
     input.value = '';
 });
@@ -122,31 +146,28 @@ document.getElementById('addSongBtn').addEventListener('click', () => {
 onValue(songsRef, (snapshot) => {
     const data = snapshot.val();
     allSongs = data ? Object.entries(data).map(([id, s]) => ({...s, id})).sort((a,b) => b.timestamp - a.timestamp) : [];
-    renderBinderPage();
+    renderBinder();
 });
 
-function renderBinderPage() {
-    const container = document.getElementById('binder-pages-display');
-    container.innerHTML = '';
-    const songsToDisplay = allSongs.slice((currentPage-1)*SONGS_PER_PAGE, currentPage*SONGS_PER_PAGE);
+function renderBinder() {
+    const display = document.getElementById('binder-pages-display');
+    display.innerHTML = '';
+    const songs = allSongs.slice((currentPage-1)*SONGS_PER_PAGE, currentPage*SONGS_PER_PAGE);
 
-    songsToDisplay.forEach(song => {
+    songs.forEach(song => {
         const div = document.createElement('div');
         div.className = 'song-entry';
         div.innerHTML = `
-            <div class="song-card">
-                <button class="delete-btn" style="float:right">×</button>
-                <iframe src="${song.embedUrl}" width="100%" height="152" frameBorder="0"></iframe>
-                <input type="text" class="handwritten-input fav-input" value="${song.favoriteLine}" placeholder="Favorite line...">
-            </div>
-            <div class="side-note-area">
-                <textarea class="side-note-textarea note-input" placeholder="Our memory...">${song.sideNote}</textarea>
-            </div>
+            <div style="display:flex; justify-content:flex-end;"><button class="del-song" style="background:none; border:none; color:red; cursor:pointer;">×</button></div>
+            <iframe src="${song.embedUrl}" width="100%" height="80" frameBorder="0" allow="encrypted-media" style="border-radius:12px; margin-bottom:10px;"></iframe>
+            <input type="text" class="song-meta-input fav-line" value="${song.favLine}" placeholder="♥ Favorite line...">
+            <textarea class="song-meta-input side-note" placeholder="Why this song?">${song.sideNote}</textarea>
         `;
-        div.querySelector('.fav-input').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {favoriteLine: e.target.value}));
-        div.querySelector('.note-input').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value}));
-        div.querySelector('.delete-btn').addEventListener('click', () => remove(ref(db, `binderSongs/${song.id}`)));
-        container.appendChild(div);
+
+        div.querySelector('.fav-line').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {favLine: e.target.value}));
+        div.querySelector('.side-note').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value}));
+        div.querySelector('.del-song').addEventListener('click', () => remove(ref(db, `binderSongs/${song.id}`)));
+        display.appendChild(div);
     });
 
     document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
@@ -154,25 +175,29 @@ function renderBinderPage() {
     document.getElementById('nextBtn').disabled = currentPage * SONGS_PER_PAGE >= allSongs.length;
 }
 
-document.getElementById('prevBtn').addEventListener('click', () => { currentPage--; renderBinderPage(); });
-document.getElementById('nextBtn').addEventListener('click', () => { currentPage++; renderBinderPage(); });
+document.getElementById('prevBtn').addEventListener('click', () => { currentPage--; renderBinder(); });
+document.getElementById('nextBtn').addEventListener('click', () => { currentPage++; renderBinder(); });
 
-// --- 5. NOTE STATION & SNOW ---
-const noteRef = ref(db, 'notes/currentNote');
-document.getElementById('saveNoteBtn').addEventListener('click', () => {
-    set(noteRef, document.getElementById('noteInput').value);
-    document.getElementById('noteInput').value = "";
-});
-onValue(noteRef, (s) => { document.getElementById('latestNote').innerText = s.val() || "No notes yet..."; });
-
+// --- 6. VISUAL SNOW ---
 function createSnow() {
     const container = document.getElementById('snow-container');
     const flake = document.createElement('div');
-    flake.classList.add('snowflake');
+    flake.className = 'snowflake';
     flake.innerHTML = '❄';
-    flake.style.left = Math.random() * 100 + 'vw';
-    flake.style.animationDuration = Math.random() * 3 + 2 + 's';
+    flake.style.cssText = `
+        position: fixed; top: -10%; left: ${Math.random() * 100}vw;
+        font-size: ${Math.random() * 10 + 10}px;
+        opacity: ${Math.random()};
+        pointer-events: none;
+        z-index: 1;
+        animation: fall ${Math.random() * 3 + 4}s linear forwards;
+    `;
     container.appendChild(flake);
-    setTimeout(() => flake.remove(), 5000);
+    setTimeout(() => flake.remove(), 6000);
 }
-setInterval(createSnow, 300);
+setInterval(createSnow, 200);
+
+// Add simple CSS for the snowflake animation
+const style = document.createElement('style');
+style.textContent = `@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }`;
+document.head.appendChild(style);
