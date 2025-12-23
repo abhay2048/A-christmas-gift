@@ -1,62 +1,57 @@
 :root {
-    --glass: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.4);
-    --accent: #d42426;
-    --text: #2c3e50;
+    /* Updated Festive Palette */
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --accent: #ff4d4d; /* Bright Christmas Red */
+    --spotify-green: #1db954;
+    --text: #ffffff;
     --soft-pink: #ffb7c5;
     --handwritten: 'Indie Flower', cursive;
+    --spotify-font: 'Montserrat', sans-serif;
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+}
 
 body {
     margin: 0;
     font-family: 'Quicksand', sans-serif;
-    background: linear-gradient(135deg, #e0f2f1 0%, #fce4ec 100%);
-    background-attachment: fixed;
+    /* Deep Winter Night Gradient */
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070') no-repeat center center fixed;
+    background-size: cover;
     color: var(--text);
     overflow-x: hidden;
 }
 
-/* --- REVEAL OVERLAY (THE CLIMAX) --- */
+/* --- REVEAL OVERLAY --- */
 .reveal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(15px);
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(20px);
     z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 20px;
-    animation: fadeIn 1s ease-out;
 }
 
 .reveal-text {
     font-family: 'Dancing Script', cursive;
     font-size: clamp(2.5rem, 8vw, 4.5rem);
     color: white;
-    margin-bottom: 20px;
-    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+    text-shadow: 0 0 20px var(--accent);
 }
-
-.reveal-subtext {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: clamp(1.1rem, 4vw, 1.5rem);
-    color: var(--soft-pink);
-}
-
-.sparkles { font-size: 2rem; margin-top: 30px; animation: bounce 2s infinite; }
-
-@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
 /* --- LOGIN SCREEN --- */
 .login-overlay {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle, #1a472a, #0a2e1a);
+    background: radial-gradient(circle, #1a472a, #051a0d); /* Forest Green Gradient */
     z-index: 10000;
     display: flex;
     justify-content: center;
@@ -64,18 +59,22 @@ body {
 }
 
 .login-box {
-    background: white;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
     padding: 40px;
     border-radius: 30px;
     text-align: center;
     width: 90%;
     max-width: 350px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
+
+.login-box h2 { font-family: var(--spotify-font); font-weight: 700; color: white; }
 
 /* --- MAIN LAYOUT --- */
 .main-content {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
     position: relative;
@@ -84,172 +83,208 @@ body {
 
 .hero-section {
     text-align: center;
-    padding: 60px 0 40px;
+    padding: 80px 0 40px;
 }
 
 .main-title {
     font-family: 'Dancing Script', cursive;
-    font-size: clamp(2.5rem, 10vw, 4.5rem);
-    color: var(--accent);
+    font-size: clamp(3rem, 12vw, 5.5rem);
+    color: white;
     margin: 0 0 15px;
+    text-shadow: 0 0 30px rgba(255,255,255,0.4);
 }
 
 .timer-display {
     background: var(--glass);
-    backdrop-filter: blur(5px);
-    padding: 12px 30px;
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
     border-radius: 50px;
     display: inline-block;
     font-weight: 700;
+    font-family: var(--spotify-font);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    color: white;
 }
 
-/* --- CARDS & UI --- */
+/* --- CATCHY CARDS --- */
 .glass-card {
     background: var(--glass);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     border-radius: 25px;
-    padding: 25px;
-    margin-bottom: 30px;
+    padding: 30px;
+    margin-bottom: 40px;
     border: 1px solid var(--glass-border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
 }
 
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.card-header h2 { font-size: 1.2rem; margin: 0; opacity: 0.8; }
-.card-tag { font-size: 0.7rem; background: var(--accent); color: white; padding: 4px 10px; border-radius: 10px; text-transform: uppercase; }
-
-/* NOTE STATION SPECIFIC */
-.pinned-note {
-    background: #fffdf0;
-    padding: 25px;
-    border-radius: 15px;
-    font-family: var(--handwritten);
-    font-size: 1.4rem;
-    line-height: 1.6;
-    margin-bottom: 25px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.02), 5px 5px 15px rgba(0,0,0,0.05);
-    position: relative;
+.glass-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
-.pinned-note::before {
-    content: '📌';
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.note-input-area textarea {
-    width: 100%;
-    border-radius: 15px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    font-family: inherit;
-    resize: none;
-    margin-bottom: 10px;
-}
-
-/* --- BINDER (MOBILE OPTIMIZED) --- */
+/* --- MUSIC BINDER (THE BIG CHANGE) --- */
 .binder-wrapper {
-    display: flex;
-    background: #fffaf0;
-    border-radius: 25px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    border: 1px solid var(--glass-border);
     overflow: hidden;
     margin-top: 40px;
 }
 
-.binder-spine { width: 60px; background: #f1f1f1; display: flex; flex-direction: column; justify-content: space-around; align-items: center; padding: 40px 0; border-right: 2px solid #ddd; }
-.ring { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #ccc, #eee); border: 2px solid #bbb; }
+.binder-content { padding: 40px; }
 
-.binder-content { flex: 1; padding: 30px; }
-
-/* SONG CARD */
+/* The Song Layout Request: Memory Left, Music+Lyrics Right */
 .song-entry {
-    background: white;
-    padding: 15px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr; /* Memory slightly wider */
+    gap: 30px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 25px;
     border-radius: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    border: 1px solid #f0f0f0;
+    margin-bottom: 40px;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.song-meta-input {
-    font-family: var(--handwritten);
+/* Left Side: Memory/Why this song */
+.song-memory {
+    font-family: var(--spotify-font);
+    text-align: left;
+}
+
+.song-memory h3 {
+    font-weight: 900;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.song-memory p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    font-weight: 500;
+    color: #efefef;
+}
+
+/* Right Side: Stacked Music and Favorite Line */
+.song-visual-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.music-box {
     width: 100%;
+    aspect-ratio: 1 / 1; /* Forces Perfect Square */
+    background: #000;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.music-box iframe {
+    width: 100%;
+    height: 100%;
     border: none;
-    border-bottom: 1px dotted #ccc;
-    padding: 10px 0;
-    font-size: 1.1rem;
-    margin-top: 10px;
+}
+
+/* Favorite Line: Spotify Lyrics Font Style */
+.favorite-line-box {
+    font-family: var(--spotify-font);
+    font-weight: 900;
+    font-size: 1.3rem;
+    background: var(--accent); /* Christmas Red */
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    line-height: 1.2;
+    letter-spacing: -1px;
+    text-align: left;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 /* --- BUTTONS & INPUTS --- */
+input[type="text"], input[type="password"], textarea {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    padding: 15px;
+    border-radius: 12px;
+    color: white;
+    font-family: var(--spotify-font);
+    width: 100%;
+    transition: 0.3s;
+}
+
+input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+    border-color: var(--accent);
+}
+
 .primary-btn {
     background: var(--accent);
     color: white;
     border: none;
-    padding: 12px 25px;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-family: var(--spotify-font);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(255, 77, 77, 0.3);
+    transition: 0.3s;
+}
+
+.primary-btn:hover {
+    transform: scale(1.05);
+    background: #ff1a1a;
+}
+
+/* --- PINNED NOTE --- */
+.pinned-note {
+    background: white;
+    color: #333;
+    padding: 30px;
     border-radius: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
+    font-family: var(--handwritten);
+    font-size: 1.6rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transform: rotate(-1deg);
 }
-
-.secondary-btn {
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-}
-
-.icon-btn { background: var(--accent); color: white; border: none; width: 45px; height: 45px; border-radius: 12px; font-size: 1.5rem; cursor: pointer; }
-
-.preview-pill {
-    background: none;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    margin-top: 15px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.preview-pill:hover { background: var(--accent); color: white; }
 
 /* --- BUCKET LIST --- */
-.custom-list { list-style: none; padding: 0; }
 .custom-list li {
-    background: white;
-    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 18px;
     border-radius: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    margin-bottom: 12px;
+    font-family: var(--spotify-font);
+    font-weight: 600;
 }
 
-.custom-list li.done span { text-decoration: line-through; opacity: 0.5; }
-
 /* --- MOBILE RESPONSIVENESS --- */
-@media (max-width: 600px) {
-    .main-content { padding: 15px; }
-    .hero-section { padding: 40px 0 20px; }
-    .binder-spine { display: none; } /* Hide rings on mobile to save space */
-    .binder-content { padding: 20px; }
-    .song-entry { padding: 10px; }
-    .login-box { padding: 30px 20px; }
-    .glass-card { padding: 20px; border-radius: 20px; }
+@media (max-width: 768px) {
+    .song-entry {
+        grid-template-columns: 1fr; /* Stack vertically on small phones */
+    }
     
-    .input-row { display: flex; flex-direction: column; gap: 10px; }
-    .input-row input { width: 100%; }
+    .song-memory {
+        text-align: center;
+        order: 2; /* Memory below music on mobile */
+    }
+    
+    .song-visual-stack {
+        order: 1;
+    }
+
+    .main-title { font-size: 3rem; }
 }
 
 .hidden { display: none !important; }
