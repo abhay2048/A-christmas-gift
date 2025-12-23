@@ -7,8 +7,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Essential inline styles for the new features */
+        .music-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .music-inputs input, .music-inputs textarea {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .song-entry {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #a18cd1;
+        }
+        .song-info {
+            font-family: 'Indie Flower', cursive;
+            margin-top: 10px;
+        }
+        .song-info h3 { margin: 5px 0; color: #333; }
+        .song-info .lyric { font-style: italic; color: #ff6b8d; font-weight: bold; }
+        .song-info .note { color: #555; font-size: 0.95rem; }
+        
+        #secretMessage {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px dashed #fff;
+            animation: fadeIn 2s ease-in;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Styles for the new Music Binder UI */
+        .binder { display: flex; background: #fffcf5; border-radius: 20px; overflow: hidden; border: 1px solid #eee; position: relative; }
+        .binder-page { flex: 1; padding: 25px; min-height: 300px; position: relative; }
+        .binder-page.left { border-right: 1px dashed #ccc; }
+        .binder-center { width: 40px; background: #f4f4f4; display: flex; align-items: center; justify-content: center; }
+        .spine { display: flex; flex-direction: column; gap: 40px; }
+        .ring { width: 15px; height: 15px; border-radius: 50%; border: 3px solid #ccc; background: white; }
+        .note { font-family: 'Indie Flower', cursive; font-size: 1.1rem; color: #ff6b8d; margin-bottom: 15px; }
+        .scribble { font-family: 'Indie Flower', cursive; font-size: 0.9rem; color: #aaa; position: absolute; bottom: 10px; }
+        .s1 { left: 10px; } .s2 { right: 10px; }
+        .page-actions { font-size: 0.7rem; text-transform: uppercase; color: #ccc; margin-top: 10px; text-align: center; }
+        .controls input, .controls select, .controls button { margin-bottom: 10px; width: 100%; }
+    </style>
 </head>
 <body>
+
     <canvas id="fireworksCanvas"></canvas>
 
     <div id="settings-modal" class="modal">
@@ -18,14 +74,16 @@
             <input type="text" id="event-name-input" placeholder="e.g. Christmas Day">
             <label>Event Date:</label>
             <input type="date" id="event-date-input">
+            
             <button id="simulate-btn" class="add-btn" style="background: linear-gradient(45deg, #a18cd1, #fbc2eb); width:100%; margin-top:15px;">
-                ✨ Preview Surprise
+                ✨ Preview The Surprise (10s)
             </button>
+
             <div style="margin-top:20px; display:flex; gap:10px;">
                 <button id="save-settings-btn" class="add-btn">Save</button>
                 <button onclick="toggleSettings()" class="add-btn" style="background:#aaa;">Close</button>
             </div>
-            <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; color:red; cursor:pointer; background:none; border:none;">Reset Passcode</button>
+            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Reset Lock</button>
         </div>
     </div>
 
@@ -39,8 +97,13 @@
     </div>
 
     <div id="main-app">
+        <div class="ghost-art snowman">⛄</div>
+        <div class="ghost-art snowflake-static">❄</div>
         <div class="snow-container" id="snow-container"></div>
-        <button class="settings-trigger" onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
+
+        <button class="settings-trigger" onclick="toggleSettings()">
+            <i class="fas fa-cog"></i>
+        </button>
 
         <div class="main-content">
             <header>
@@ -51,56 +114,104 @@
             <section class="glass-card">
                 <h2>✉️ The Note Station</h2>
                 <textarea id="noteInput" placeholder="Write a sweet note..." rows="4"></textarea>
-                <button id="saveNoteBtn" class="add-btn full-width" style="width:100%; margin-top:10px;">Pin Note</button>
-                <div id="latestNote" class="note-paper" style="margin-top:20px; font-family:'Indie Flower'; font-size:1.2rem;">...</div>
+                <button id="saveNoteBtn" class="add-btn full-width">Pin Note</button>
+                <div id="latestNote" class="note-paper">...</div>
             </section>
 
-            <section class="binder-container">
-                <div class="binder-rings">
-                    <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+            <section class="glass-card">
+                <h2>✈️ Bucket List</h2>
+                <div class="input-group">
+                    <input type="text" id="bucketInput" placeholder="New adventure?">
+                    <button id="addBucketBtn" class="add-btn"><i class="fas fa-plus"></i></button>
                 </div>
-                <div class="binder-page">
-                    <h2 class="handwritten-title">🎵 Our Playlist</h2>
-                    <div class="music-inputs">
-                        <input type="text" id="songLinkInput" placeholder="Spotify Link...">
-                        <input type="text" id="songLyricInput" placeholder="A special lyric...">
-                        <textarea id="songNoteInput" placeholder="Why this song?"></textarea>
-                        <button id="addSongBtn" class="add-btn">Add to Binder</button>
-                    </div>
-                    
-                    <div id="binder-pages-display"></div>
-
-                    <div class="pagination-controls">
-                        <button id="prevBtn" class="nav-btn"><i class="fas fa-arrow-left"></i></button>
-                        <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn" class="nav-btn"><i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
+                <ul id="bucketList" class="styled-list"></ul>
             </section>
 
+            <section id="music-binder-section" class="glass-card" style="margin:28px 0;">
+                <h2 style="margin:0 0 8px 0;">🎵 Music Binder</h2>
+
+                <div class="binder" aria-hidden="false">
+                    <div class="binder-page left" id="binder-left">
+                        <div class="note">all the love songs<br>remind me of you</div>
+                        <div class="scribble s1">and suddenly —</div>
+                        <div class="page-actions">left page</div>
+                    </div>
+
+                    <div class="binder-center">
+                        <div class="spine" aria-hidden="true">
+                            <div class="ring"></div>
+                            <div class="ring" style="transform: rotate(6deg)"></div>
+                            <div class="ring" style="transform: rotate(-6deg)"></div>
+                        </div>
+                    </div>
+
+                    <div class="binder-page right" id="binder-right">
+                        <div class="note">you're the loveliest</div>
+                        <div class="scribble s2">were about you</div>
+                        <div class="page-actions">right page</div>
+                    </div>
+                </div>
+
+                <div class="controls" style="margin-top:14px;">
+                    <input id="binder-spotify-url" type="text" placeholder="Paste Spotify track URL" />
+                    <input id="binder-lyric" type="text" placeholder="Short lyric (optional)" />
+                    <select id="binder-page-select">
+                        <option value="right">Right page</option>
+                        <option value="left">Left page</option>
+                    </select>
+                    <button id="binder-add-btn" class="add-btn">Add Song</button>
+                    <button id="binder-clear-btn" class="add-btn" style="background:#aaa;">Clear</button>
+                </div>
+            </section>
             <div id="secretMessage">
-                <h1 class="fancy-title">Merry Christmas!</h1>
-                <p>You are my favorite gift every single day. 🎁</p>
+                <h1 class="fancy-title" style="font-size: 3rem; color: #ff6b8d; margin-bottom: 10px;">Merry Christmas!</h1>
+                <p style="font-family: 'Indie Flower', cursive; font-size: 1.8rem; color: #2c3e50; line-height: 1.4;">
+                    May the days to come be as beautiful as the Christmas snow. ❄️
+                </p>
+                <div style="font-size: 3rem; margin-top: 20px;">🎄🎁✨</div>
             </div>
+
         </div>
     </div>
 
     <script type="module" src="script.js"></script>
     <script>
         const SECRET_CODE = "1234"; 
+        
         function checkPasscode() {
-            if (document.getElementById('passcode-input').value === SECRET_CODE) {
+            const val = document.getElementById('passcode-input').value;
+            if (val === SECRET_CODE) { 
                 document.getElementById('login-overlay').style.display = 'none';
                 localStorage.setItem('isUnlocked', 'true');
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
+            } else { 
+                document.getElementById('error-msg').style.display = 'block'; 
             }
         }
-        if(localStorage.getItem('isUnlocked') === 'true') document.getElementById('login-overlay').style.display = 'none';
+
+        if(localStorage.getItem('isUnlocked') === 'true') { 
+            document.getElementById('login-overlay').style.display = 'none';
+        }
+
         function toggleSettings() {
             const m = document.getElementById('settings-modal');
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
+
+        function showChristmasSurprise() {
+            const msg = document.getElementById('secretMessage');
+            if(msg) {
+                msg.style.display = 'block';
+                msg.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        document.getElementById('simulate-btn')?.addEventListener('click', () => {
+            toggleSettings();
+            showChristmasSurprise();
+            setTimeout(() => {
+                document.getElementById('secretMessage').style.display = 'none';
+            }, 10000);
+        });
     </script>
 </body>
 </html>
