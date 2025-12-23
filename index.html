@@ -2,67 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Memory Vault</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Our Winter Wonderland</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="settings-modal" class="modal">
-        <div class="modal-content glass-card">
-            <h3>⚙️ Vault Settings</h3>
-            <label>Event Name:</label>
-            <input type="text" id="event-name-input">
-            <label>Event Date:</label>
-            <input type="date" id="event-date-input">
-            <div style="margin-top:20px; display:flex; gap:10px;">
-                <button id="save-settings-btn" class="add-btn">Save</button>
-                <button onclick="toggleSettings()" class="add-btn" style="background:#888;">Close</button>
-            </div>
-            <button onclick="localStorage.clear(); location.reload();" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer; font-size:0.8rem;">Clear Cache / Relock</button>
-        </div>
-    </div>
-
     <div id="login-overlay">
         <div class="login-box">
             <h1>❄️ Our Secret World ❄️</h1>
+            <p>Enter our special code:</p>
             <input type="password" id="passcode-input" placeholder="Passcode">
-            <button onclick="checkPasscode()" class="add-btn">Unlock</button>
-            <p id="error-msg" style="display:none; color: #ff6b8d; margin-top:10px;">Wrong code! ❤️</p>
+            <button onclick="checkPasscode()">Unlock</button>
+            <p id="error-msg">Wrong code, try again! ❤️</p>
         </div>
     </div>
 
     <div id="main-app">
-        <div class="ghost-art snowman">⛄</div>
-        <div class="ghost-art snowflake-static">❄</div>
-        <div class="ghost-art reindeer">🦌</div>
         
         <div class="snow-container" id="snow-container"></div>
 
-        <button class="settings-trigger" onclick="toggleSettings()">
-            <i class="fas fa-cog"></i>
-        </button>
-
         <div class="main-content">
             <header>
-                <h1 id="vault-title">Our Winter Wonderland</h1>
-                <div id="countdown-timer" class="timer">Calculating...</div>
+                <h1>Our Winter Wonderland</h1>
+                <div id="countdown-timer" class="timer">Loading our countdown...</div>
             </header>
 
-            <section class="glass-card">
-                <h2>✉️ The Note Station</h2>
-                <textarea id="noteInput" placeholder="Write a sweet note..." rows="4"></textarea>
-                <button id="saveNoteBtn" class="add-btn" style="width:100%; margin-top:10px;">Pin Note</button>
-                <div id="latestNote" class="note-paper">Loading...</div>
+            <section class="glass-card full-width">
+                <div class="section-header">
+                    <h2>✉️ The Note Station</h2>
+                </div>
+                <textarea id="noteInput" placeholder="Write a sweet note here..." rows="4"></textarea>
+                <button id="saveNoteBtn" class="full-btn add-btn">Pin Note</button>
+                <div id="latestNote" class="note-paper">Loading note...</div>
             </section>
 
-            <section class="glass-card">
+            <section class="glass-card full-width">
                 <h2>✈️ Our Future Bucket List</h2>
                 <div class="input-group">
-                    <input type="text" id="bucketInput" placeholder="New adventure?">
-                    <button id="addBucketBtn" class="add-btn"><i class="fas fa-plus"></i></button>
+                    <input type="text" id="bucketInput" placeholder="What's our next adventure?">
+                    <button id="addBucketBtn" class="add-btn">Add</button>
                 </div>
                 <ul id="bucketList" class="styled-list"></ul>
             </section>
@@ -72,16 +52,21 @@
                     <div class="ring"></div><div class="ring"></div><div class="ring"></div>
                 </div>
                 <div class="binder-page">
-                    <h2>🎵 Music Memory Binder</h2>
-                    <div class="input-group">
-                        <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                        <button id="addSongBtn" class="add-btn"><i class="fas fa-music"></i></button>
+                    <h2>🎵 Our Music Memory Binder</h2>
+                    
+                    <div class="add-song-section full-width">
+                        <div class="input-group">
+                            <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                            <button id="addSongBtn" class="add-btn">Add Page</button>
+                        </div>
                     </div>
+
                     <div id="binder-pages-display"></div>
+
                     <div class="pagination-controls">
-                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
+                        <button id="prevBtn" disabled>« Prev</button>
                         <span id="pageIndicator">Page 1</span>
-                        <button id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
+                        <button id="nextBtn">Next »</button>
                     </div>
                 </div>
             </section>
@@ -89,22 +74,33 @@
     </div>
 
     <script type="module" src="script.js"></script>
+    
     <script>
-        const SECRET_CODE = "1234"; 
+        const SECRET_CODE = "1234"; // CHANGE THIS
+
         function checkPasscode() {
-            if (document.getElementById('passcode-input').value === SECRET_CODE) { 
-                document.getElementById('login-overlay').style.display = 'none';
-                localStorage.setItem('isUnlocked', 'true');
-            } else { 
-                document.getElementById('error-msg').style.display = 'block'; 
+            const input = document.getElementById('passcode-input').value;
+            if (input === SECRET_CODE) {
+                unlockApp();
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
             }
         }
-        if(localStorage.getItem('isUnlocked') === 'true') { 
-            document.getElementById('login-overlay').style.display = 'none';
+
+        function unlockApp() {
+            document.getElementById('login-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('main-app').style.opacity = '1';
+                window.dispatchEvent(new Event('app-unlocked'));
+            }, 500);
+            localStorage.setItem('isUnlocked', 'true');
         }
-        function toggleSettings() {
-            const m = document.getElementById('settings-modal');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+
+        if(localStorage.getItem('isUnlocked') === 'true') {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('main-app').style.opacity = '1';
+            setTimeout(() => window.dispatchEvent(new Event('app-unlocked')), 100);
         }
     </script>
 </body>
