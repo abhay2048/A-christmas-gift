@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, push, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
@@ -14,101 +14,252 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let targetDate, eventName, allSongs = [], currentPage = 1;
+let targetDate, eventName, allSongs = [], currentPage = 1, simulationMode = false;
+let fireworksInterval;
 
-// --- INIT FUNCTIONS ---
+// --- INITIALIZE ---
 initSettings();
 initTimer();
 initNotes();
+initBucket();
 initSongs();
 startSnow();
 
 function initSettings() {
     onValue(ref(db, 'vaultConfig'), (snap) => {
         const data = snap.val() || { eventName: "Christmas", date: "2025-12-25" };
-        eventName = data.eventName;
-        targetDate = new Date(data.date + "T00:00:00").getTime();
-        document.getElementById('vault-title').innerText = `Our ${eventName} Wonderland`;
+        if(!simulationMode) {
+            eventName = data.eventName;
+            targetDate = new Date(data.date + "T00:00:00").getTime();
+            document.getElementById('vault-title').innerText = `Our ${eventName} Wonderland`;
+            document.getElementById('event-name-input').value = eventName;
+            document.getElementById('event-date-input').value = data.date;
+        }
     });
+    document.getElementById('save-settings-btn').onclick = () => {
+        const name = document.getElementById('event-name-input').value;
+        const date = document.getElementById('event-date-input').value;
+        if(name && date) { set(ref(db, 'vaultConfig'), { eventName: name, date: date }); alert("Saved!"); location.reload(); }
+    };
+    // PREVIEW BUTTON
+    document.getElementById('simulate-btn').onclick = () => {
+        simulationMode = true;
+        targetDate = new Date().getTime() + 10000; // 10 seconds
+        eventName = "Magic Moment";
+        document.getElementById('settings-modal').style.display = 'none';
+        document.getElementById('vault-title').innerText = "Get Ready...";
+    };
 }
 
 function initTimer() {
+    const box = document.getElementById('countdown-timer');
     setInterval(() => {
         const diff = targetDate - new Date().getTime();
-        const box = document.getElementById('countdown-timer');
-        if (diff <= 0) { box.innerText = "✨ The Surprise is Here!"; return; }
-        const days = Math.floor(diff / 86400000);
-        box.innerText = `${days} Days until ${eventName}`;
+        
+        // --- THE SURPRISE MOMENT ---
+        if (diff <= 0) {
+            box.innerHTML = `✨ Merry Christmas!<br><span style="font-size:1rem; font-weight:400;">I love you more than words can say.</span>`;
+            box.classList.add('celebrate');
+            if(!fireworksInterval) startFireworks(); // START FIREWORKS
+            return;
+        }
+
+        const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000),
+              m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+        
+        if (diff < 10000) { box.innerText = s; box.style.color = "#ff4757"; }
+        else if (diff < 60000) box.innerText = `${s} Seconds...`;
+        else if (d < 1) box.innerText = `${h}h ${m}m Remaining`;
+        else box.innerText = `${d} Days until ${eventName}`;
     }, 1000);
 }
 
+// --- FIREWORKS ENGINE ---
+function startFireworks() {
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Darken background for effect
+    document.body.style.background = "#2d3436"; 
+    
+    let particles = [];
+    fireworksInterval = setInterval(() => {
+        // Create explosion
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        for(let i=0; i<30; i++) {
+            particles.push({x, y, dx: (Math.random()-0.5)*5, dy: (Math.random()-0.5)*5, color, alpha: 1});
+        }
+    }, 500);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Trail effect
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, index) => {
+            p.x += p.dx; p.y += p.dy; p.alpha -= 0.02;
+            ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+            if(p.alpha <= 0) particles.splice(index, 1);
+        });
+    }
+    animate();
+}
+
+// --- STANDARD FEATURES ---
 function initNotes() {
     const r = ref(db, 'notes/currentNote');
     document.getElementById('saveNoteBtn').onclick = () => set(r, document.getElementById('noteInput').value);
-    onValue(r, (s) => document.getElementById('latestNote').innerText = s.val() || "No notes yet...");
+    onValue(r, s => document.getElementById('latestNote').innerText = s.val() || "...");
 }
-
+function initBucket() {
+    const r = ref(db, 'bucketList');
+    document.getElementById('addBucketBtn').onclick = () => {
+        const el = document.getElementById('bucketInput');
+        if(el.value) push(r, { text: el.value, done: false }); el.value = '';
+    };
+    onValue(r, s => {
+        const list = document.getElementById('bucketList'); list.innerHTML = '';
+        if(s.val()) Object.entries(s.val()).forEach(([k, v]) => {
+            const li = document.createElement('li'); li.innerHTML = `<span>${v.text}</span> <div class="del-btn-sleek" onclick="deleteItem('${k}')"><i class="fas fa-trash"></i></div>`;
+            list.appendChild(li);
+        });
+    });
+}
 function initSongs() {
     const r = ref(db, 'binderSongs');
     document.getElementById('addSongBtn').onclick = () => {
         const url = document.getElementById('songLinkInput').value;
-        const lyric = document.getElementById('songLyricInput').value;
-        const note = document.getElementById('songNoteInput').value;
         const m = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-        
-        if(m) {
-            push(r, { 
-                embedUrl: `https://open.spotify.com/embed/${m[1]}/${m[2]}`, 
-                lyric, note, timestamp: Date.now() 
-            });
-            document.getElementById('songLinkInput').value = '';
-            document.getElementById('songLyricInput').value = '';
-            document.getElementById('songNoteInput').value = '';
-        }
+        if(m) { push(r, { embedUrl: `https://open.spotify.com/embed/$${m[1]}/${m[2]}`, timestamp: Date.now() }); document.getElementById('songLinkInput').value = ''; }
     };
-
     onValue(r, snap => {
-        allSongs = [];
-        if(snap.val()) Object.entries(snap.val()).forEach(([k, v]) => allSongs.push({...v, id: k}));
-        allSongs.reverse();
+        allSongs = []; if(snap.val()) Object.entries(snap.val()).forEach(([k, v]) => allSongs.push({...v, id: k}));
         renderSongs();
     });
 }
-
 function renderSongs() {
-    const d = document.getElementById('binder-pages-display'); d.innerHTML = '';
+    const d = document.getElementById('binder-pages-display'); 
+    if(!d) return; 
+    d.innerHTML = '';
     const start = (currentPage-1)*3;
-    
-    allSongs.slice(start, start + 3).forEach((s, i) => {
-        const tilt = i % 2 === 0 ? 'rotate(3deg)' : 'rotate(-3deg)';
-        const div = document.createElement('div');
-        div.className = 'song-entry';
-        div.innerHTML = `
-            <div class="song-card" style="transform: ${tilt}">
-                <iframe src="${s.embedUrl}" allow="encrypted-media"></iframe>
-            </div>
-            <div class="song-info-overlay">
-                <p class="song-lyric-snippet">"${s.lyric || 'Our Song'}"</p>
-                <p>${s.note || ''}</p>
-                <button onclick="window.delSong('${s.id}')" style="background:none; border:none; color:#ddd; cursor:pointer;"><i class="fas fa-trash"></i></button>
-            </div>
-        `;
+    allSongs.slice(start, start + 3).forEach(s => {
+        const div = document.createElement('div'); div.className = 'song-entry';
+        div.innerHTML = `<div class="song-card"><iframe src="${s.embedUrl}" allow="encrypted-media"></iframe></div><div class="del-btn-sleek" onclick="deleteSong('${s.id}')"><i class="fas fa-trash"></i></div>`;
         d.appendChild(div);
     });
     document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
     document.getElementById('prevBtn').disabled = currentPage === 1;
-    document.getElementById('nextBtn').disabled = (start+3) >= allSongs.length;
+    document.getElementById('nextBtn').disabled = (start + 3) >= allSongs.length;
 }
-
-window.delSong = (id) => remove(ref(db, `binderSongs/${id}`));
 document.getElementById('prevBtn').onclick = () => { currentPage--; renderSongs(); };
 document.getElementById('nextBtn').onclick = () => { currentPage++; renderSongs(); };
-
 function startSnow() {
-    const c = document.getElementById('snow-container');
+    const c = document.getElementById('snow-container'); c.innerHTML = '';
     for(let i=0; i<30; i++) {
         const f = document.createElement('div'); f.className = 'snowflake'; f.innerHTML = '❄';
-        f.style.cssText = `position:absolute; color:white; left:${Math.random()*100}vw; top:-10px; animation: fall ${Math.random()*5+5}s linear infinite;`;
-        c.appendChild(f);
+        f.style.left = Math.random()*100+'vw'; f.style.top = -Math.random()*100+'vh'; f.style.fontSize = Math.random()*15+10+'px';
+        f.style.animation = `fall ${Math.random()*5+5}s linear infinite`; c.appendChild(f);
     }
 }
+window.deleteItem = (id) => remove(ref(db, `bucketList/${id}`));
+window.deleteSong = (id) => remove(ref(db, `binderSongs/${id}`));
+
+/* ===== Music Binder JS (Appended) ===== */
+(()=> {
+  function createBinderCard(data){
+    const card = document.createElement('div');
+    card.className = 'song-square';
+    const bgs = [
+      'linear-gradient(180deg,#ffdbe8,#f7dff0)',
+      'linear-gradient(180deg,#fef4d6,#fff0d6)',
+      'linear-gradient(180deg,#e6f3ff,#e9f8ff)',
+      'linear-gradient(180deg,#e6cfe7,#f1d7ee)'
+    ];
+    card.style.background = bgs[Math.floor(Math.random()*bgs.length)];
+
+    const thumb = document.createElement('div');
+    thumb.className = 'song-thumb';
+    thumb.style.backgroundImage = data.thumb ? `url("${data.thumb}")` : `url('https://via.placeholder.com/64x64/cccccc/ffffff?text=♪')`;
+
+    const meta = document.createElement('div');
+    meta.className = 'song-meta';
+
+    const title = document.createElement('div');
+    title.className = 'song-title';
+    title.textContent = data.title || 'Unknown Title';
+
+    const artist = document.createElement('div');
+    artist.className = 'song-artist';
+    artist.textContent = data.artist || '';
+
+    meta.appendChild(title);
+    meta.appendChild(artist);
+
+    if (data.lyric){
+      const lyric = document.createElement('div');
+      lyric.className = 'song-lyric';
+      lyric.textContent = data.lyric;
+      meta.appendChild(lyric);
+    }
+
+    card.appendChild(thumb);
+    card.appendChild(meta);
+
+    return card;
+  }
+
+  async function tryFetchOEmbed(url){
+    try {
+      const api = 'https://open.spotify.com/oembed?url=' + encodeURIComponent(url);
+      const r = await fetch(api);
+      if (!r.ok) throw new Error('oembed request failed');
+      const j = await r.json();
+      let title = j.title || '';
+      let artist = '';
+      if (title.includes('—')) {
+        const parts = title.split('—').map(s => s.trim());
+        title = parts[0];
+        artist = parts.slice(1).join(' — ');
+      }
+      return { title, artist, thumb: j.thumbnail_url || '' };
+    } catch (e) {
+      console.warn('Spotify oEmbed failed:', e);
+      return null;
+    }
+  }
+
+  document.addEventListener('click', async function(e){
+    if (e.target && e.target.id === 'binder-add-btn'){
+      const url = document.getElementById('binder-spotify-url').value.trim();
+      const lyric = document.getElementById('binder-lyric').value.trim();
+      const page = document.getElementById('binder-page-select').value;
+      if (!url) { alert('Paste a Spotify track URL first.'); return; }
+
+      const info = await tryFetchOEmbed(url);
+      let data;
+      if (info){
+        data = { title: info.title, artist: info.artist, thumb: info.thumb, lyric };
+      } else {
+        const m = url.match(/track\/([A-Za-z0-9]+)/);
+        const id = m ? m[1] : null;
+        data = { title: id ? `Spotify Track • ${id}` : url, artist:'', thumb:'', lyric };
+      }
+
+      const card = createBinderCard(data);
+      const parent = (page === 'left') ? document.getElementById('binder-left') : document.getElementById('binder-right');
+      parent.insertBefore(card, parent.querySelector('.scribble') || parent.querySelector('.page-actions'));
+
+      document.getElementById('binder-spotify-url').value = '';
+      document.getElementById('binder-lyric').value = '';
+    }
+
+    if (e.target && e.target.id === 'binder-clear-btn'){
+      document.getElementById('binder-spotify-url').value = '';
+      document.getElementById('binder-lyric').value = '';
+    }
+  });
+})();
