@@ -104,7 +104,7 @@ body {
     color: white;
 }
 
-/* --- GLASS CARD --- */
+/* --- GLASS CARD (Generic Container) --- */
 .glass-card {
     background: var(--glass);
     backdrop-filter: blur(12px);
@@ -115,7 +115,7 @@ body {
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-/* --- PINNED NOTE --- */
+/* --- REDESIGNED NOTE STATION (GLASS STYLE) --- */
 .pinned-note {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(15px);
@@ -194,7 +194,7 @@ body {
     text-decoration: line-through rgba(255,255,255,0.5) 2px;
 }
 
-/* --- MUSIC BINDER (RESTRUCTURED FOR YOU) --- */
+/* --- MUSIC BINDER --- */
 .binder-wrapper {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(15px);
@@ -206,15 +206,13 @@ body {
 
 .song-entry {
     display: grid;
-    /* SONG ON LEFT, TEXT ON RIGHT */
-    grid-template-columns: 1fr 1.5fr; 
+    grid-template-columns: 1.2fr 1fr;
     gap: 30px;
     background: rgba(0, 0, 0, 0.3);
     padding: 25px;
     border-radius: 20px;
     margin-bottom: 40px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    align-items: start;
 }
 
 .music-box {
@@ -225,53 +223,15 @@ body {
     background: #000;
 }
 
-/* Container to stack lyrics and memory on the right */
-.song-details-right {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
 .favorite-line-box {
     font-family: var(--spotify-font);
     font-weight: 900;
     font-size: 1.2rem;
     background: var(--accent);
     color: white;
-    padding: 20px;
-    border-radius: 12px;
-    /* AUTO SIZE: Grow with text, no scroll bars */
-    height: auto;
-    width: 100%;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.4;
-    text-transform: uppercase;
-}
-
-/* Styled Memory Container for the right side */
-.memory-entry-box {
-    display: flex;
-    flex-direction: column;
-}
-
-.memory-entry-box label {
-    font-family: var(--spotify-font);
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-    opacity: 0.7;
-}
-
-.memory-entry-box textarea {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--glass-border);
-    border-radius: 15px;
     padding: 15px;
-    color: white;
-    font-family: var(--handwritten);
-    font-size: 1.6rem;
-    min-height: 150px;
-    resize: vertical;
+    border-radius: 12px;
+    margin-top: 15px;
 }
 
 /* --- INPUTS & BUTTONS --- */
@@ -285,7 +245,7 @@ body {
     margin-top: 20px;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], textarea {
     background: transparent;
     border: none;
     color: white;
@@ -294,7 +254,7 @@ input[type="text"], input[type="password"] {
     width: 100%;
 }
 
-input:focus, textarea:focus { outline: none; }
+input:focus { outline: none; }
 
 .icon-btn {
     background: var(--accent);
@@ -309,7 +269,6 @@ input:focus, textarea:focus { outline: none; }
     justify-content: center;
     align-items: center;
     font-size: 1.2rem;
-    animation: breathingGlow 3s infinite ease-in-out;
 }
 
 .icon-btn:hover {
@@ -325,20 +284,11 @@ input:focus, textarea:focus { outline: none; }
     font-weight: 800;
     cursor: pointer;
     transition: 0.3s;
-    animation: breathingGlow 3s infinite ease-in-out;
-}
-
-@keyframes breathingGlow {
-    0% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.4); }
-    50% { box-shadow: 0 0 20px rgba(255, 77, 77, 0.8); }
-    100% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.4); }
 }
 
 /* --- RESPONSIVENESS --- */
-@media (max-width: 850px) {
-    .song-entry { 
-        grid-template-columns: 1fr; /* Stack vertically on small screens */
-    }
+@media (max-width: 768px) {
+    .song-entry { grid-template-columns: 1fr; }
     .main-title { font-size: 2.5rem; }
     .binder-wrapper { padding: 20px; }
 }
