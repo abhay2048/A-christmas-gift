@@ -24,17 +24,15 @@ if (localStorage.getItem('wonderlandUnlocked') === 'true') {
 }
 
 loginBtn.addEventListener('click', () => {
-    // UPDATED: Password changed to "MOON" (Case-insensitive)
     if (passwordInput.value.toUpperCase() === "MOON") {
         localStorage.setItem('wonderlandUnlocked', 'true');
         loginScreen.classList.add('hidden');
     } else {
         alert("Incorrect secret word, my love. ❤️");
-        passwordInput.value = ""; // Clear input on fail
+        passwordInput.value = "";
     }
 });
 
-// Allow pressing "Enter" key to unlock
 passwordInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') loginBtn.click();
 });
@@ -46,20 +44,14 @@ let revealTriggered = false;
 function handleReveal() {
     if (revealTriggered) return;
     revealTriggered = true;
-    
     const overlay = document.getElementById('reveal-overlay');
     overlay.classList.remove('hidden');
-    
-    // Auto-hide the reveal after 15 seconds
-    setTimeout(() => {
-        overlay.classList.add('hidden');
-    }, 15000);
+    setTimeout(() => { overlay.classList.add('hidden'); }, 15000);
 }
 
 function updateCountdown() {
     const now = new Date().getTime();
     const gap = targetDate - now;
-
     const timerDiv = document.getElementById('countdown-timer');
 
     if (gap <= 0) {
@@ -79,12 +71,11 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 
 document.getElementById('previewTimer').addEventListener('click', () => {
-    // Climax Preview: Start a 5-second countdown for excitement
     revealTriggered = false;
     targetDate = new Date().getTime() + 6000;
 });
 
-// --- 3. NOTE STATION (Pinned Note First) ---
+// --- 3. NOTE STATION ---
 const noteRef = ref(db, 'notes/currentNote');
 onValue(noteRef, (s) => {
     document.getElementById('latestNote').innerText = s.val() || "No notes yet... Write something for me! 👇";
@@ -97,7 +88,7 @@ document.getElementById('saveNoteBtn').addEventListener('click', () => {
     input.value = '';
 });
 
-// --- 4. BUCKET LIST (Delete Functionality) ---
+// --- 4. BUCKET LIST ---
 const bucketRef = ref(db, 'bucketList');
 document.getElementById('addBucketBtn').addEventListener('click', () => {
     const input = document.getElementById('bucketInput');
@@ -115,14 +106,12 @@ onValue(bucketRef, (snapshot) => {
             const li = document.createElement('li');
             li.className = item.done ? 'done' : '';
             li.innerHTML = `
-                <span onclick="this.parentElement.dataset.key='${key}'">${item.text}</span>
+                <span style="cursor:pointer;">${item.text}</span>
                 <button class="del-btn" style="background:none; border:none; cursor:pointer;">🗑️</button>
             `;
-            
             li.querySelector('span').addEventListener('click', () => {
                 update(ref(db, `bucketList/${key}`), { done: !item.done });
             });
-
             li.querySelector('.del-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 remove(ref(db, `bucketList/${key}`));
@@ -132,7 +121,7 @@ onValue(bucketRef, (snapshot) => {
     }
 });
 
-// --- 5. MUSIC BINDER ---
+// --- 5. MUSIC BINDER (RE-DESIGNED RENDER) ---
 const songsRef = ref(db, 'binderSongs');
 let allSongs = [];
 let currentPage = 1;
@@ -141,11 +130,13 @@ const SONGS_PER_PAGE = 3;
 document.getElementById('addSongBtn').addEventListener('click', () => {
     const input = document.getElementById('songLinkInput');
     const match = input.value.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-    if (!match) return alert("Paste a Spotify link!");
+    if (!match) return alert("Paste a valid Spotify link, my love! ❤️");
     
     push(songsRef, {
         embedUrl: `https://open.spotify.com/embed/${match[1]}/${match[2]}`,
-        favLine: "", sideNote: "", timestamp: Date.now()
+        favLine: "", 
+        sideNote: "", 
+        timestamp: Date.now()
     });
     input.value = '';
 });
@@ -163,17 +154,48 @@ function renderBinder() {
 
     songs.forEach(song => {
         const div = document.createElement('div');
-        div.className = 'song-entry';
+        div.className = 'song-entry'; // Uses the Grid Layout from your CSS
+
         div.innerHTML = `
-            <div style="display:flex; justify-content:flex-end;"><button class="del-song" style="background:none; border:none; color:red; cursor:pointer;">×</button></div>
-            <iframe src="${song.embedUrl}" width="100%" height="80" frameBorder="0" allow="encrypted-media" style="border-radius:12px; margin-bottom:10px;"></iframe>
-            <input type="text" class="song-meta-input fav-line" value="${song.favLine}" placeholder="♥ Favorite line...">
-            <textarea class="song-meta-input side-note" placeholder="Why this song?">${song.sideNote}</textarea>
+            <!-- Left Side: Memory/Why this song -->
+            <div class="song-memory">
+                <h3>Our Memory</h3>
+                <textarea class="song-meta-input side-note" 
+                    placeholder="Why does this song remind you of us?" 
+                    style="height: 180px; width: 100%; font-family: 'Quicksand', sans-serif;">${song.sideNote}</textarea>
+            </div>
+
+            <!-- Right Side Stack: Music Box Square + Favorite Line -->
+            <div class="song-visual-stack">
+                <div style="display:flex; justify-content:flex-end;">
+                    <button class="del-song" style="background:none; border:none; color:rgba(255,255,255,0.4); cursor:pointer;">Remove ×</button>
+                </div>
+                
+                <div class="music-box">
+                    <!-- Spotify Square Player -->
+                    <iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0" allow="encrypted-media"></iframe>
+                </div>
+                
+                <div class="favorite-line-box">
+                    <input type="text" class="fav-line" 
+                        value="${song.favLine}" 
+                        placeholder="♥ Add favorite line..." 
+                        style="background:transparent; border:none; width: 100%; color: white; font-weight: 900; font-family: 'Montserrat', sans-serif;">
+                </div>
+            </div>
         `;
 
-        div.querySelector('.fav-line').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {favLine: e.target.value}));
-        div.querySelector('.side-note').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value}));
-        div.querySelector('.del-song').addEventListener('click', () => remove(ref(db, `binderSongs/${song.id}`)));
+        // Update Database on changes
+        div.querySelector('.fav-line').addEventListener('change', (e) => {
+            update(ref(db, `binderSongs/${song.id}`), {favLine: e.target.value});
+        });
+        div.querySelector('.side-note').addEventListener('change', (e) => {
+            update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value});
+        });
+        div.querySelector('.del-song').addEventListener('click', () => {
+            if(confirm("Remove this song from our binder?")) remove(ref(db, `binderSongs/${song.id}`));
+        });
+
         display.appendChild(div);
     });
 
@@ -185,25 +207,35 @@ function renderBinder() {
 document.getElementById('prevBtn').addEventListener('click', () => { currentPage--; renderBinder(); });
 document.getElementById('nextBtn').addEventListener('click', () => { currentPage++; renderBinder(); });
 
-// --- 6. VISUAL SNOW ---
+// --- 6. VISUAL SNOW (Enhanced) ---
 function createSnow() {
     const container = document.getElementById('snow-container');
+    if (!container) return;
+    
     const flake = document.createElement('div');
-    flake.className = 'snowflake';
-    flake.innerHTML = '❄';
+    const icons = ['❄', '✨', '🤍', '❄️'];
+    flake.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+    
     flake.style.cssText = `
-        position: fixed; top: -10%; left: ${Math.random() * 100}vw;
-        font-size: ${Math.random() * 10 + 10}px;
-        opacity: ${Math.random()};
+        position: fixed; 
+        top: -10%; 
+        left: ${Math.random() * 100}vw;
+        font-size: ${Math.random() * 15 + 10}px;
+        opacity: ${Math.random() * 0.7 + 0.3};
         pointer-events: none;
         z-index: 1;
-        animation: fall ${Math.random() * 3 + 4}s linear forwards;
+        filter: blur(${Math.random() * 1}px);
+        animation: fall ${Math.random() * 4 + 5}s linear forwards;
     `;
     container.appendChild(flake);
-    setTimeout(() => flake.remove(), 6000);
+    setTimeout(() => flake.remove(), 7000);
 }
-setInterval(createSnow, 200);
+setInterval(createSnow, 300);
 
 const style = document.createElement('style');
-style.textContent = `@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }`;
+style.textContent = `
+    @keyframes fall { 
+        to { transform: translateY(110vh) rotate(360deg); } 
+    }
+`;
 document.head.appendChild(style);
