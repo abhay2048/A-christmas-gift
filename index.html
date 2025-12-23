@@ -9,25 +9,44 @@
 </head>
 <body>
 
+    <!-- 1. Password Lock Screen -->
+    <div id="login-screen" class="login-overlay">
+        <div class="login-box">
+            <h2 style="font-family: 'Dancing Script'; font-size: 2.5rem; color: #d42426;">🎄 For Your Eyes Only 🎁</h2>
+            <p>Enter our special date to open your gift (MMDD)</p>
+            <input type="password" id="passwordInput" placeholder="Password...">
+            <button id="loginBtn" class="add-btn" style="margin-top: 20px; width: 100%;">Open Wonderland</button>
+        </div>
+    </div>
+
     <div class="snow-container" id="snow-container"></div>
+
+    <!-- Decorative Christmas Lights -->
+    <ul class="lightrope">
+        <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+    </ul>
 
     <div class="main-content">
         <header>
             <h1>Our Winter Wonderland</h1>
             <div id="countdown-timer" class="timer">Loading our countdown...</div>
+            <div id="special-message" class="special-msg hidden"></div>
+            <button id="previewTimer" class="preview-btn">✨ Preview Christmas Morning</button>
         </header>
 
+        <!-- Note Station -->
         <section class="glass-card full-width">
             <h2>✉️ The Note Station</h2>
-            <p style="text-align:center; margin-bottom:15px; font-style:italic; font-size:0.9rem;">Leave a message for me to find...</p>
+            <p class="subtitle">Leave a message for me to find...</p>
             <textarea id="noteInput" placeholder="Write a sweet note here..." rows="4"></textarea>
             <button id="saveNoteBtn" class="full-btn add-btn" style="margin-top: 10px;">Pin Note</button>
             <div id="latestNote" class="note-paper">Loading note...</div>
         </section>
 
+        <!-- Bucket List -->
         <section class="glass-card full-width">
             <h2>✈️ Our Future Bucket List</h2>
-            <p style="text-align:center; margin-bottom:15px; font-style:italic; font-size:0.9rem;">Click an item to cross it off!</p>
+            <p class="subtitle">Click text to cross off, or icon to remove!</p>
             <div class="input-group">
                 <input type="text" id="bucketInput" placeholder="What's our next adventure?">
                 <button id="addBucketBtn" class="add-btn">Add</button>
@@ -35,6 +54,7 @@
             <ul id="bucketList" class="styled-list"></ul>
         </section>
 
+        <!-- Music Binder -->
         <section class="binder-container">
             <div class="binder-rings">
                 <div class="ring"></div>
@@ -48,17 +68,18 @@
                 <div class="add-song-section full-width">
                     <div class="input-group">
                         <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                        <button id="addSongBtn" class="add-btn">Add Song Page</button>
+                        <button id="addSongBtn" class="add-btn">Add Song</button>
                     </div>
                 </div>
 
                 <div id="binder-pages-display">
-                    </div>
+                    <!-- Songs load here -->
+                </div>
 
                 <div class="pagination-controls">
-                    <button id="prevBtn" disabled>« Prev Page</button>
+                    <button id="prevBtn" disabled>« Prev</button>
                     <span id="pageIndicator">Page 1</span>
-                    <button id="nextBtn">Next Page »</button>
+                    <button id="nextBtn">Next »</button>
                 </div>
             </div>
         </section>
