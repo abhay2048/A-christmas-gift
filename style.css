@@ -18,6 +18,7 @@
 body {
     margin: 0;
     font-family: 'Quicksand', sans-serif;
+    /* Deep Winter Night Gradient */
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
                 url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070') no-repeat center center fixed;
     background-size: cover;
@@ -50,7 +51,7 @@ body {
 .login-overlay {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle, #ff4d4d, #8b0000); /* Festive Red Gradient */
+    background: radial-gradient(circle, #1a472a, #051a0d); 
     z-index: 10000;
     display: flex;
     justify-content: center;
@@ -58,14 +59,14 @@ body {
 }
 
 .login-box {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
     padding: 40px;
     border-radius: 30px;
     text-align: center;
     width: 90%;
     max-width: 350px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--glass-border);
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
@@ -114,10 +115,11 @@ body {
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-/* --- NOTE STATION --- */
+/* --- REDESIGNED NOTE STATION (GLASS STYLE) --- */
 .pinned-note {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     color: #ffffff;
     padding: 45px 30px 30px;
     border-radius: 20px;
@@ -126,9 +128,17 @@ body {
     line-height: 1.5;
     margin-bottom: 30px;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    transform: rotate(-0.5deg);
     position: relative;
     transition: all 0.4s ease;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.pinned-note:hover {
+    transform: rotate(0deg) translateY(-5px);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent);
 }
 
 .pinned-note::before {
@@ -138,6 +148,8 @@ body {
     left: 50%;
     transform: translateX(-50%);
     font-size: 2rem;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+    z-index: 2;
     animation: heartPulse 2s infinite;
 }
 
@@ -148,105 +160,78 @@ body {
 }
 
 /* --- BUCKET LIST --- */
-.custom-list { padding: 0; list-style: none; }
+.custom-list {
+    padding: 0;
+    list-style: none;
+}
+
 .custom-list li {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
     margin-bottom: 15px;
     padding: 20px;
     border-radius: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: all 0.3s ease;
     border-left: 5px solid var(--accent);
 }
 
-/* --- MUSIC BINDER (SWAPPED LAYOUT) --- */
+.custom-list li:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(10px);
+}
+
+.custom-list li.done {
+    opacity: 0.6;
+    border-left: 5px solid var(--spotify-green);
+    background: rgba(29, 185, 84, 0.1);
+}
+
+.custom-list li.done span {
+    text-decoration: line-through rgba(255,255,255,0.5) 2px;
+}
+
+/* --- MUSIC BINDER --- */
 .binder-wrapper {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(15px);
     border-radius: 30px;
     border: 1px solid var(--glass-border);
     margin-top: 40px;
-    padding: 20px;
+    padding: 40px;
 }
 
 .song-entry {
     display: grid;
-    grid-template-columns: 0.8fr 1.2fr; /* Swapped: Smaller Left, Larger Right */
+    grid-template-columns: 1.2fr 1fr;
     gap: 30px;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.3);
     padding: 25px;
     border-radius: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    align-items: start;
-}
-
-/* Left Side: Visuals */
-.song-visual-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
 }
 
 .music-box {
     width: 100%;
-    aspect-ratio: 1 / 1; 
-    max-width: 300px; 
-    margin: 0 auto;
+    aspect-ratio: 1 / 1;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    background: #000;
 }
 
 .favorite-line-box {
-    background: var(--accent);
-    padding: 18px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
-    box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3);
-}
-
-.favorite-line-box input.fav-line {
-    font-size: 1.1rem !important;
-    font-weight: 900 !important;
-    text-transform: uppercase;
-    color: white;
-    background: transparent !important;
-    border: none !important;
-    padding: 0;
-}
-
-/* Right Side: Memory Text Area */
-.song-memory {
-    width: 100%;
-    text-align: left;
-}
-
-.song-memory h3 {
-    font-size: 1rem;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-}
-
-.song-meta-input.side-note {
-    background: transparent !important;
-    border: none !important;
-    font-size: 1.4rem !important; 
-    line-height: 1.5;
-    color: #fff;
-    padding: 0;
-    width: 100%;
-    resize: none;
-    min-height: 120px;
     font-family: var(--spotify-font);
-    font-weight: 500;
+    font-weight: 900;
+    font-size: 1.2rem;
+    background: var(--accent);
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 15px;
 }
 
 /* --- INPUTS & BUTTONS --- */
@@ -257,6 +242,7 @@ body {
     padding: 10px;
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 20px;
 }
 
 input[type="text"], input[type="password"], textarea {
@@ -268,12 +254,37 @@ input[type="text"], input[type="password"], textarea {
     width: 100%;
 }
 
-.icon-btn, .primary-btn {
+input:focus { outline: none; }
+
+.icon-btn {
     background: var(--accent);
     color: white;
     border: none;
-    border-radius: 50px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
     cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    animation: breathingGlow 3s infinite ease-in-out;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1) rotate(10deg);
+}
+
+.primary-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.3s;
     animation: breathingGlow 3s infinite ease-in-out;
 }
 
@@ -283,27 +294,11 @@ input[type="text"], input[type="password"], textarea {
     100% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.4); }
 }
 
-/* --- MOBILE RESPONSIVE TWEAKS --- */
+/* --- RESPONSIVENESS --- */
 @media (max-width: 768px) {
-    .song-entry {
-        grid-template-columns: 1fr; /* Stack vertically */
-        gap: 20px;
-        padding: 20px;
-    }
-
-    .song-memory {
-        text-align: center;
-        order: 2; /* Keeps memory below music for mobile scrolling */
-    }
-
-    .song-visual-stack {
-        order: 1; /* Music on top */
-    }
-
-    .song-meta-input.side-note {
-        text-align: center;
-        font-size: 1.2rem !important;
-    }
+    .song-entry { grid-template-columns: 1fr; }
+    .main-title { font-size: 2.5rem; }
+    .binder-wrapper { padding: 20px; }
 }
 
 .hidden { display: none !important; }
