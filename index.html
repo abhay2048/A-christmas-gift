@@ -9,84 +9,87 @@
 </head>
 <body>
 
-    <!-- Visual Life: Aurora, Snow, and Hearts -->
-    <div class="aurora-bg"></div>
-    <div class="snow-container" id="snow-container"></div>
-    <div class="hearts-container" id="hearts-container"></div>
-
-    <!-- Login Overlay -->
+    <!-- 1. Password Lock Screen -->
     <div id="login-screen" class="login-overlay">
         <div class="login-box">
-            <h2 class="handmade-text">To the Moon and Back</h2>
-            <p>Enter the secret word...</p>
-            <input type="password" id="passwordInput" placeholder="••••" class="doodle-input">
-            <button id="loginBtn" class="marker-btn">Unlock Wonderland</button>
+            <h1>❄️</h1>
+            <h2>Our Private Space</h2>
+            <p>Enter the secret word to the moon...</p>
+            <input type="password" id="passwordInput" placeholder="Secret Word">
+            <button id="loginBtn" class="primary-btn">Unlock Wonderland</button>
         </div>
     </div>
 
-    <!-- Dramatic Reveal Overlay -->
+    <!-- 2. The Grand Reveal Overlay (Hidden by default) -->
     <div id="reveal-overlay" class="reveal-overlay hidden">
-        <div class="reveal-paper">
-            <h2 class="reveal-text">Merry Christmas, my love...</h2>
+        <div class="reveal-content">
+            <h2 class="reveal-text">Merry Christmas my love...</h2>
             <p class="reveal-subtext">May your days to come be as pretty as the Christmas snow.</p>
-            <div class="sparkles">✨❄️✨</div>
+            <div class="sparkles">✨🎁✨</div>
         </div>
     </div>
+
+    <div class="snow-container" id="snow-container"></div>
 
     <main class="main-content">
-        <header>
+        <header class="hero-section">
             <h1 class="main-title">Our Winter Wonderland</h1>
-            <div class="countdown-wrapper">
-                <div id="countdown-timer" class="timer-display">Loading...</div>
-                <button id="previewTimer" class="preview-tag">✨ Preview Christmas Morning</button>
+            <div class="countdown-container">
+                <div id="countdown-timer" class="timer-display">Calculating...</div>
+                <button id="previewTimer" class="preview-pill">✨ Preview The Magic</button>
             </div>
         </header>
 
-        <!-- Note Station (Pinned Note FIRST) -->
-        <section class="glass-section">
-            <div class="section-label">✉️ The Latest Note</div>
-            <div id="latestNote" class="scrapbook-note">No notes yet...</div>
-            <div class="note-input-row">
-                <textarea id="noteInput" placeholder="Leave a message for me..." class="doodle-input"></textarea>
-                <button id="saveNoteBtn" class="marker-btn">Pin Note</button>
+        <!-- 3. Note Station (Pinned Note FIRST) -->
+        <section class="glass-card">
+            <div class="card-header">
+                <h2>✉️ The Note Station</h2>
+                <span class="card-tag">Latest Message</span>
+            </div>
+            
+            <div id="latestNote" class="pinned-note">Loading note...</div>
+
+            <div class="note-input-area">
+                <textarea id="noteInput" placeholder="Leave a new note for me to find..." rows="3"></textarea>
+                <button id="saveNoteBtn" class="secondary-btn">Pin New Note</button>
             </div>
         </section>
 
-        <!-- Bucket List -->
-        <section class="glass-section">
-            <div class="section-label">✈️ Our Future Bucket List</div>
+        <!-- 4. Bucket List -->
+        <section class="glass-card">
+            <div class="card-header">
+                <h2>✈️ Our Bucket List</h2>
+            </div>
             <div class="input-row">
-                <input type="text" id="bucketInput" class="doodle-input" placeholder="What's our next adventure?">
-                <button id="addBucketBtn" class="add-circle">+</button>
+                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
+                <button id="addBucketBtn" class="icon-btn">+</button>
             </div>
-            <ul id="bucketList" class="styled-list"></ul>
+            <ul id="bucketList" class="custom-list"></ul>
         </section>
 
-        <!-- PHOTO ACCURATE BINDER -->
-        <div class="binder-container">
-            <div class="binder-rings">
-                <div class="metal-ring"></div>
-                <div class="metal-ring"></div>
-                <div class="metal-ring"></div>
-                <div class="metal-ring"></div>
+        <!-- 5. Music Binder (Fully Responsive) -->
+        <div class="binder-wrapper">
+            <div class="binder-spine mobile-hidden">
+                <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
             </div>
-
-            <div class="binder-page">
-                <h2 class="handmade-title">🎵 Music & Memories</h2>
+            <div class="binder-content">
+                <div class="card-header center">
+                    <h2 class="handwritten-title">🎵 Music & Memories</h2>
+                </div>
                 
-                <div class="song-upload">
-                    <input type="text" id="songLinkInput" class="doodle-input" placeholder="Paste Spotify Link...">
-                    <button id="addSongBtn" class="marker-btn">Add Page</button>
+                <div class="song-upload-bar">
+                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                    <button id="addSongBtn" class="primary-btn">Add to Binder</button>
                 </div>
 
-                <div id="binder-pages-display">
-                    <!-- Song entries will render here with left/right layout -->
+                <div id="binder-pages-display" class="songs-grid">
+                    <!-- Songs load here -->
                 </div>
 
                 <div class="pagination">
-                    <button id="prevBtn" class="nav-btn">« Prev</button>
+                    <button id="prevBtn" disabled>«</button>
                     <span id="pageIndicator">Page 1</span>
-                    <button id="nextBtn" class="nav-btn">Next »</button>
+                    <button id="nextBtn">»</button>
                 </div>
             </div>
         </div>
