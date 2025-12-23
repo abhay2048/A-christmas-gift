@@ -1,3 +1,4 @@
+/* --- VARIABLES & BASE --- */
 :root {
     /* Festive Glass Palette */
     --glass: rgba(255, 255, 255, 0.1);
@@ -26,7 +27,7 @@ body {
     overflow-x: hidden;
 }
 
-/* --- REVEAL OVERLAY --- */
+/* --- REVEAL & LOGIN OVERLAYS --- */
 .reveal-overlay {
     position: fixed;
     inset: 0;
@@ -47,7 +48,6 @@ body {
     text-shadow: 0 0 20px var(--accent);
 }
 
-/* --- LOGIN SCREEN --- */
 .login-overlay {
     position: fixed;
     inset: 0;
@@ -104,7 +104,7 @@ body {
     color: white;
 }
 
-/* --- GLASS CARD --- */
+/* --- GLASS CARD & PINNED NOTE --- */
 .glass-card {
     background: var(--glass);
     backdrop-filter: blur(12px);
@@ -115,7 +115,6 @@ body {
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-/* --- REDESIGNED NOTE STATION (GLASS STYLE) --- */
 .pinned-note {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(15px);
@@ -153,12 +152,6 @@ body {
     animation: heartPulse 2s infinite;
 }
 
-@keyframes heartPulse {
-    0% { transform: translateX(-50%) scale(1); }
-    50% { transform: translateX(-50%) scale(1.15); }
-    100% { transform: translateX(-50%) scale(1); }
-}
-
 /* --- BUCKET LIST --- */
 .custom-list {
     padding: 0;
@@ -194,7 +187,7 @@ body {
     text-decoration: line-through rgba(255,255,255,0.5) 2px;
 }
 
-/* --- MUSIC BINDER --- */
+/* --- MUSIC BINDER (UPDATED LAYOUT) --- */
 .binder-wrapper {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(15px);
@@ -206,13 +199,15 @@ body {
 
 .song-entry {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    /* Song on left, Text content on right */
+    grid-template-columns: 1fr 1.5fr; 
     gap: 30px;
     background: rgba(0, 0, 0, 0.3);
     padding: 25px;
     border-radius: 20px;
     margin-bottom: 40px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    align-items: start;
 }
 
 .music-box {
@@ -223,15 +218,43 @@ body {
     background: #000;
 }
 
+/* Stack Lyric and Memory on the right */
+.song-details-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .favorite-line-box {
     font-family: var(--spotify-font);
     font-weight: 900;
     font-size: 1.2rem;
     background: var(--accent);
     color: white;
-    padding: 15px;
+    padding: 20px;
     border-radius: 12px;
-    margin-top: 15px;
+    height: auto; 
+    min-height: 60px;
+    width: 100%;
+    word-wrap: break-word;
+    overflow: visible; 
+    text-transform: uppercase;
+}
+
+.memory-input-box {
+    width: 100%;
+}
+
+.memory-input-box textarea {
+    width: 100%;
+    min-height: 150px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 15px;
+    color: white;
+    font-family: var(--spotify-font);
+    resize: vertical;
 }
 
 /* --- INPUTS & BUTTONS --- */
@@ -245,7 +268,7 @@ body {
     margin-top: 20px;
 }
 
-input[type="text"], input[type="password"], textarea {
+input[type="text"], input[type="password"] {
     background: transparent;
     border: none;
     color: white;
@@ -254,7 +277,7 @@ input[type="text"], input[type="password"], textarea {
     width: 100%;
 }
 
-input:focus { outline: none; }
+input:focus, textarea:focus { outline: none; }
 
 .icon-btn {
     background: var(--accent);
@@ -272,10 +295,6 @@ input:focus { outline: none; }
     animation: breathingGlow 3s infinite ease-in-out;
 }
 
-.icon-btn:hover {
-    transform: scale(1.1) rotate(10deg);
-}
-
 .primary-btn {
     background: var(--accent);
     color: white;
@@ -288,6 +307,13 @@ input:focus { outline: none; }
     animation: breathingGlow 3s infinite ease-in-out;
 }
 
+/* --- ANIMATIONS --- */
+@keyframes heartPulse {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.15); }
+    100% { transform: translateX(-50%) scale(1); }
+}
+
 @keyframes breathingGlow {
     0% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.4); }
     50% { box-shadow: 0 0 20px rgba(255, 77, 77, 0.8); }
@@ -296,7 +322,9 @@ input:focus { outline: none; }
 
 /* --- RESPONSIVENESS --- */
 @media (max-width: 768px) {
-    .song-entry { grid-template-columns: 1fr; }
+    .song-entry { 
+        grid-template-columns: 1fr; 
+    }
     .main-title { font-size: 2.5rem; }
     .binder-wrapper { padding: 20px; }
 }
