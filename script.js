@@ -14,7 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- 1. THEME TOGGLE (GIFT) ---
+// --- THEME TOGGLE ---
 const body = document.body;
 const giftToggle = document.getElementById('theme-toggle-gift');
 const title = document.getElementById('dynamic-title');
@@ -31,33 +31,19 @@ giftToggle.addEventListener('click', () => {
     }
 });
 
-// --- 2. LOGIN ---
+// --- LOGIN ---
 const loginScreen = document.getElementById('login-screen');
 const loginBtn = document.getElementById('loginBtn');
 const passwordInput = document.getElementById('passwordInput');
-
 if (localStorage.getItem('wonderlandUnlocked') === 'true') loginScreen.classList.add('hidden');
-
 loginBtn.addEventListener('click', () => {
     if (passwordInput.value.toUpperCase() === "MOON") {
         localStorage.setItem('wonderlandUnlocked', 'true');
         loginScreen.classList.add('hidden');
-    } else {
-        alert("Incorrect secret word, my love. ❤️");
-    }
+    } else { alert("Incorrect word, my love. ❤️"); }
 });
 
-// --- 3. MEMORY TRIGGERS ---
-document.getElementById('mem-christmas').addEventListener('click', () => {
-    document.getElementById('reveal-overlay').classList.remove('hidden');
-});
-document.querySelector('.close-reveal-btn').addEventListener('click', () => {
-    document.getElementById('reveal-overlay').classList.add('hidden');
-});
-
-// --- 4. NEW YEAR SEQUENCE ---
-const nyOverlay = document.getElementById('ny-experience-overlay');
-const starContainer = document.getElementById('star-container');
+// --- NEW YEAR EXPERIENCE ---
 const starMessages = [
     "Handling me even when I'm difficult ❤️",
     "Being my safest place in 2025 🏠",
@@ -69,55 +55,60 @@ const starMessages = [
 let starsClicked = 0;
 
 document.getElementById('mem-newyear').addEventListener('click', () => {
-    nyOverlay.classList.remove('hidden');
+    document.getElementById('ny-experience-overlay').classList.remove('hidden');
     startStarSequence();
 });
 
 function startStarSequence() {
     starsClicked = 0;
-    starContainer.innerHTML = '';
+    const field = document.getElementById('star-field');
+    field.innerHTML = '';
     document.querySelectorAll('.stage').forEach(s => s.classList.add('hidden'));
     document.getElementById('star-stage').classList.remove('hidden');
     
-    starMessages.forEach((msg, i) => {
+    starMessages.forEach((msg) => {
         const star = document.createElement('div');
-        star.className = 'floating-star';
+        star.className = 'drifting-star';
         star.innerHTML = '⭐';
-        star.style.left = Math.random() * 80 + 10 + '%';
-        star.style.top = Math.random() * 70 + 10 + '%';
-        
+        let x = Math.random() * 80 + 10, y = Math.random() * 80 + 10;
+        let xDir = (Math.random() - 0.5) * 0.3, yDir = (Math.random() - 0.5) * 0.3;
+
+        function move() {
+            if (star.classList.contains('clicked')) return;
+            x += xDir; y += yDir;
+            if (x < 5 || x > 95) xDir *= -1; if (y < 5 || y > 95) yDir *= -1;
+            star.style.left = x + '%'; star.style.top = y + '%';
+            requestAnimationFrame(move);
+        }
+        requestAnimationFrame(move);
+
         star.onclick = () => {
             if (star.classList.contains('clicked')) return;
             star.classList.add('clicked');
             star.innerHTML = `<span class="star-msg">${msg}</span>`;
             starsClicked++;
-            document.querySelector('.star-count-hint').innerText = `Click the stars to remember (${starsClicked}/6)`;
-            if (starsClicked === 6) setTimeout(startCountdownSequence, 2000);
+            document.querySelector('.star-count-hint').innerText = `Stars found: (${starsClicked}/6)`;
+            if (starsClicked === 6) setTimeout(startClockSequence, 3000);
         };
-        starContainer.appendChild(star);
+        field.appendChild(star);
     });
 }
 
-function startCountdownSequence() {
+function startClockSequence() {
     document.getElementById('star-stage').classList.add('hidden');
     document.getElementById('countdown-stage').classList.remove('hidden');
-    let year = 2025;
-    let mIdx = 0;
-    const yearEl = document.getElementById('fast-year-counter');
-    const dateEl = document.getElementById('fast-date-counter');
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    let timer = setInterval(() => {
-        dateEl.innerText = `${months[mIdx % 12]} ${Math.floor(Math.random()*28)+1}`;
-        mIdx++;
-        if (mIdx > 15) {
-            year = 2026;
-            yearEl.innerText = year;
-            yearEl.classList.add('glow-up');
+    let sec = 55;
+    const clock = document.getElementById('digital-clock');
+    const timer = setInterval(() => {
+        sec++;
+        if (sec < 60) { clock.innerText = `23:59:${sec.toString().padStart(2,'0')}`; }
+        else {
             clearInterval(timer);
+            clock.innerText = "00:00:00"; clock.style.color = "#d4af37";
+            document.getElementById('clock-year').innerText = "2026";
             setTimeout(startEnvelopeSequence, 2000);
         }
-    }, 120);
+    }, 1000);
 }
 
 function startEnvelopeSequence() {
@@ -125,44 +116,40 @@ function startEnvelopeSequence() {
     document.getElementById('envelope-stage').classList.remove('hidden');
     const env = document.getElementById('main-envelope');
     const typeTarget = document.getElementById('typewriter-text');
-    const fullText = "Thank you for handling me this year. You are my greatest gift. Can you please do that for this year too? I love you forever. ❤️";
+    const fullText = "Thank you for handling me this year. You are my greatest gift. Can you please do that for this year too?\n\nI love you forever. ❤️";
     
     env.onclick = () => {
         if (env.classList.contains('open')) return;
         env.classList.add('open');
         setTimeout(() => {
-            let i = 0;
+            let i = 0; typeTarget.innerText = "";
             let typing = setInterval(() => {
-                typeTarget.innerText += fullText[i];
-                i++;
+                typeTarget.innerText += fullText[i]; i++;
                 if (i >= fullText.length) {
                     clearInterval(typing);
                     document.getElementById('final-ny-text').classList.remove('hidden');
-                    setTimeout(() => nyOverlay.classList.add('hidden'), 8000);
+                    setTimeout(() => { if(confirm("Back to Wonderland?")) document.getElementById('ny-experience-overlay').classList.add('hidden'); }, 6000);
                 }
-            }, 50);
-        }, 1000);
+            }, 70);
+        }, 1200);
     };
 }
 
-// --- 5. FIREBASE (NOTES, BUCKET, BINDER) ---
+// --- FIREBASE LOGIC ---
 const noteRef = ref(db, 'notes/currentNote');
-onValue(noteRef, (s) => document.getElementById('latestNote').innerText = s.val() || "Write a note... 👇");
+onValue(noteRef, (s) => document.getElementById('latestNote').innerText = s.val() || "No notes yet...");
 document.getElementById('saveNoteBtn').onclick = () => {
     const inp = document.getElementById('noteInput');
-    if (inp.value.trim()) set(noteRef, inp.value);
-    inp.value = '';
+    if (inp.value.trim()) set(noteRef, inp.value); inp.value = '';
 };
 
 const bucketRef = ref(db, 'bucketList');
 document.getElementById('addBucketBtn').onclick = () => {
     const inp = document.getElementById('bucketInput');
-    if (inp.value) push(bucketRef, { text: inp.value, done: false });
-    inp.value = '';
+    if (inp.value) push(bucketRef, { text: inp.value, done: false }); inp.value = '';
 };
 onValue(bucketRef, (snap) => {
-    const list = document.getElementById('bucketList');
-    list.innerHTML = '';
+    const list = document.getElementById('bucketList'); list.innerHTML = '';
     const data = snap.val();
     if (data) {
         Object.entries(data).forEach(([key, item]) => {
@@ -177,23 +164,18 @@ onValue(bucketRef, (snap) => {
 });
 
 const songsRef = ref(db, 'binderSongs');
-let allSongs = [];
-let currentPage = 1;
+let allSongs = [], currentPage = 1;
 onValue(songsRef, (snap) => {
     const data = snap.val();
     allSongs = data ? Object.entries(data).map(([id, s]) => ({...s, id})).sort((a,b) => b.timestamp - a.timestamp) : [];
     renderBinder();
 });
-
 function renderBinder() {
-    const display = document.getElementById('binder-pages-display');
-    display.innerHTML = '';
+    const display = document.getElementById('binder-pages-display'); display.innerHTML = '';
     const songs = allSongs.slice((currentPage-1)*3, currentPage*3);
     songs.forEach(song => {
-        const div = document.createElement('div');
-        div.className = 'song-entry';
-        div.innerHTML = `
-            <div class="song-memory"><h3>Our Memory</h3><textarea class="side-note">${song.sideNote||""}</textarea></div>
+        const div = document.createElement('div'); div.className = 'song-entry';
+        div.innerHTML = `<div class="song-memory"><h3>Our Memory</h3><textarea class="side-note">${song.sideNote||""}</textarea></div>
             <div class="song-visual-stack">
                 <button class="del-song">Remove ×</button>
                 <div class="music-box"><iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0"></iframe></div>
@@ -208,7 +190,6 @@ function renderBinder() {
     document.getElementById('prevBtn').disabled = currentPage === 1;
     document.getElementById('nextBtn').disabled = currentPage * 3 >= allSongs.length;
 }
-
 document.getElementById('addSongBtn').onclick = () => {
     const val = document.getElementById('songLinkInput').value;
     const match = val.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
@@ -217,8 +198,10 @@ document.getElementById('addSongBtn').onclick = () => {
 };
 document.getElementById('prevBtn').onclick = () => { if(currentPage > 1) { currentPage--; renderBinder(); } };
 document.getElementById('nextBtn').onclick = () => { if(currentPage * 3 < allSongs.length) { currentPage++; renderBinder(); } };
+document.getElementById('mem-christmas').onclick = () => document.getElementById('reveal-overlay').classList.remove('hidden');
+document.querySelector('.close-reveal-btn').onclick = () => document.getElementById('reveal-overlay').classList.add('hidden');
 
-// --- 6. SNOW ---
+// --- SNOW & TIMER ---
 function createSnow() {
     const container = document.getElementById('snow-container');
     const flake = document.createElement('div');
@@ -228,13 +211,8 @@ function createSnow() {
     setTimeout(() => flake.remove(), 7000);
 }
 setInterval(createSnow, 300);
-
-// Timer
 setInterval(() => {
     const gap = new Date("Dec 25, 2025").getTime() - new Date().getTime();
-    const d = Math.max(0, Math.floor(gap / 86400000));
-    const h = Math.max(0, Math.floor((gap % 86400000) / 3600000));
-    const m = Math.max(0, Math.floor((gap % 3600000) / 60000));
-    const s = Math.max(0, Math.floor((gap % 60000) / 1000));
+    const d = Math.max(0, Math.floor(gap / 86400000)), h = Math.max(0, Math.floor((gap % 86400000) / 3600000)), m = Math.max(0, Math.floor((gap % 3600000) / 60000)), s = Math.max(0, Math.floor((gap % 60000) / 1000));
     document.getElementById('countdown-timer').innerText = gap > 0 ? `${d}d : ${h}h : ${m}m : ${s}s` : "Merry Christmas! ❤️";
 }, 1000);
