@@ -5,14 +5,12 @@
   <title>Our Winter Wonderland</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Dancing+Script:wght@600&family=Indie+Flower&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- 🔒 LOCK SCREEN -->
 <div id="lockScreen" class="fullscreen center">
   <div class="glass-card">
     <h1>❄️</h1>
@@ -23,34 +21,36 @@
   </div>
 </div>
 
-<!-- 🎁 FLOATING GIFT -->
 <div id="floatingGift">🎁</div>
 
-<!-- 🌌 MAIN APP -->
 <div id="app" class="hidden">
 
-  <!-- ❄️ SNOW CONTAINER -->
   <div id="snowContainer"></div>
 
   <main class="container">
 
-    <!-- HERO -->
     <section class="hero">
       <h1 id="mainTitle">Our Winter Wonderland</h1>
       <div id="countdown" class="pill">Loading countdown...</div>
     </section>
 
-    <!-- ✉️ NOTE STATION -->
     <section class="card">
       <h2>✉️ The Note Station</h2>
+      
       <div id="latestNote" class="note">
-        Loading note...
+        Loading latest note...
       </div>
-      <textarea id="noteInput" placeholder="Leave a new note..."></textarea>
-      <button id="saveNoteBtn">Pin New Note</button>
-    </section>
 
-    <!-- ✈️ BUCKET LIST -->
+      <br>
+
+      <textarea id="noteInput" placeholder="Type your message here..."></textarea>
+      
+      <button id="saveNote">Save Note</button>
+
+      <div id="notesContainer">
+        </div>
+      </section>
+
     <section class="card">
       <h2>✈️ Our Bucket List</h2>
 
@@ -62,7 +62,6 @@
       <ul id="bucketList"></ul>
     </section>
 
-    <!-- 🎵 MUSIC BINDER -->
     <section class="card">
       <h2 class="center-text">🎵 Music & Memories</h2>
 
