@@ -1,87 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Our Winter Wonderland</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Dancing+Script:wght@600&family=Indie+Flower&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Winter Wonderland</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&family=Playfair+Display:ital@1&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="christmas-theme"> <!-- Default Theme -->
 
-<div id="lockScreen" class="fullscreen center">
-  <div class="glass-card">
-    <h1>❄️</h1>
-    <h2>Our Private Space</h2>
-    <p>Enter the secret word to the moon...</p>
-    <input type="password" id="passwordInput" placeholder="Secret Word" />
-    <button id="unlockBtn">Unlock Wonderland</button>
-  </div>
-</div>
+    <!-- Floating Gift Toggle -->
+    <div id="theme-toggle-gift" class="floating-gift" title="Change the Season">🎁</div>
 
-<div id="floatingGift">🎁</div>
-
-<div id="app" class="hidden">
-
-  <div id="snowContainer"></div>
-
-  <main class="container">
-
-    <section class="hero">
-      <h1 id="mainTitle">Our Winter Wonderland</h1>
-      <div id="countdown" class="pill">Loading countdown...</div>
-    </section>
-
-    <section class="card">
-      <h2>✉️ The Note Station</h2>
-      
-      <div id="latestNote" class="note">
-        Loading latest note...
-      </div>
-
-      <br>
-
-      <textarea id="noteInput" placeholder="Type your message here..."></textarea>
-      
-      <button id="saveNote">Save Note</button>
-
-      <div id="notesContainer">
+    <!-- 1. Password Lock Screen -->
+    <div id="login-screen" class="login-overlay">
+        <div class="login-box">
+            <h1 class="festive-icon">❄️</h1>
+            <h2>Our Private Space</h2>
+            <p>Enter the secret word to the moon...</p>
+            <input type="password" id="passwordInput" placeholder="Secret Word">
+            <button id="loginBtn" class="primary-btn">Unlock Wonderland</button>
         </div>
-      </section>
+    </div>
 
-    <section class="card">
-      <h2>✈️ Our Bucket List</h2>
+    <!-- 2. The Grand Reveal Overlay (Christmas) -->
+    <div id="reveal-overlay" class="reveal-overlay hidden">
+        <div class="reveal-content">
+            <h2 class="reveal-text">Merry Christmas my love...</h2>
+            <p class="reveal-subtext">May your days to come be as pretty as the Christmas snow.</p>
+            <div class="sparkles">✨🎁✨</div>
+            <button class="close-reveal">Close</button>
+        </div>
+    </div>
 
-      <div class="row">
-        <input id="bucketInput" placeholder="What's our next adventure?" />
-        <button id="addBucketBtn">+</button>
-      </div>
+    <!-- 3. New Year Experience Overlay (The Star/Envelope Sequence) -->
+    <div id="ny-experience-overlay" class="ny-overlay hidden">
+        <div id="star-stage" class="stage">
+            <h2 class="stage-title">Thank you for...</h2>
+            <div id="star-container"></div>
+            <p class="star-count-hint">Click the stars to remember (0/6)</p>
+        </div>
 
-      <ul id="bucketList"></ul>
-    </section>
+        <div id="countdown-stage" class="stage hidden">
+            <div id="fast-year-counter">2025</div>
+            <div id="fast-date-counter">January 1st</div>
+        </div>
 
-    <section class="card">
-      <h2 class="center-text">🎵 Music & Memories</h2>
+        <div id="envelope-stage" class="stage hidden">
+            <div class="envelope-wrapper">
+                <div class="envelope" id="main-envelope">
+                    <div class="flap"></div>
+                    <div class="letter">
+                        <div id="typewriter-text"></div>
+                    </div>
+                </div>
+            </div>
+            <h2 class="ny-wish hidden" id="final-ny-text">Happy New Year 2026! 🥂</h2>
+        </div>
+    </div>
 
-      <div class="row">
-        <input id="songInput" placeholder="Paste Spotify Link..." />
-        <button id="addSongBtn">Add to Binder</button>
-      </div>
+    <div class="snow-container" id="snow-container"></div>
 
-      <div id="songsContainer"></div>
+    <main class="main-content">
+        <header class="hero-section">
+            <h1 class="main-title" id="dynamic-title">Our Winter Wonderland</h1>
+            <div class="countdown-container">
+                <div id="countdown-timer" class="timer-display">Calculating...</div>
+                
+                <!-- Updated Memory Section -->
+                <div class="memory-station">
+                    <h3>✨ Our Memories</h3>
+                    <div class="memory-btns">
+                        <button id="mem-christmas" class="memory-pill">🎄 Christmas</button>
+                        <button id="mem-newyear" class="memory-pill">🎆 New Year</button>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-      <div class="pagination">
-        <button id="prevPage">«</button>
-        <span id="pageIndicator">Page 1</span>
-        <button id="nextPage">»</button>
-      </div>
-    </section>
+        <!-- Note Station -->
+        <section class="glass-card">
+            <div class="card-header">
+                <h2>✉️ The Note Station</h2>
+                <span class="card-tag">Latest Message</span>
+            </div>
+            <div id="latestNote" class="pinned-note">Loading note...</div>
+            <div class="note-input-area">
+                <textarea id="noteInput" placeholder="Leave a new note for me to find..." rows="3"></textarea>
+                <button id="saveNoteBtn" class="secondary-btn">Pin New Note</button>
+            </div>
+        </section>
 
-  </main>
-</div>
+        <!-- Bucket List -->
+        <section class="glass-card">
+            <div class="card-header">
+                <h2>✈️ Our Bucket List</h2>
+            </div>
+            <div class="input-row">
+                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
+                <button id="addBucketBtn" class="icon-btn">+</button>
+            </div>
+            <ul id="bucketList" class="custom-list"></ul>
+        </section>
 
-<script type="module" src="script.js"></script>
+        <!-- Music Binder -->
+        <div class="binder-wrapper">
+            <div class="binder-content">
+                <div class="card-header center">
+                    <h2 class="handwritten-title">🎵 Music & Memories</h2>
+                </div>
+                <div class="song-upload-bar">
+                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                    <button id="addSongBtn" class="primary-btn">Add to Binder</button>
+                </div>
+                <div id="binder-pages-display" class="songs-grid"></div>
+                <div class="pagination">
+                    <button id="prevBtn" disabled>«</button>
+                    <span id="pageIndicator">Page 1</span>
+                    <button id="nextBtn">»</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="script.js"></script>
 </body>
 </html>
