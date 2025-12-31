@@ -35,31 +35,37 @@
 
     <!-- 3. New Year Experience Overlay -->
     <div id="ny-experience-overlay" class="ny-overlay hidden">
+        <!-- Stage 1: Drifting Stars -->
         <div id="star-stage" class="stage">
             <h2 class="stage-title">Thank you for...</h2>
             <div id="star-field"></div>
             <p class="star-count-hint">Find and click the drifting stars (0/6)</p>
         </div>
 
+        <!-- Stage 2: 2025 Fast Forward to 12:00 -->
         <div id="countdown-stage" class="stage hidden">
-            <div class="digital-clock-container">
-                <div id="clock-year">2025</div>
-                <div id="digital-clock">23:59:55</div>
-                <div class="clock-label">FINAL SECONDS OF 2025</div>
+            <div class="clock-wrap">
+                <div id="ff-month">JANUARY</div>
+                <div id="ff-year">2025</div>
+                <div id="digital-clock">11:59:55</div>
+                <div id="midnight-message" class="hidden">HAPPY NEW YEAR 2026!</div>
             </div>
         </div>
 
+        <!-- Stage 3: The Pretty Letter -->
         <div id="envelope-stage" class="stage hidden">
             <div class="envelope-wrapper">
                 <div class="envelope" id="main-envelope">
+                    <div class="wax-seal">❤️</div>
                     <div class="flap"></div>
                     <div class="pocket"></div>
+                    <div class="letter-label">For your eyes only... <br><span>(Click to Open)</span></div>
                     <div class="letter" id="final-letter">
+                        <div class="letter-header">To My Favorite Person,</div>
                         <div id="typewriter-text"></div>
                     </div>
                 </div>
             </div>
-            <h2 class="ny-wish hidden" id="final-ny-text">WELCOME TO 2026, MY LOVE! 🥂</h2>
         </div>
     </div>
 
@@ -98,7 +104,7 @@
                 <h2>✈️ Our Bucket List</h2>
             </div>
             <div class="input-row">
-                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
+                <input type="text" id="bucketInput" placeholder="Next adventure?">
                 <button id="addBucketBtn" class="icon-btn">+</button>
             </div>
             <ul id="bucketList" class="custom-list"></ul>
