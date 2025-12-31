@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Memory Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@400;700;900&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Our Winter Wonderland</title>
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@400;700;900&family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="christmas-theme">
@@ -12,126 +13,127 @@
     <!-- 1. Password Lock -->
     <div id="login-screen" class="login-overlay">
         <div class="login-box">
-            <div class="lock-header">🔒</div>
-            <h2 class="montserrat-title">The Vault</h2>
+            <h1 class="festive-icon">❄️</h1>
+            <h2 class="spotify-font">Our Private Space</h2>
             <p>Enter the secret word to the moon...</p>
             <input type="password" id="passwordInput" placeholder="Secret Word">
-            <button id="loginBtn" class="premium-btn red-glow">Unlock Memories</button>
+            <button id="loginBtn" class="primary-btn">Unlock Wonderland</button>
         </div>
     </div>
 
-    <!-- 2. The Gift Portal -->
+    <!-- 2. Transition Elements -->
     <div id="magic-gift" class="floating-gift">🎁<div class="gift-glow"></div></div>
     <div id="portal-overlay" class="portal hidden"></div>
 
-    <!-- 3. OLD WORLD (Christmas UI) -->
+    <!-- 3. OLD WORLD (Original Christmas UI) -->
     <div id="old-world">
         <div class="snow-container" id="snow-container"></div>
         <main class="main-content">
             <header class="hero-section">
                 <h1 class="main-title">Our Winter Wonderland</h1>
-                <div class="glass-pill">Merry Christmas, My Love</div>
+                <div class="timer-display">Merry Christmas, My Love</div>
             </header>
+            
             <section class="glass-card">
-                <div class="card-header"><h2 class="montserrat-title">✉️ Note Station</h2></div>
+                <div class="card-header">
+                    <h2>✉️ The Note Station</h2>
+                    <span class="card-tag">Latest Message</span>
+                </div>
                 <div class="pinned-note">
-                    I've hidden something special inside this gift for you... <br>
-                    Tap it whenever you're ready. ❤️
+                    I've hidden a whole new world for us inside that floating gift. 
+                    ❤️
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- 4. NEW WORLD (The Vault) -->
+    <!-- 4. NEW WORLD (The Memory Vault) -->
     <div id="new-world" class="hidden">
         
         <!-- NEW YEAR INTERACTIVE EXPERIENCE -->
         <div id="ny-overlay" class="ny-experience hidden">
             <canvas id="fireworks"></canvas>
             
-            <!-- Stage 1: The Star Catching Game -->
+            <!-- Stage 1: The Star Game -->
             <div id="ny-stage-1" class="ny-stage">
-                <h2 class="dancing-title gold-text">Catch the Memories</h2>
-                <div class="game-stats">Found: <span id="starCount">0</span>/7</div>
-                <p class="instruction">Tap the moving stars to reveal why I love you.</p>
-                <div id="game-canvas-area" class="star-field"></div>
+                <h2 class="main-title gold-text">Catch the Memories</h2>
+                <div class="game-status">Caught: <span id="starCount">0</span> / 6</div>
+                <div id="star-game-area" class="star-field"></div>
             </div>
 
             <!-- Stage 2: Selection Menu -->
             <div id="ny-stage-menu" class="ny-stage hidden">
-                <h2 class="montserrat-title gold-text">Choose Your Path</h2>
+                <h2 class="main-title gold-text">Our Path for 2026</h2>
                 <div class="menu-grid">
-                    <button class="menu-card" id="goReasons">
-                        <div class="menu-icon">💖</div>
-                        <h3>Our Love Jar</h3>
+                    <button class="menu-card" id="btnReasons">
+                        <span class="menu-icon">💖</span>
+                        <h3>Why I Love You</h3>
                         <p>A reminder of my heart</p>
                     </button>
-                    <button class="menu-card" id="goLetter">
-                        <div class="menu-icon">📜</div>
-                        <h3>The Final Letter</h3>
+                    <button class="menu-card" id="btnLetter">
+                        <span class="menu-icon">📜</span>
+                        <h3>A Love Letter</h3>
                         <p>Words from my soul</p>
                     </button>
                 </div>
-                <button class="back-pill" id="exitNY">Return to Vault</button>
+                <button class="close-overlay" id="exitNY">Back to Vault</button>
             </div>
 
-            <!-- Stage 3A: Reasons Why I Love You -->
+            <!-- Stage 3A: Reasons -->
             <div id="ny-stage-reasons" class="ny-stage hidden">
-                <div class="glass-card premium-border">
-                    <h1 class="montserrat-title gold-text">Reasons I Love You</h1>
-                    <div class="reason-display-area" id="reasonTrigger">
-                        <p id="reasonDisplay">Tap to reveal my heart...</p>
+                <div class="glass-card premium-gold">
+                    <h2 class="spotify-font gold-text">Reasons I Love You</h2>
+                    <div class="reason-box" id="reasonTrigger">
+                        <p id="reasonDisplay">Tap to reveal a reason...</p>
                     </div>
-                    <button class="back-pill">← Back to Menu</button>
+                    <button class="back-btn">← Back to Menu</button>
                 </div>
             </div>
 
-            <!-- Stage 3B: Paper Love Letter -->
+            <!-- Stage 3B: Letter -->
             <div id="ny-stage-letter" class="ny-stage hidden">
-                <div class="letter-scroll-wrapper">
-                    <div class="paper-scroll">
-                        <div id="typewriter-text" class="letter-body"></div>
-                    </div>
+                <div class="paper-scroll">
+                    <div id="typewriter-text" class="letter-body"></div>
                 </div>
-                <button class="back-pill">← Back to Menu</button>
+                <button class="back-btn">← Back to Menu</button>
             </div>
         </div>
 
         <main class="main-content">
             <header class="hero-section">
-                <h1 class="dancing-title gold-text">The Memory Vault</h1>
-                <button id="btnNY" class="premium-btn gold-glow">🎇 New Year Journey</button>
+                <h1 class="main-title gold-text">The Memory Vault</h1>
+                <button id="btnNY" class="primary-btn gold-bg">🎇 2026 Magic Journey</button>
             </header>
 
-            <section class="glass-card premium-border">
-                <div class="card-header"><h2 class="montserrat-title">✉️ Note Station</h2></div>
+            <section class="glass-card premium-gold">
+                <div class="card-header"><h2>✉️ Note Station</h2></div>
                 <div id="latestNote" class="pinned-note">Loading...</div>
-                <div class="input-group">
-                    <textarea id="noteInput" placeholder="Write a note..."></textarea>
-                    <button id="saveNoteBtn" class="icon-save-btn">Pin Note</button>
+                <div class="note-input-area">
+                    <textarea id="noteInput" placeholder="Leave a note..."></textarea>
+                    <button id="saveNoteBtn" class="primary-btn">Pin Note</button>
                 </div>
             </section>
 
-            <section class="glass-card premium-border">
-                <div class="card-header"><h2 class="montserrat-title">✈️ Bucket List</h2></div>
+            <section class="glass-card premium-gold">
+                <div class="card-header"><h2>✈️ Our Bucket List</h2></div>
                 <div class="input-row">
-                    <input type="text" id="bucketInput" placeholder="Add an adventure...">
-                    <button id="addBucketBtn" class="plus-btn">+</button>
+                    <input type="text" id="bucketInput" placeholder="Next adventure?">
+                    <button id="addBucketBtn" class="icon-btn">+</button>
                 </div>
                 <ul id="bucketList" class="custom-list"></ul>
             </section>
 
-            <div class="binder-wrapper glass-card premium-border">
-                <h2 class="montserrat-title center">🎵 Our Soundtrack</h2>
-                <div class="input-row">
-                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Track Link...">
-                    <button id="addSongBtn" class="plus-btn">+</button>
+            <div class="binder-wrapper premium-gold">
+                <div class="card-header center"><h2>🎵 Music Binder</h2></div>
+                <div class="song-upload-bar">
+                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
+                    <button id="addSongBtn" class="primary-btn">Add</button>
                 </div>
-                <div id="binder-pages-display"></div>
+                <div id="binder-pages-display" class="songs-grid"></div>
                 <div class="pagination">
-                    <button id="prevBtn" class="page-btn">«</button>
-                    <span id="pageIndicator">1</span>
-                    <button id="nextBtn" class="page-btn">»</button>
+                    <button id="prevBtn">«</button>
+                    <span id="pageIndicator">Page 1</span>
+                    <button id="nextBtn">»</button>
                 </div>
             </div>
         </main>
