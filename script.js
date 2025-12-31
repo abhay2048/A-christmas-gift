@@ -14,7 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- 1. THEME TOGGLE ---
+// --- 1. THEME TOGGLE (GIFT) ---
 const body = document.body;
 const giftToggle = document.getElementById('theme-toggle-gift');
 const title = document.getElementById('dynamic-title');
@@ -47,7 +47,7 @@ loginBtn.addEventListener('click', () => {
     }
 });
 
-// --- 3. MEMORY OVERLAYS ---
+// --- 3. MEMORY TRIGGERS ---
 document.getElementById('mem-christmas').addEventListener('click', () => {
     document.getElementById('reveal-overlay').classList.remove('hidden');
 });
@@ -55,7 +55,7 @@ document.querySelector('.close-reveal-btn').addEventListener('click', () => {
     document.getElementById('reveal-overlay').classList.add('hidden');
 });
 
-// --- 4. NEW YEAR EXPERIENCE ---
+// --- 4. NEW YEAR SEQUENCE ---
 const nyOverlay = document.getElementById('ny-experience-overlay');
 const starContainer = document.getElementById('star-container');
 const starMessages = [
@@ -110,7 +110,7 @@ function startCountdownSequence() {
     let timer = setInterval(() => {
         dateEl.innerText = `${months[mIdx % 12]} ${Math.floor(Math.random()*28)+1}`;
         mIdx++;
-        if (mIdx > 20) {
+        if (mIdx > 15) {
             year = 2026;
             yearEl.innerText = year;
             yearEl.classList.add('glow-up');
@@ -145,23 +145,21 @@ function startEnvelopeSequence() {
     };
 }
 
-// --- 5. FIREBASE LOGIC ---
-// Note Station
+// --- 5. FIREBASE (NOTES, BUCKET, BINDER) ---
 const noteRef = ref(db, 'notes/currentNote');
-onValue(noteRef, (s) => document.getElementById('latestNote').innerText = s.val() || "No notes yet...");
-document.getElementById('saveNoteBtn').addEventListener('click', () => {
+onValue(noteRef, (s) => document.getElementById('latestNote').innerText = s.val() || "Write a note... 👇");
+document.getElementById('saveNoteBtn').onclick = () => {
     const inp = document.getElementById('noteInput');
     if (inp.value.trim()) set(noteRef, inp.value);
     inp.value = '';
-});
+};
 
-// Bucket List
 const bucketRef = ref(db, 'bucketList');
-document.getElementById('addBucketBtn').addEventListener('click', () => {
+document.getElementById('addBucketBtn').onclick = () => {
     const inp = document.getElementById('bucketInput');
     if (inp.value) push(bucketRef, { text: inp.value, done: false });
     inp.value = '';
-});
+};
 onValue(bucketRef, (snap) => {
     const list = document.getElementById('bucketList');
     list.innerHTML = '';
@@ -170,7 +168,7 @@ onValue(bucketRef, (snap) => {
         Object.entries(data).forEach(([key, item]) => {
             const li = document.createElement('li');
             li.className = item.done ? 'done' : '';
-            li.innerHTML = `<div class="item-text"><span>${item.done ? '✅' : '🌟'}</span><span>${item.text}</span></div><button class="del-btn">❄️</button>`;
+            li.innerHTML = `<div class="item-text"><span>${item.done?'✅':'🌟'}</span><span>${item.text}</span></div><button class="del-btn">❄️</button>`;
             li.querySelector('.item-text').onclick = () => update(ref(db, `bucketList/${key}`), { done: !item.done });
             li.querySelector('.del-btn').onclick = () => remove(ref(db, `bucketList/${key}`));
             list.appendChild(li);
@@ -178,11 +176,9 @@ onValue(bucketRef, (snap) => {
     }
 });
 
-// Music Binder
 const songsRef = ref(db, 'binderSongs');
 let allSongs = [];
 let currentPage = 1;
-
 onValue(songsRef, (snap) => {
     const data = snap.val();
     allSongs = data ? Object.entries(data).map(([id, s]) => ({...s, id})).sort((a,b) => b.timestamp - a.timestamp) : [];
@@ -197,11 +193,11 @@ function renderBinder() {
         const div = document.createElement('div');
         div.className = 'song-entry';
         div.innerHTML = `
-            <div class="song-memory"><h3>Memory</h3><textarea class="side-note">${song.sideNote || ""}</textarea></div>
+            <div class="song-memory"><h3>Our Memory</h3><textarea class="side-note">${song.sideNote||""}</textarea></div>
             <div class="song-visual-stack">
-                <button class="del-song">×</button>
+                <button class="del-song">Remove ×</button>
                 <div class="music-box"><iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0"></iframe></div>
-                <div class="favorite-line-box"><input type="text" class="fav-line" value="${song.favLine || ""}" placeholder="♥ Favorite line"></div>
+                <div class="favorite-line-box"><input type="text" class="fav-line" value="${song.favLine||""}" placeholder="♥ Add favorite line..."></div>
             </div>`;
         div.querySelector('.fav-line').onchange = (e) => update(ref(db, `binderSongs/${song.id}`), {favLine: e.target.value});
         div.querySelector('.side-note').onchange = (e) => update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value});
@@ -209,33 +205,36 @@ function renderBinder() {
         display.appendChild(div);
     });
     document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = currentPage * 3 >= allSongs.length;
 }
 
 document.getElementById('addSongBtn').onclick = () => {
-    const url = document.getElementById('songLinkInput').value;
-    const match = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+    const val = document.getElementById('songLinkInput').value;
+    const match = val.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
     if (match) push(songsRef, { embedUrl: `https://open.spotify.com/embed/${match[1]}/${match[2]}`, timestamp: Date.now() });
     document.getElementById('songLinkInput').value = '';
 };
-
 document.getElementById('prevBtn').onclick = () => { if(currentPage > 1) { currentPage--; renderBinder(); } };
 document.getElementById('nextBtn').onclick = () => { if(currentPage * 3 < allSongs.length) { currentPage++; renderBinder(); } };
 
-// --- 6. SNOW & TIME ---
+// --- 6. SNOW ---
 function createSnow() {
     const container = document.getElementById('snow-container');
     const flake = document.createElement('div');
-    const isNY = body.classList.contains('ny-theme');
-    flake.innerHTML = isNY ? '✨' : '❄️';
-    flake.style.cssText = `position: fixed; top: -10%; left: ${Math.random()*100}vw; animation: fall ${Math.random()*4+5}s linear forwards; font-size: 20px; z-index: 1;`;
+    flake.innerHTML = body.classList.contains('ny-theme') ? '✨' : '❄️';
+    flake.style.cssText = `position: fixed; top: -10%; left: ${Math.random()*100}vw; animation: fall ${Math.random()*4+5}s linear forwards; font-size: 20px; z-index: 1; pointer-events: none;`;
     container.appendChild(flake);
     setTimeout(() => flake.remove(), 7000);
 }
 setInterval(createSnow, 300);
+
+// Timer
 setInterval(() => {
     const gap = new Date("Dec 25, 2025").getTime() - new Date().getTime();
-    const d = Math.floor(gap / 86400000);
-    const h = Math.floor((gap % 86400000) / 3600000);
-    const m = Math.floor((gap % 3600000) / 60000);
-    document.getElementById('countdown-timer').innerText = `${d}d : ${h}h : ${m}m`;
+    const d = Math.max(0, Math.floor(gap / 86400000));
+    const h = Math.max(0, Math.floor((gap % 86400000) / 3600000));
+    const m = Math.max(0, Math.floor((gap % 3600000) / 60000));
+    const s = Math.max(0, Math.floor((gap % 60000) / 1000));
+    document.getElementById('countdown-timer').innerText = gap > 0 ? `${d}d : ${h}h : ${m}m : ${s}s` : "Merry Christmas! ❤️";
 }, 1000);
