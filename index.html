@@ -1,138 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Memory Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Our Winter Wonderland</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Dancing+Script:wght@600&family=Indie+Flower&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="christmas-theme">
+<body>
 
-    <!-- 1. Password Lock -->
-    <div id="login-screen" class="login-overlay">
-        <div class="glass-login">
-            <div class="lock-circle">🔒</div>
-            <h2 class="premium-header gold-text">The Private Vault</h2>
-            <input type="password" id="passwordInput" placeholder="Secret Word">
-            <button id="loginBtn" class="glow-btn">Unlock Experience</button>
-        </div>
-    </div>
+<!-- 🔒 LOCK SCREEN -->
+<div id="lockScreen" class="fullscreen center">
+  <div class="glass-card">
+    <h1>❄️</h1>
+    <h2>Our Private Space</h2>
+    <p>Enter the secret word to the moon...</p>
+    <input type="password" id="passwordInput" placeholder="Secret Word" />
+    <button id="unlockBtn">Unlock Wonderland</button>
+  </div>
+</div>
 
-    <!-- 2. The Gift Transition -->
-    <div id="magic-gift" class="floating-gift">🎁<div class="pulse-ring"></div></div>
-    <div id="portal-overlay" class="portal hidden"></div>
+<!-- 🎁 FLOATING GIFT -->
+<div id="floatingGift">🎁</div>
 
-    <!-- 3. THE OLD WORLD (Christmas UI) -->
-    <div id="old-world">
-        <div class="snow-container" id="snow-container"></div>
-        <main class="main-content">
-            <header class="hero">
-                <h1 class="christmas-title">Our Winter Wonderland</h1>
-                <div class="pill-badge">Merry Christmas, My Love</div>
-            </header>
-            <section class="original-glass-card">
-                <div class="pinned-note">
-                    I've hidden something special inside this gift for you... <br>
-                    Tap it whenever you're ready. ❤️
-                </div>
-            </section>
-        </main>
-    </div>
+<!-- 🌌 MAIN APP -->
+<div id="app" class="hidden">
 
-    <!-- 4. THE NEW WORLD (The Premium Vault) -->
-    <div id="new-world" class="hidden">
-        
-        <div id="ny-overlay" class="ny-experience hidden">
-            <canvas id="fireworks"></canvas>
-            
-            <!-- Stage 1: The High-Speed Star Game -->
-            <div id="ny-stage-1" class="ny-stage">
-                <h2 class="premium-header gold-text">Capture the Memories</h2>
-                <div class="game-hud">Caught: <span id="starCount">0</span>/7</div>
-                <div id="game-canvas-area" class="star-field"></div>
-            </div>
+  <!-- ❄️ SNOW CONTAINER -->
+  <div id="snowContainer"></div>
 
-            <!-- Stage 2: Selection Menu -->
-            <div id="ny-stage-menu" class="ny-stage hidden">
-                <h1 class="premium-header gold-text">Choose Your Journey</h1>
-                <div class="modern-menu">
-                    <div class="luxury-card" id="goReasons">
-                        <div class="card-icon">❤️</div>
-                        <h3>The Heart Library</h3>
-                        <p>Reasons why you are my everything.</p>
-                    </div>
-                    <div class="luxury-card" id="goLetter">
-                        <div class="card-icon">📜</div>
-                        <h3>A Soul's Letter</h3>
-                        <p>A message for our new year.</p>
-                    </div>
-                </div>
-                <button class="minimal-btn" id="exitNY">Return to Vault</button>
-            </div>
+  <main class="container">
 
-            <!-- Stage 3A: Reasons -->
-            <div id="ny-stage-reasons" class="ny-stage hidden">
-                <div class="vault-section">
-                    <h2 class="premium-header gold-text">Why I Love You</h2>
-                    <div class="reason-display" id="reasonTrigger">
-                        <p id="reasonDisplay">Tap into my heart...</p>
-                    </div>
-                    <button class="minimal-btn back-to-menu">← Back to Menu</button>
-                </div>
-            </div>
+    <!-- HERO -->
+    <section class="hero">
+      <h1 id="mainTitle">Our Winter Wonderland</h1>
+      <div id="countdown" class="pill">Loading countdown...</div>
+    </section>
 
-            <!-- Stage 3B: Letter -->
-            <div id="ny-stage-letter" class="ny-stage hidden">
-                <div class="stationery-container">
-                    <div class="luxury-paper">
-                        <div id="typewriter-text"></div>
-                    </div>
-                </div>
-                <button class="minimal-btn back-to-menu">← Back to Menu</button>
-            </div>
-        </div>
+    <!-- ✉️ NOTE STATION -->
+    <section class="card">
+      <h2>✉️ The Note Station</h2>
+      <div id="latestNote" class="note">
+        Loading note...
+      </div>
+      <textarea id="noteInput" placeholder="Leave a new note..."></textarea>
+      <button id="saveNoteBtn">Pin New Note</button>
+    </section>
 
-        <main class="main-content">
-            <header class="vault-hero">
-                <h1 class="premium-header gold-text">The Memory Vault</h1>
-                <button id="btnNY" class="vault-action-btn">🎇 Start 2026 Journey</button>
-            </header>
+    <!-- ✈️ BUCKET LIST -->
+    <section class="card">
+      <h2>✈️ Our Bucket List</h2>
 
-            <div class="vault-section">
-                <div class="section-title">✉️ Note Station</div>
-                <div id="latestNote" class="luxury-note-display">Loading...</div>
-                <div class="input-container">
-                    <textarea id="noteInput" placeholder="Write something for me..."></textarea>
-                    <button id="saveNoteBtn" class="plus-circle">✓</button>
-                </div>
-            </div>
+      <div class="row">
+        <input id="bucketInput" placeholder="What's our next adventure?" />
+        <button id="addBucketBtn">+</button>
+      </div>
 
-            <div class="vault-section">
-                <div class="section-title">✈️ Bucket List</div>
-                <div class="input-container">
-                    <input type="text" id="bucketInput" placeholder="New adventure?">
-                    <button id="addBucketBtn" class="plus-circle">+</button>
-                </div>
-                <ul id="bucketList" class="luxury-list"></ul>
-            </section>
+      <ul id="bucketList"></ul>
+    </section>
 
-            <div class="vault-section">
-                <div class="section-title">🎵 Our Soundtrack</div>
-                <div class="input-container">
-                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Track Link...">
-                    <button id="addSongBtn" class="plus-circle">+</button>
-                </div>
-                <div id="binder-pages-display"></div>
-                <div class="pagination">
-                    <button id="prevBtn" class="minimal-btn">« Prev</button>
-                    <span id="pageIndicator">Page 1</span>
-                    <button id="nextBtn" class="minimal-btn">Next »</button>
-                </div>
-            </div>
-        </main>
-    </div>
+    <!-- 🎵 MUSIC BINDER -->
+    <section class="card">
+      <h2 class="center-text">🎵 Music & Memories</h2>
 
-    <script type="module" src="script.js"></script>
+      <div class="row">
+        <input id="songInput" placeholder="Paste Spotify Link..." />
+        <button id="addSongBtn">Add to Binder</button>
+      </div>
+
+      <div id="songsContainer"></div>
+
+      <div class="pagination">
+        <button id="prevPage">«</button>
+        <span id="pageIndicator">Page 1</span>
+        <button id="nextPage">»</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
