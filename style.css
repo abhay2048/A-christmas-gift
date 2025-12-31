@@ -1,226 +1,143 @@
-/* --- EXISTING STYLES --- */
-* { box-sizing: border-box; }
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Quicksand', sans-serif;
-  background: #000;
-  color: white;
-  overflow-x: hidden;
+const firebaseConfig = {
+  apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
+  authDomain: "a-christmas-gift.firebaseapp.com",
+  databaseURL: "https://a-christmas-gift-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "a-christmas-gift",
+  storageBucket: "a-christmas-gift.firebasestorage.app",
+  messagingSenderId: "560215769128",
+  appId: "1:560215769128:web:331327bdc0417b4056351d"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getDatabase(firebaseApp);
+
+let unlocked = localStorage.getItem('wonderlandUnlocked') === 'true';
+const lockScreen = document.getElementById('lockScreen');
+const app = document.getElementById('app');
+
+if (unlocked) {
+  lockScreen.classList.add('hidden');
+  app.classList.remove('hidden');
 }
 
-.hidden { display: none; }
-.center { display: flex; align-items: center; justify-content: center; }
-.center-text { text-align: center; }
-
-.fullscreen {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle, #1a472a, #051a0d);
-  z-index: 9999;
-}
-
-.glass-card {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(15px);
-  padding: 40px;
-  border-radius: 30px;
-  text-align: center;
-  width: 90%;
-  max-width: 360px;
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-
-.glass-card h2 {
-  font-family: 'Dancing Script', cursive;
-}
-
-.glass-card input {
-  width: 100%;
-  padding: 15px;
-  margin-top: 20px;
-  border-radius: 15px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.1);
-  color: white;
-}
-
-.glass-card button {
-  margin-top: 15px;
-  width: 100%;
-  padding: 15px;
-  border-radius: 50px;
-  border: none;
-  background: #ff4d4d;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* Floating Gift */
-#floatingGift {
-  position: fixed;
-  font-size: 3rem;
-  cursor: pointer;
-  z-index: 1000;
-  filter: drop-shadow(0 0 20px gold);
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Main App */
-#app {
-  min-height: 100vh;
-  background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
-    url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070')
-    no-repeat center center fixed;
-  background-size: cover;
-}
-
-.container {
-  max-width: 1000px;
-  margin: auto;
-  padding: 20px;
-  position: relative;
-  z-index: 5;
-}
-
-.hero {
-  text-align: center;
-  padding: 80px 0 40px;
-}
-
-.hero h1 {
-  font-family: 'Dancing Script', cursive;
-  font-size: clamp(3rem, 10vw, 5rem);
-  margin-bottom: 20px;
-}
-
-.pill {
-  display: inline-block;
-  padding: 12px 30px;
-  border-radius: 50px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  font-weight: bold;
-}
-
-.card {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(12px);
-  border-radius: 25px;
-  padding: 30px;
-  margin-bottom: 40px;
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-}
-
-.note {
-  font-family: 'Indie Flower', cursive;
-  font-size: 1.6rem;
-  margin-bottom: 20px;
-}
-
-textarea, input {
-  width: 100%;
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 15px;
-  padding: 15px;
-  color: white;
-}
-
-button {
-  background: #ff4d4d;
-  border: none;
-  border-radius: 50px;
-  padding: 12px 25px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-button:active {
-  transform: scale(0.95);
-}
-
-.row {
-  display: flex;
-  gap: 10px;
-}
-
-#bucketList {
-  list-style: none;
-  padding: 0;
-}
-
-#bucketList li {
-  background: rgba(255,255,255,0.05);
-  padding: 15px;
-  border-radius: 15px;
-  margin-bottom: 10px;
-}
-
-/* --- NEW: NOTES CONTAINER STYLE --- */
-#notesContainer {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.saved-note {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 15px;
-  border-radius: 15px;
-  border-left: 4px solid #ff4d4d;
-  font-family: 'Quicksand', sans-serif;
-}
-
-/* --- NEW: FADE OUT CLASS --- */
-.fade-out {
-  opacity: 0;
-  transform: scale(0.95);
-  transition: all 0.25s ease;
-}
-
-/* Snow */
-.snowflake {
-  position: fixed;
-  top: -10%;
-  pointer-events: none;
-  animation: fall linear forwards;
-}
-
-/* Animations */
-@keyframes fall {
-  to {
-    transform: translateY(110vh) rotate(360deg);
+document.getElementById('unlockBtn').addEventListener('click', () => {
+  const pw = document.getElementById('passwordInput').value.trim();
+  if (pw.toUpperCase() === 'MOON') {
+    localStorage.setItem('wonderlandUnlocked', 'true');
+    lockScreen.classList.add('fade-out');
+    setTimeout(() => {
+      lockScreen.classList.add('hidden');
+      app.classList.remove('hidden');
+    }, 250);
+  } else {
+    alert('Incorrect secret word ❤️');
   }
+});
+
+// ---------- NOTES ----------
+const noteInput = document.getElementById('noteInput');
+const saveNoteBtn = document.getElementById('saveNote');
+const notesContainer = document.getElementById('notesContainer');
+const notesRef = ref(db, 'notes');
+
+saveNoteBtn.addEventListener('click', () => {
+  const text = noteInput.value.trim();
+  if (!text) return;
+  push(notesRef, { text, time: Date.now() });
+  noteInput.value = '';
+});
+
+onValue(notesRef, snapshot => {
+  notesContainer.innerHTML = '';
+  snapshot.forEach(child => {
+    const div = document.createElement('div');
+    div.className = 'note';
+    div.textContent = child.val().text;
+    notesContainer.appendChild(div);
+  });
+});
+
+// ---------- BUCKET LIST ----------
+const bucketInput = document.getElementById('bucketInput');
+const addBucketBtn = document.getElementById('addBucketBtn');
+const bucketList = document.getElementById('bucketList');
+const bucketRef = ref(db, 'bucketList');
+
+addBucketBtn.addEventListener('click', () => {
+  const text = bucketInput.value.trim();
+  if (!text) return;
+  push(bucketRef, { text });
+  bucketInput.value = '';
+});
+
+onValue(bucketRef, snapshot => {
+  bucketList.innerHTML = '';
+  snapshot.forEach(child => {
+    const li = document.createElement('li');
+    li.textContent = child.val().text;
+    li.addEventListener('click', () => {
+      li.classList.add('fade-out');
+      setTimeout(() => { remove(ref(db, `bucketList/${child.key}`)); }, 250);
+    });
+    bucketList.appendChild(li);
+  });
+});
+
+// ---------- MUSIC ----------
+const musicInput = document.getElementById('songInput');
+const addMusicBtn = document.getElementById('addSongBtn');
+const musicList = document.getElementById('songsContainer');
+const musicRef = ref(db, 'music');
+
+addMusicBtn.addEventListener('click', () => {
+  const link = musicInput.value.trim();
+  if (!link) return;
+  push(musicRef, { link });
+  musicInput.value = '';
+});
+
+onValue(musicRef, snapshot => {
+  musicList.innerHTML = '';
+  snapshot.forEach(child => {
+    const iframe = document.createElement('iframe');
+    iframe.src = child.val().link;
+    iframe.width = "100%"; iframe.height = "80";
+    iframe.allow = "encrypted-media"; iframe.style.borderRadius = "12px";
+    iframe.style.border = "none"; iframe.style.marginBottom = "10px";
+    musicList.appendChild(iframe);
+  });
+});
+
+// ---------- COUNTDOWN & ANIMATIONS ----------
+const countdownEl = document.getElementById('countdown');
+function updateCountdown() {
+  const target = new Date("December 25, 2026 00:00:00").getTime();
+  const gap = target - Date.now();
+  if (gap <= 0) { countdownEl.textContent = 'Merry Christmas 🎄'; return; }
+  const d = Math.floor(gap / 86400000), h = Math.floor((gap / 3600000) % 24), m = Math.floor((gap / 60000) % 60), s = Math.floor((gap / 1000) % 60);
+  countdownEl.textContent = `${d}d : ${h}h : ${m}m : ${s}s`;
 }
+setInterval(updateCountdown, 1000);
 
-@keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
+const gift = document.getElementById('floatingGift');
+let gx = 50, gy = 50, dx = 0.15, dy = 0.12;
+setInterval(() => {
+  gx += dx; gy += dy;
+  if (gx < 0 || gx > 95) dx *= -1; if (gy < 0 || gy > 90) dy *= -1;
+  gift.style.left = gx + '%'; gift.style.top = gy + '%';
+}, 50);
 
-/* --- NEW: MEDIA QUERY --- */
-@media (max-width: 600px) {
-  .hero h1 {
-    font-size: 2.8rem;
-  }
-
-  .glass-card {
-    padding: 25px;
-  }
-
-  .card {
-    padding: 20px;
-  }
-
-  textarea, input {
-    font-size: 16px;
-  }
-}
+setInterval(() => {
+  const flake = document.createElement('div');
+  flake.className = 'snowflake';
+  flake.textContent = ['❄','✨','🤍'][Math.floor(Math.random()*3)];
+  flake.style.left = Math.random()*100 + 'vw';
+  flake.style.fontSize = 10 + Math.random()*15 + 'px';
+  flake.style.opacity = Math.random();
+  flake.style.animationDuration = 5 + Math.random()*5 + 's';
+  document.body.appendChild(flake);
+  setTimeout(() => flake.remove(), 10000);
+}, 300);
