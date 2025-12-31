@@ -7,31 +7,29 @@
     --spotify-font: 'Montserrat', sans-serif;
 }
 
-body {
-    margin: 0; font-family: 'Quicksand', sans-serif; color: #fff; background: #000; overflow-x: hidden;
-}
+body { margin: 0; font-family: 'Quicksand', sans-serif; color: #fff; background: #000; overflow-x: hidden; }
 
 .christmas-theme { --accent: #ff4d4d; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070') center/cover fixed; }
 .ny-theme { --accent: var(--gold); background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1467810563316-b5476525c0f9?q=80&w=2069') center/cover fixed; }
 
 .hidden { display: none !important; }
 
-/* OVERLAYS */
-.login-overlay, .reveal-overlay, .ny-overlay {
-    position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); text-align: center;
+/* CINEMATIC OVERLAY */
+.ny-overlay, .reveal-overlay, .login-overlay {
+    position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(25px); display: flex; align-items: center; justify-content: center; text-align: center;
 }
-
-/* PREMIUM NY STAGES */
 .stage { width: 100%; position: absolute; }
-#star-field { position: fixed; inset: 0; pointer-events: none; }
-.drifting-star { position: absolute; font-size: 2.5rem; cursor: pointer; pointer-events: auto; transition: 0.3s; }
-.star-msg { font-family: var(--handwritten); background: var(--gold); color: #000; padding: 8px 15px; border-radius: 12px; font-size: 1.2rem; }
 
-#ff-month { font-size: 4rem; font-weight: 900; letter-spacing: 12px; font-family: var(--spotify-font); opacity: 0; transition: 0.3s; }
+/* STARS */
+#star-field { position: fixed; inset: 0; pointer-events: none; }
+.drifting-star { position: absolute; font-size: 2.5rem; cursor: pointer; pointer-events: auto; }
+
+/* TIME MACHINE */
+#ff-month { font-size: 4rem; font-weight: 900; letter-spacing: 12px; font-family: var(--spotify-font); opacity: 0; }
 .month-zoom { animation: zoomIn 0.4s ease-out forwards; }
 #digital-clock { font-size: clamp(4rem, 15vw, 8rem); font-family: var(--spotify-font); font-weight: 900; margin: 20px 0; }
-.midnight-strike { color: var(--gold) !important; text-shadow: 0 0 50px var(--gold); transform: scale(1.15); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.midnight-strike { color: var(--gold) !important; text-shadow: 0 0 50px var(--gold); transform: scale(1.15); transition: 0.6s; }
 
 /* 3D ENVELOPE */
 .envelope-container { perspective: 1500px; padding-top: 50px; }
@@ -45,19 +43,20 @@ body {
 .envelope.open .env-flap { transform: rotateX(180deg); z-index: 1; }
 .letter {
     position: absolute; bottom: 5px; left: 10px; width: calc(100% - 20px); height: 90%;
-    background: #fff; z-index: 2; padding: 25px; transition: 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    background: #fdfaf3; z-index: 2; padding: 25px; transition: 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    box-sizing: border-box; background-image: repeating-linear-gradient(white, white 29px, #eee 29px, #eee 30px);
 }
-.envelope.open .letter { transform: translateY(-330px); height: 480px; z-index: 10; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-.paper-lines { height: 100%; width: 100%; background-image: repeating-linear-gradient(white, white 29px, #eee 29px, #eee 30px); text-align: left; color: #222; font-family: var(--handwritten); overflow: hidden; }
+.envelope.open .letter { transform: translateY(-330px); height: 480px; z-index: 10; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.paper-lines { height: 100%; text-align: left; color: #222; font-family: var(--handwritten); overflow: hidden; }
 .wax-seal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: #b02a2a; border-radius: 50%; z-index: 5; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
 
-/* MAIN UI REMAINDER */
-.main-content { max-width: 1000px; margin: 0 auto; padding: 20px; position: relative; z-index: 5; }
+/* BINDER & MAIN UI */
+.main-content { max-width: 1000px; margin: 0 auto; padding: 20px; }
 .hero-section { text-align: center; padding: 60px 0; }
 .main-title { font-family: 'Dancing Script'; font-size: clamp(3rem, 10vw, 5rem); }
 .timer-display { background: var(--glass); padding: 15px 40px; border-radius: 50px; border: 1px solid var(--glass-border); font-family: var(--spotify-font); font-weight: bold; }
 
-.glass-card { background: var(--glass); backdrop-filter: blur(12px); border-radius: 25px; padding: 30px; margin-bottom: 40px; border: 1px solid var(--glass-border); }
+.glass-card { background: var(--glass); backdrop-filter: blur(15px); border-radius: 25px; padding: 30px; margin-bottom: 40px; border: 1px solid var(--glass-border); }
 .pinned-note {
     background: rgba(255,255,255,0.08); padding: 45px 30px 30px; border-radius: 20px; font-family: var(--handwritten); font-size: 1.8rem;
     position: relative; border: 1px solid var(--glass-border); transform: rotate(-0.5deg);
@@ -73,8 +72,7 @@ body {
 .music-box { aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; background: #000; }
 .favorite-line-box { background: var(--accent); padding: 15px; border-radius: 12px; margin-top: 15px; font-family: var(--spotify-font); font-weight: 900; }
 
-input, textarea { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: #fff; padding: 12px; border-radius: 10px; width: 100%; font-family: var(--spotify-font); }
-.primary-btn, .secondary-btn, .memory-pill { background: var(--accent); color: #fff; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: 800; }
+.floating-gift { position: fixed; bottom: 30px; right: 30px; font-size: 3.5rem; cursor: pointer; z-index: 999; filter: drop-shadow(0 0 10px var(--accent)); }
 
 @keyframes zoomIn { from { opacity: 0; transform: scale(0.5); filter: blur(10px); } to { opacity: 1; transform: scale(1.1); filter: blur(0); } }
 @keyframes pulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.2); } }
