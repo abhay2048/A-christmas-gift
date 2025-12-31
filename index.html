@@ -3,25 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Our Living Memories</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&family=Playfair+Display:ital@1&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>The Memory Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="christmas-theme"> <div id="login-screen" class="login-overlay">
+<body>
+
+    <!-- 1. Password Lock Screen -->
+    <div id="login-screen" class="login-overlay">
         <div class="login-box">
-            <h1 class="festive-icon" id="login-emoji">❄️</h1>
-            <h2>Our Private Space</h2>
-            <p>Enter the secret word to the moon...</p>
+            <div class="vault-icon">🔒</div>
+            <h2>The Memory Vault</h2>
+            <p>Accessing our private timeline...</p>
             <input type="password" id="passwordInput" placeholder="Secret Word">
-            <button id="loginBtn" class="primary-btn">Unlock Wonderland</button>
+            <button id="loginBtn" class="primary-btn">Unlock Memories</button>
         </div>
     </div>
 
+    <!-- 2. Christmas Reveal Overlay -->
     <div id="reveal-overlay" class="reveal-overlay hidden">
         <div class="reveal-content">
-            <h2 id="reveal-title" class="reveal-text">Merry Christmas...</h2>
-            <p id="reveal-desc" class="reveal-subtext">May your days be as pretty as the Christmas snow.</p>
-            <div id="reveal-icons" class="sparkles">✨🎁✨</div>
+            <h2 class="reveal-text">Merry Christmas my love...</h2>
+            <p class="reveal-subtext">You are the best gift I've ever received.</p>
+            <div class="sparkles">🎄✨🎁</div>
+            <button class="close-overlay">Return to Vault</button>
+        </div>
+    </div>
+
+    <!-- 3. NEW YEAR CINEMATIC EXPERIENCE -->
+    <div id="ny-overlay" class="ny-experience hidden">
+        <canvas id="fireworks"></canvas>
+        
+        <!-- Stage 1: Floating Memories -->
+        <div id="ny-stage-1" class="ny-stage">
+            <h2 class="cinematic-title">A year of beautiful moments...</h2>
+            <div class="floating-gallery">
+                <div class="float-img" style="--d: 0s"><img src="https://images.unsplash.com/photo-1518101645466-7795880fb9f8?w=500" alt="1"></div>
+                <div class="float-img" style="--d: 2s"><img src="https://images.unsplash.com/photo-1516589174184-c68526514b48?w=500" alt="2"></div>
+                <div class="float-img" style="--d: 4s"><img src="https://images.unsplash.com/photo-1533038595180-fbc5630327f1?w=500" alt="3"></div>
+            </div>
+        </div>
+
+        <!-- Stage 2: The Message & Interactive Reasons -->
+        <div id="ny-stage-2" class="ny-stage hidden">
+            <div class="ny-content-card">
+                <h1 class="gold-gradient-text">Happy New Year, Darling</h1>
+                <p class="handwritten-p">365 new pages, and I want you to be the protagonist in every single one.</p>
+                
+                <div class="reason-generator" id="reasonTrigger">
+                    <div class="reason-card">
+                        <span class="heart-icon">❤️</span>
+                        <p id="reasonDisplay">Tap to see why I love you...</p>
+                    </div>
+                </div>
+
+                <div class="letter-section">
+                    <p>As the clock strikes twelve, I just want you to know that you are my favorite person in every universe. Let's make 2026 even more magical than the last.</p>
+                </div>
+
+                <button class="close-overlay" id="exitNY">Back to Vault</button>
+            </div>
         </div>
     </div>
 
@@ -29,32 +70,24 @@
 
     <main class="main-content">
         <header class="hero-section">
-            <h1 id="hero-title" class="main-title">Our Winter Wonderland</h1>
-            <div class="countdown-container">
-                <div id="countdown-timer" class="timer-display">Calculating...</div>
-                <button id="previewTimer" class="preview-pill">✨ Preview The Magic</button>
+            <h1 class="main-title">The Memory Vault</h1>
+            
+            <div class="seasonal-selector">
+                <button id="btnXmas" class="magic-pill xmas-pill">🎄 Christmas Magic</button>
+                <button id="btnNY" class="magic-pill ny-pill">🎆 New Year Sparkle</button>
             </div>
         </header>
 
-        <section class="glass-card">
-            <div class="card-header">
-                <h2>✨ Our Special Seasons</h2>
-            </div>
-            <div class="season-toggle-area">
-                <button id="btn-christmas" class="season-btn active">🎄 Christmas 2025</button>
-                <button id="btn-newyear" class="season-btn">🥂 New Year 2026</button>
-            </div>
-        </section>
-
+        <!-- Keep your existing functional sections -->
         <section class="glass-card">
             <div class="card-header">
                 <h2>✉️ The Note Station</h2>
-                <span class="card-tag">Latest Message</span>
+                <span class="card-tag">Private Messages</span>
             </div>
-            <div id="latestNote" class="pinned-note">Loading note...</div>
+            <div id="latestNote" class="pinned-note">Loading...</div>
             <div class="note-input-area">
-                <textarea id="noteInput" placeholder="Leave a new note for me to find..." rows="3"></textarea>
-                <button id="saveNoteBtn" class="secondary-btn">Pin New Note</button>
+                <textarea id="noteInput" placeholder="Leave a new note for me..." rows="3"></textarea>
+                <button id="saveNoteBtn" class="secondary-btn">Leave Note</button>
             </div>
         </section>
 
@@ -63,30 +96,25 @@
                 <h2>✈️ Our Bucket List</h2>
             </div>
             <div class="input-row">
-                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
+                <input type="text" id="bucketInput" placeholder="Where to next?">
                 <button id="addBucketBtn" class="icon-btn">+</button>
             </div>
             <ul id="bucketList" class="custom-list"></ul>
         </section>
 
         <div class="binder-wrapper">
-            <div class="binder-spine mobile-hidden">
-                <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+            <div class="card-header center">
+                <h2 class="handwritten-title">🎵 Music Binder</h2>
             </div>
-            <div class="binder-content">
-                <div class="card-header center">
-                    <h2 class="handwritten-title">🎵 Music & Memories</h2>
-                </div>
-                <div class="song-upload-bar">
-                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                    <button id="addSongBtn" class="primary-btn">Add to Binder</button>
-                </div>
-                <div id="binder-pages-display" class="songs-grid"></div>
-                <div class="pagination">
-                    <button id="prevBtn" disabled>«</button>
-                    <span id="pageIndicator">Page 1</span>
-                    <button id="nextBtn">»</button>
-                </div>
+            <div class="song-upload-bar">
+                <input type="text" id="songLinkInput" placeholder="Paste Spotify Track Link...">
+                <button id="addSongBtn" class="primary-btn">Add Song</button>
+            </div>
+            <div id="binder-pages-display" class="songs-grid"></div>
+            <div class="pagination">
+                <button id="prevBtn">«</button>
+                <span id="pageIndicator">Page 1</span>
+                <button id="nextBtn">»</button>
             </div>
         </div>
     </main>
