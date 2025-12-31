@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500;700&family=Indie+Flower&family=Playfair+Display:ital@1&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="christmas-theme"> <!-- Default Theme -->
+<body class="christmas-theme">
 
     <!-- Floating Gift Toggle -->
-    <div id="theme-toggle-gift" class="floating-gift" title="Change the Season">🎁</div>
+    <div id="theme-toggle-gift" class="floating-gift">🎁</div>
 
     <!-- 1. Password Lock Screen -->
     <div id="login-screen" class="login-overlay">
@@ -23,29 +23,32 @@
         </div>
     </div>
 
-    <!-- 2. The Grand Reveal Overlay (Christmas) -->
+    <!-- 2. Christmas Memory Overlay -->
     <div id="reveal-overlay" class="reveal-overlay hidden">
         <div class="reveal-content">
             <h2 class="reveal-text">Merry Christmas my love...</h2>
             <p class="reveal-subtext">May your days to come be as pretty as the Christmas snow.</p>
             <div class="sparkles">✨🎁✨</div>
-            <button class="close-reveal">Close</button>
+            <button class="close-reveal-btn">Close</button>
         </div>
     </div>
 
-    <!-- 3. New Year Experience Overlay (The Star/Envelope Sequence) -->
+    <!-- 3. New Year Experience Overlay -->
     <div id="ny-experience-overlay" class="ny-overlay hidden">
+        <!-- Stage 1: Stars -->
         <div id="star-stage" class="stage">
             <h2 class="stage-title">Thank you for...</h2>
             <div id="star-container"></div>
             <p class="star-count-hint">Click the stars to remember (0/6)</p>
         </div>
 
+        <!-- Stage 2: Countdown -->
         <div id="countdown-stage" class="stage hidden">
             <div id="fast-year-counter">2025</div>
             <div id="fast-date-counter">January 1st</div>
         </div>
 
+        <!-- Stage 3: Envelope -->
         <div id="envelope-stage" class="stage hidden">
             <div class="envelope-wrapper">
                 <div class="envelope" id="main-envelope">
@@ -67,7 +70,6 @@
             <div class="countdown-container">
                 <div id="countdown-timer" class="timer-display">Calculating...</div>
                 
-                <!-- Updated Memory Section -->
                 <div class="memory-station">
                     <h3>✨ Our Memories</h3>
                     <div class="memory-btns">
@@ -78,44 +80,38 @@
             </div>
         </header>
 
-        <!-- Note Station -->
         <section class="glass-card">
             <div class="card-header">
                 <h2>✉️ The Note Station</h2>
-                <span class="card-tag">Latest Message</span>
             </div>
-            <div id="latestNote" class="pinned-note">Loading note...</div>
+            <div id="latestNote" class="pinned-note">Loading...</div>
             <div class="note-input-area">
-                <textarea id="noteInput" placeholder="Leave a new note for me to find..." rows="3"></textarea>
-                <button id="saveNoteBtn" class="secondary-btn">Pin New Note</button>
+                <textarea id="noteInput" placeholder="Leave a note..." rows="3"></textarea>
+                <button id="saveNoteBtn" class="secondary-btn">Pin Note</button>
             </div>
         </section>
 
-        <!-- Bucket List -->
         <section class="glass-card">
             <div class="card-header">
                 <h2>✈️ Our Bucket List</h2>
             </div>
             <div class="input-row">
-                <input type="text" id="bucketInput" placeholder="What's our next adventure?">
+                <input type="text" id="bucketInput" placeholder="Next adventure?">
                 <button id="addBucketBtn" class="icon-btn">+</button>
             </div>
             <ul id="bucketList" class="custom-list"></ul>
         </section>
 
-        <!-- Music Binder -->
         <div class="binder-wrapper">
             <div class="binder-content">
-                <div class="card-header center">
-                    <h2 class="handwritten-title">🎵 Music & Memories</h2>
-                </div>
+                <h2 class="handwritten-title">🎵 Music Binder</h2>
                 <div class="song-upload-bar">
-                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Link...">
-                    <button id="addSongBtn" class="primary-btn">Add to Binder</button>
+                    <input type="text" id="songLinkInput" placeholder="Spotify Link...">
+                    <button id="addSongBtn" class="primary-btn">Add Song</button>
                 </div>
                 <div id="binder-pages-display" class="songs-grid"></div>
                 <div class="pagination">
-                    <button id="prevBtn" disabled>«</button>
+                    <button id="prevBtn">«</button>
                     <span id="pageIndicator">Page 1</span>
                     <button id="nextBtn">»</button>
                 </div>
