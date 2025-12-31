@@ -1,185 +1,285 @@
-// ---------- FIREBASE SETUP ----------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, push, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
-  authDomain: "a-christmas-gift.firebaseapp.com",
-  databaseURL: "https://a-christmas-gift-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "a-christmas-gift",
-  storageBucket: "a-christmas-gift.firebasestorage.app",
-  messagingSenderId: "560215769128",
-  appId: "1:560215769128:web:331327bdc0417b4056351d"
+    apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
+    authDomain: "a-christmas-gift.firebaseapp.com",
+    databaseURL: "https://a-christmas-gift-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "a-christmas-gift",
+    storageBucket: "a-christmas-gift.firebasestorage.app",
+    messagingSenderId: "560215769128",
+    appId: "1:560215769128:web:331327bdc0417b4056351d"
 };
 
-// Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getDatabase(firebaseApp);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-// ---------- STATE & DOM ELEMENTS ----------
-let unlocked = localStorage.getItem('wonderlandUnlocked') === 'true';
+// --- 1. THEME TOGGLE (GIFT CLICK) ---
+const body = document.body;
+const giftToggle = document.getElementById('theme-toggle-gift');
+const title = document.getElementById('dynamic-title');
 
-const lockScreen = document.getElementById('lockScreen');
-const app = document.getElementById('app');
-const gift = document.getElementById('floatingGift');
-const countdownEl = document.getElementById('countdown');
+giftToggle.addEventListener('click', () => {
+    if (body.classList.contains('christmas-theme')) {
+        body.classList.replace('christmas-theme', 'ny-theme');
+        title.innerText = "Our Golden New Year";
+        giftToggle.innerText = "🎆";
+    } else {
+        body.classList.replace('ny-theme', 'christmas-theme');
+        title.innerText = "Our Winter Wonderland";
+        giftToggle.innerText = "🎁";
+    }
+});
 
-// ---------- LOGIN ----------
-if (unlocked) {
-  lockScreen.classList.add('hidden');
-  app.classList.remove('hidden');
+// --- 2. LOGIN SYSTEM ---
+const loginScreen = document.getElementById('login-screen');
+const loginBtn = document.getElementById('loginBtn');
+const passwordInput = document.getElementById('passwordInput');
+
+if (localStorage.getItem('wonderlandUnlocked') === 'true') {
+    loginScreen.classList.add('hidden');
 }
 
-document.getElementById('unlockBtn').addEventListener('click', () => {
-  const pw = document.getElementById('passwordInput').value.trim();
-  if (pw.toUpperCase() === 'MOON') {
-    localStorage.setItem('wonderlandUnlocked', 'true');
+loginBtn.addEventListener('click', () => {
+    if (passwordInput.value.toUpperCase() === "MOON") {
+        localStorage.setItem('wonderlandUnlocked', 'true');
+        loginScreen.classList.add('hidden');
+    } else {
+        alert("Incorrect secret word, my love. ❤️");
+        passwordInput.value = "";
+    }
+});
+
+// --- 3. REVEAL CONTROLS (CHRISTMAS) ---
+const christmasOverlay = document.getElementById('reveal-overlay');
+document.getElementById('mem-christmas').addEventListener('click', () => {
+    christmasOverlay.classList.remove('hidden');
+});
+document.querySelector('.close-reveal').addEventListener('click', () => {
+    christmasOverlay.classList.add('hidden');
+});
+
+// --- 4. NEW YEAR EXPERIENCE (STAR & ENVELOPE) ---
+const nyOverlay = document.getElementById('ny-experience-overlay');
+const starContainer = document.getElementById('star-container');
+const starMessages = [
+    "Handling me even when I'm difficult ❤️",
+    "Being my safest place in 2025 🏠",
+    "All the late night laughs 🌙",
+    "Choosing me every single day ✨",
+    "The way you make everything better 🌸",
+    "Simply being you. I love you! 🥂"
+];
+let starsClicked = 0;
+
+document.getElementById('mem-newyear').addEventListener('click', () => {
+    nyOverlay.classList.remove('hidden');
+    startStarSequence();
+});
+
+function startStarSequence() {
+    starsClicked = 0;
+    starContainer.innerHTML = '';
+    document.getElementById('star-stage').classList.remove('hidden');
+    document.getElementById('countdown-stage').classList.add('hidden');
+    document.getElementById('envelope-stage').classList.add('hidden');
+    document.querySelector('.star-count-hint').innerText = `Click the stars to remember (0/${starMessages.length})`;
+
+    for (let i = 0; i < starMessages.length; i++) {
+        const star = document.createElement('div');
+        star.className = 'floating-star';
+        star.innerHTML = '⭐';
+        star.style.left = Math.random() * 80 + 10 + '%';
+        star.style.top = Math.random() * 60 + 20 + '%';
+        star.style.animationDelay = (Math.random() * 2) + 's';
+        
+        star.onclick = () => {
+            if (star.classList.contains('clicked')) return;
+            star.classList.add('clicked');
+            star.innerHTML = `<span class="star-msg">${starMessages[i]}</span>`;
+            starsClicked++;
+            document.querySelector('.star-count-hint').innerText = `Click the stars to remember (${starsClicked}/${starMessages.length})`;
+            
+            if (starsClicked === starMessages.length) {
+                setTimeout(startCountdownSequence, 2000);
+            }
+        };
+        starContainer.appendChild(star);
+    }
+}
+
+function startCountdownSequence() {
+    document.getElementById('star-stage').classList.add('hidden');
+    document.getElementById('countdown-stage').classList.remove('hidden');
     
-    lockScreen.classList.add('fade-out');
-    setTimeout(() => {
-      lockScreen.classList.add('hidden');
-      app.classList.remove('hidden');
-    }, 250);
-  } else {
-    alert('Incorrect secret word ❤️');
-  }
+    let year = 2025;
+    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let mIdx = 0;
+    const yearEl = document.getElementById('fast-year-counter');
+    const dateEl = document.getElementById('fast-date-counter');
+
+    let fastCounter = setInterval(() => {
+        dateEl.innerText = `${months[mIdx % 12]} ${Math.floor(Math.random()*28)+1}`;
+        mIdx++;
+        if (mIdx > 24) {
+            year = 2026;
+            yearEl.innerText = year;
+            yearEl.classList.add('glow-up');
+            clearInterval(fastCounter);
+            setTimeout(startEnvelopeSequence, 1500);
+        }
+    }, 100);
+}
+
+function startEnvelopeSequence() {
+    document.getElementById('countdown-stage').classList.add('hidden');
+    document.getElementById('envelope-stage').classList.remove('hidden');
+    
+    const envelope = document.getElementById('main-envelope');
+    const textTarget = document.getElementById('typewriter-text');
+    const fullText = "Thank you for handling me this year. You are my greatest gift. Can you please do that for this year too? I love you forever. ❤️";
+    
+    envelope.onclick = () => {
+        envelope.classList.add('open');
+        setTimeout(() => {
+            let i = 0;
+            textTarget.innerText = "";
+            let typing = setInterval(() => {
+                textTarget.innerText += fullText[i];
+                i++;
+                if (i >= fullText.length) {
+                    clearInterval(typing);
+                    document.getElementById('final-ny-text').classList.remove('hidden');
+                    setTimeout(() => nyOverlay.classList.add('hidden'), 8000);
+                }
+            }, 50);
+        }, 1000);
+    };
+}
+
+// --- 5. FIREBASE LOGIC (Note, Bucket, Binder - Same as original) ---
+// (Note Station)
+const noteRef = ref(db, 'notes/currentNote');
+onValue(noteRef, (s) => {
+    document.getElementById('latestNote').innerText = s.val() || "No notes yet... Write something for me! 👇";
+});
+document.getElementById('saveNoteBtn').addEventListener('click', () => {
+    const input = document.getElementById('noteInput');
+    if (!input.value.trim()) return;
+    set(noteRef, input.value);
+    input.value = '';
 });
 
-// ---------- NOTES ----------
-const noteInput = document.getElementById('noteInput');
-const saveNoteBtn = document.getElementById('saveNote');
-const notesContainer = document.getElementById('notesContainer');
-
-const notesRef = ref(db, 'notes');
-
-saveNoteBtn.addEventListener('click', () => {
-  const text = noteInput.value.trim();
-  if (!text) return;
-
-  push(notesRef, {
-    text,
-    time: Date.now()
-  });
-
-  noteInput.value = '';
-});
-
-onValue(notesRef, snapshot => {
-  notesContainer.innerHTML = '';
-  snapshot.forEach(child => {
-    const div = document.createElement('div');
-    div.className = 'note';
-    div.textContent = child.val().text;
-    notesContainer.appendChild(div);
-  });
-});
-
-// ---------- BUCKET LIST ----------
-const bucketInput = document.getElementById('bucketInput');
-const addBucketBtn = document.getElementById('addBucketBtn');
-const bucketList = document.getElementById('bucketList');
-
+// (Bucket List)
 const bucketRef = ref(db, 'bucketList');
-
-addBucketBtn.addEventListener('click', () => {
-  const text = bucketInput.value.trim();
-  if (!text) return;
-  push(bucketRef, { text });
-  bucketInput.value = '';
+document.getElementById('addBucketBtn').addEventListener('click', () => {
+    const input = document.getElementById('bucketInput');
+    if (!input.value) return;
+    push(bucketRef, { text: input.value, done: false });
+    input.value = '';
+});
+onValue(bucketRef, (snapshot) => {
+    const list = document.getElementById('bucketList');
+    list.innerHTML = '';
+    const data = snapshot.val();
+    if (data) {
+        Object.entries(data).forEach(([key, item]) => {
+            const li = document.createElement('li');
+            li.className = item.done ? 'done' : '';
+            li.innerHTML = `
+                <div style="display:flex; align-items:center; gap:15px; cursor:pointer;" class="item-text">
+                    <span>${item.done ? '✅' : '🌟'}</span>
+                    <span>${item.text}</span>
+                </div>
+                <button class="del-btn">❄️</button>
+            `;
+            li.querySelector('.item-text').addEventListener('click', () => update(ref(db, `bucketList/${key}`), { done: !item.done }));
+            li.querySelector('.del-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(confirm("Remove this?")) remove(ref(db, `bucketList/${key}`));
+            });
+            list.appendChild(li);
+        });
+    }
 });
 
-onValue(bucketRef, snapshot => {
-  bucketList.innerHTML = '';
-  snapshot.forEach(child => {
-    const li = document.createElement('li');
-    li.textContent = child.val().text;
-    
-    // Smooth delete animation
-    li.addEventListener('click', () => {
-      li.classList.add('fade-out');
-      setTimeout(() => {
-        remove(ref(db, `bucketList/${child.key}`));
-      }, 250);
+// (Music Binder)
+const songsRef = ref(db, 'binderSongs');
+let allSongs = [];
+let currentPage = 1;
+const SONGS_PER_PAGE = 3;
+
+document.getElementById('addSongBtn').addEventListener('click', () => {
+    const input = document.getElementById('songLinkInput');
+    const match = input.value.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+    if (!match) return alert("Paste a valid Spotify link!");
+    push(songsRef, { embedUrl: `https://open.spotify.com/embed/${match[1]}/${match[2]}`, favLine: "", sideNote: "", timestamp: Date.now() });
+    input.value = '';
+});
+
+onValue(songsRef, (snapshot) => {
+    const data = snapshot.val();
+    allSongs = data ? Object.entries(data).map(([id, s]) => ({...s, id})).sort((a,b) => b.timestamp - a.timestamp) : [];
+    renderBinder();
+});
+
+function renderBinder() {
+    const display = document.getElementById('binder-pages-display');
+    display.innerHTML = '';
+    const songs = allSongs.slice((currentPage-1)*SONGS_PER_PAGE, currentPage*SONGS_PER_PAGE);
+    songs.forEach(song => {
+        const div = document.createElement('div');
+        div.className = 'song-entry';
+        div.innerHTML = `
+            <div class="song-memory">
+                <h3>Our Memory</h3>
+                <textarea class="song-meta-input side-note">${song.sideNote}</textarea>
+            </div>
+            <div class="song-visual-stack">
+                <button class="del-song">Remove ×</button>
+                <div class="music-box">
+                    <iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0" allow="encrypted-media"></iframe>
+                </div>
+                <div class="favorite-line-box">
+                    <input type="text" class="fav-line" value="${song.favLine}" placeholder="♥ Favorite line...">
+                </div>
+            </div>
+        `;
+        div.querySelector('.fav-line').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {favLine: e.target.value}));
+        div.querySelector('.side-note').addEventListener('change', (e) => update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value}));
+        div.querySelector('.del-song').addEventListener('click', () => remove(ref(db, `binderSongs/${song.id}`)));
+        display.appendChild(div);
     });
-    
-    bucketList.appendChild(li);
-  });
-});
+    document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = currentPage * SONGS_PER_PAGE >= allSongs.length;
+}
 
-// ---------- MUSIC ----------
-const musicInput = document.getElementById('songInput');
-const addMusicBtn = document.getElementById('addSongBtn');
-const musicList = document.getElementById('songsContainer');
+document.getElementById('prevBtn').addEventListener('click', () => { currentPage--; renderBinder(); });
+document.getElementById('nextBtn').addEventListener('click', () => { currentPage++; renderBinder(); });
 
-const musicRef = ref(db, 'music');
-
-addMusicBtn.addEventListener('click', () => {
-  const link = musicInput.value.trim();
-  if (!link) return;
-  push(musicRef, { link });
-  musicInput.value = '';
-});
-
-onValue(musicRef, snapshot => {
-  musicList.innerHTML = '';
-  snapshot.forEach(child => {
-    const iframe = document.createElement('iframe');
-    iframe.src = child.val().link;
-    iframe.width = "100%";
-    iframe.height = "80";
-    iframe.allow = "encrypted-media";
-    iframe.style.borderRadius = "12px";
-    iframe.style.border = "none";
-    iframe.style.marginBottom = "10px";
-    musicList.appendChild(iframe);
-  });
-});
-
-// ---------- COUNTDOWN ----------
+// --- 6. SNOW & TIMER ---
 function updateCountdown() {
-  const target = new Date("December 25, 2026 00:00:00").getTime();
-  const now = Date.now();
-  const gap = target - now;
-
-  if (gap <= 0) {
-    countdownEl.textContent = 'Merry Christmas 🎄';
-    return;
-  }
-
-  const d = Math.floor(gap / (1000 * 60 * 60 * 24));
-  const h = Math.floor((gap / (1000 * 60 * 60)) % 24);
-  const m = Math.floor((gap / (1000 * 60)) % 60);
-  const s = Math.floor((gap / 1000) % 60);
-
-  countdownEl.textContent = `${d}d : ${h}h : ${m}m : ${s}s`;
+    const target = new Date("December 25, 2025 00:00:00").getTime();
+    const now = new Date().getTime();
+    const gap = target - now;
+    const timerDiv = document.getElementById('countdown-timer');
+    if (gap <= 0) { timerDiv.innerText = "Enjoy the Season! ❤️"; return; }
+    const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+    const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((gap % (1000 * 60)) / 1000);
+    timerDiv.innerText = `${d}d : ${h}h : ${m}m : ${s}s`;
 }
 setInterval(updateCountdown, 1000);
-updateCountdown();
 
-// ---------- FLOATING GIFT ----------
-let gx = 50, gy = 50;
-let dx = 0.15, dy = 0.12;
-
-setInterval(() => {
-  gx += dx;
-  gy += dy;
-  if (gx < 0 || gx > 95) dx *= -1;
-  if (gy < 0 || gy > 90) dy *= -1;
-  gift.style.left = gx + '%';
-  gift.style.top = gy + '%';
-}, 50);
-
-// ---------- SNOW ----------
-const snowContainer = document.getElementById('snowContainer');
-setInterval(() => {
-  const flake = document.createElement('div');
-  flake.className = 'snowflake';
-  flake.textContent = ['❄','✨','🤍'][Math.floor(Math.random() * 3)];
-  flake.style.left = Math.random() * 100 + 'vw';
-  flake.style.fontSize = 10 + Math.random() * 15 + 'px';
-  flake.style.opacity = Math.random();
-  flake.style.animationDuration = 5 + Math.random() * 5 + 's';
-  document.body.appendChild(flake);
-
-  setTimeout(() => flake.remove(), 10000);
-}, 300);
+function createSnow() {
+    const container = document.getElementById('snow-container');
+    const flake = document.createElement('div');
+    const isNY = body.classList.contains('ny-theme');
+    flake.innerHTML = isNY ? ['✨', '🎈', '🎊', '⭐'][Math.floor(Math.random()*4)] : '❄️';
+    flake.style.cssText = `position: fixed; top: -10%; left: ${Math.random() * 100}vw; font-size: ${Math.random() * 20 + 10}px; animation: fall ${Math.random() * 4 + 5}s linear forwards; z-index: 10; pointer-events: none;`;
+    container.appendChild(flake);
+    setTimeout(() => flake.remove(), 7000);
+}
+setInterval(createSnow, 300);
