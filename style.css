@@ -1,60 +1,50 @@
-:root {
-    --bg: #050505;
-    --glass: rgba(255, 255, 255, 0.05);
-    --gold: #ffd700;
-    --text: #ffffff;
-}
+:root { --gold: #ffd700; --accent: #ff4d4d; }
+body { margin: 0; font-family: 'Quicksand', sans-serif; color: white; overflow-x: hidden; }
 
-body {
-    margin: 0; font-family: 'Quicksand', sans-serif;
-    background: var(--bg); color: var(--text); overflow-x: hidden;
-}
+/* THEMES */
+.christmas-theme { background: radial-gradient(circle, #1a472a, #051a0d); }
+.vault-theme { background: #050505; }
 
-.login-overlay, .reveal-overlay, .ny-experience {
-    position: fixed; inset: 0; z-index: 10000;
-    display: flex; justify-content: center; align-items: center;
-    backdrop-filter: blur(25px); text-align: center;
-}
+/* TRANSITION */
+.floating-gift { position: fixed; bottom: 30px; right: 30px; font-size: 3.5rem; cursor: pointer; z-index: 9999; animation: bounce 2s infinite; transition: 1.2s cubic-bezier(0.5, 0, 0.5, 1); }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+.gift-glow { position: absolute; inset: 0; background: white; filter: blur(20px); opacity: 0.4; z-index: -1; }
+.portal { position: fixed; inset: 0; background: white; border-radius: 50%; transform: scale(0); z-index: 9998; transition: transform 1.2s ease; }
 
-.ny-experience { background: black; overflow: hidden; }
+/* OVERLAYS */
+.login-overlay, .ny-experience { position: fixed; inset: 0; z-index: 10000; background: black; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.ny-experience { overflow: hidden; }
 #fireworks { position: absolute; inset: 0; }
+.ny-stage { position: relative; z-index: 10; width: 90%; max-width: 600px; }
 
-/* ORBS STYLING */
-.orb-grid { position: relative; height: 300px; width: 100%; }
-.memory-orb {
-    position: absolute; padding: 15px 25px; border-radius: 50px;
-    background: rgba(255, 255, 255, 0.1); border: 1px solid white;
-    box-shadow: 0 0 20px rgba(255,255,255,0.3); cursor: pointer;
-    font-family: 'Dancing Script'; font-size: 1.4rem;
-    animation: orbFloat 4s ease-in-out infinite alternate;
-    transition: all 0.5s ease;
-}
+/* STAR FIELD */
+.star-field { height: 350px; position: relative; }
+.star-point { position: absolute; cursor: pointer; font-size: 1.5rem; transition: 0.4s; }
+.star-label { display: block; font-size: 0.7rem; opacity: 0; transition: 0.4s; }
+.star-point.active { transform: scale(1.5); color: var(--gold); }
+.star-point.active .star-label { opacity: 1; }
 
-@keyframes orbFloat { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+/* PROMISE JAR */
+.promise-jar { border: 2px dashed var(--gold); padding: 40px; border-radius: 30px; background: rgba(255,215,0,0.05); cursor: pointer; }
+.jar-icon { font-size: 4rem; }
 
-/* MAIN CONTENT */
-.main-content { max-width: 800px; margin: 0 auto; padding: 20px; }
-.main-title { font-family: 'Playfair Display'; font-size: 3rem; text-align: center; }
+/* TYPEWRITER */
+.letter-wrap { font-family: 'Dancing Script'; font-size: 1.8rem; text-align: left; border-left: 2px solid var(--gold); padding-left: 20px; }
 
-.seasonal-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
-.magic-pill { padding: 12px 20px; border-radius: 50px; border: none; color: white; cursor: pointer; font-weight: bold; }
-.xmas-pill { background: linear-gradient(45deg, #d42426, #1a472a); }
-.ny-pill { background: #111; border: 1px solid var(--gold); }
-
-.glass-card { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-.pinned-note { font-family: 'Dancing Script'; font-size: 1.8rem; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; margin: 15px 0; }
-
+/* MAIN UI */
+.main-content { max-width: 800px; margin: 0 auto; padding: 20px; position: relative; z-index: 5; }
+.main-title, .vault-title { font-family: 'Dancing Script'; font-size: 3rem; text-align: center; }
+.vault-theme .vault-title { color: var(--gold); font-family: 'Playfair Display'; }
+.glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+.pinned-note { font-family: 'Dancing Script'; font-size: 1.8rem; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin: 10px 0; }
 .custom-list { list-style: none; padding: 0; }
-.custom-list li { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; }
-.done { text-decoration: line-through; opacity: 0.5; background: rgba(0,255,0,0.1) !important; }
+.custom-list li { background: rgba(255,255,255,0.03); padding: 12px; margin: 8px 0; border-radius: 10px; display: flex; justify-content: space-between; }
+.done { text-decoration: line-through; opacity: 0.4; }
+.song-entry { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+.sn { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.1); width: 100%; border-radius: 10px; }
 
-.song-entry { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.sn, .fl { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 5px; border-radius: 5px; }
-
-.gold-gradient-text { background: linear-gradient(to bottom, #fff7ad, #ffa700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Playfair Display'; font-size: 3rem; }
-.reason-card { border: 2px solid var(--gold); padding: 20px; border-radius: 15px; cursor: pointer; margin-top: 20px; }
-
-@keyframes fall { to { transform: translateY(110vh); } }
+.magic-pill { padding: 12px 25px; border-radius: 50px; background: none; border: 1px solid var(--gold); color: white; cursor: pointer; font-weight: bold; }
+.primary-btn { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; }
+@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
 .hidden { display: none !important; }
-
 @media (max-width: 600px) { .song-entry { grid-template-columns: 1fr; } }
