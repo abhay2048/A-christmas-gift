@@ -1,132 +1,109 @@
-/* --- CRITICAL FIX: Ensure hidden actually hides elements --- */
-.hidden { 
-    display: none !important; 
+:root {
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --text: #ffffff;
+    --accent: #ff4d4d;
+    --handwritten: 'Indie Flower', cursive;
+    --spotify-font: 'Montserrat', sans-serif;
 }
 
-/* --- NEW YEAR OVERLAY SEQUENCE --- */
-.ny-overlay {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle, #1a1a1a, #000);
-    z-index: 10001;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    color: white;
+.christmas-theme { --accent: #ff4d4d; --bg: url('https://images.unsplash.com/photo-1482517967863-00e15c9b44be?q=80&w=2070'); }
+.ny-theme { --accent: #d4af37; --bg: url('https://images.unsplash.com/photo-1467810563316-b5476525c0f9?q=80&w=2069'); }
+
+body {
+    margin: 0; font-family: 'Quicksand', sans-serif; color: var(--text);
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), var(--bg) no-repeat center center fixed;
+    background-size: cover; transition: background 1s ease-in-out; overflow-x: hidden;
 }
 
-/* Ensure stages are centered and don't overlap */
-.stage {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.hidden { display: none !important; }
+
+/* FLOATING GIFT */
+.floating-gift {
+    position: fixed; bottom: 30px; right: 30px; font-size: 3.5rem; cursor: pointer;
+    z-index: 999; animation: bob 3s infinite ease-in-out; filter: drop-shadow(0 0 10px var(--accent));
+}
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+/* OVERLAYS */
+.login-overlay, .reveal-overlay, .ny-overlay {
+    position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); text-align: center;
+}
+.stage { position: absolute; width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; }
+
+/* REVEAL UI */
+.reveal-text { font-family: 'Dancing Script'; font-size: 3rem; color: white; text-shadow: 0 0 20px var(--accent); }
+
+/* MAIN CONTENT */
+.main-content { max-width: 1000px; margin: 0 auto; padding: 20px; position: relative; z-index: 5; }
+.hero-section { text-align: center; padding: 80px 0 40px; }
+.main-title { font-family: 'Dancing Script'; font-size: clamp(3rem, 12vw, 5.5rem); text-shadow: 0 0 30px rgba(255,255,255,0.4); }
+
+/* MEMORY PILLS */
+.memory-station { margin-top: 25px; }
+.memory-pill {
+    background: var(--accent); color: white; border: none; padding: 10px 25px;
+    border-radius: 50px; cursor: pointer; font-weight: 800; margin: 5px; transition: 0.3s;
 }
 
-/* Styling for the Star Stage */
-#star-container {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    margin-top: 20px;
+/* GLASS CARD & PINNED NOTE */
+.glass-card {
+    background: var(--glass); backdrop-filter: blur(12px); border-radius: 25px;
+    padding: 30px; margin-bottom: 40px; border: 1px solid var(--glass-border);
 }
+.pinned-note {
+    background: rgba(255, 255, 255, 0.08); padding: 45px 30px 30px; border-radius: 20px;
+    font-family: var(--handwritten); font-size: 1.8rem; margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2); position: relative; transform: rotate(-0.5deg);
+}
+.pinned-note::before {
+    content: '❤️'; position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    font-size: 2rem; animation: heartPulse 2s infinite;
+}
+@keyframes heartPulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.15); } }
 
-.stage-title {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(2rem, 8vw, 3.5rem);
-    color: var(--accent);
-    margin: 0;
+/* BUCKET LIST */
+.custom-list { list-style: none; padding: 0; }
+.custom-list li {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; border-left: 5px solid var(--accent);
 }
+.custom-list li.done { opacity: 0.6; border-left-color: #1db954; text-decoration: line-through; }
 
-.star-count-hint {
-    font-family: 'Quicksand', sans-serif;
-    opacity: 0.6;
-    margin-top: 20px;
+/* BINDER RESTORED */
+.binder-wrapper {
+    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border-radius: 30px;
+    border: 1px solid var(--glass-border); display: flex; margin-top: 40px;
 }
+.binder-spine { width: 40px; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: space-around; padding: 20px 0; border-radius: 30px 0 0 30px; }
+.ring { width: 25px; height: 25px; border: 4px solid #ccc; border-radius: 50%; margin: 0 auto; }
+.binder-content { flex: 1; padding: 40px; }
+.song-entry {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; background: rgba(0, 0, 0, 0.3);
+    padding: 25px; border-radius: 20px; margin-bottom: 40px; border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.music-box { aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; background: #000; }
+.favorite-line-box { font-family: var(--spotify-font); font-weight: 900; background: var(--accent); padding: 15px; border-radius: 12px; margin-top: 15px; }
 
-/* Styling for the Countdown Stage */
-#fast-year-counter {
-    font-size: clamp(5rem, 15vw, 10rem);
-    font-weight: 900;
-    font-family: 'Montserrat', sans-serif;
-    margin: 0;
-}
+/* STAR SEQUENCE */
+#star-container { width: 100%; height: 400px; position: relative; }
+.floating-star { position: absolute; font-size: 2rem; cursor: pointer; transition: 0.5s; }
+.star-msg { font-family: var(--handwritten); background: var(--accent); padding: 5px 15px; border-radius: 10px; font-size: 1.3rem; }
 
-#fast-date-counter {
-    font-size: 2rem;
-    color: var(--accent);
-    font-family: 'Montserrat', sans-serif;
-}
+/* COUNTDOWN & ENVELOPE */
+#fast-year-counter { font-size: 8rem; font-weight: 900; }
+.glow-up { color: #d4af37; text-shadow: 0 0 30px #d4af37; }
+.envelope-wrapper { width: 300px; height: 200px; position: relative; margin-bottom: 40px; }
+.envelope { background: #fdf5e6; height: 100%; width: 100%; position: relative; border-radius: 0 0 5px 5px; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.flap { position: absolute; top: 0; width: 0; height: 0; border-left: 150px solid transparent; border-right: 150px solid transparent; border-top: 100px solid #dcd0b9; z-index: 3; transition: 0.6s; transform-origin: top; }
+.envelope.open .flap { transform: rotateX(180deg); }
+.letter { position: absolute; top: 5px; left: 10px; width: 280px; height: 180px; background: white; padding: 20px; z-index: 2; color: #333; font-family: var(--handwritten); font-size: 1.1rem; transition: 0.6s; text-align: left; }
+.envelope.open .letter { transform: translateY(-130px); height: 250px; }
 
-/* Styling for the Envelope Stage */
-.envelope-wrapper {
-    position: relative;
-    width: 300px;
-    height: 200px;
-    margin-bottom: 50px;
-}
+/* INPUTS */
+input, textarea { background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); color: white; padding: 12px; border-radius: 10px; width: 100%; font-family: var(--spotify-font); }
+.primary-btn, .secondary-btn { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; }
 
-.envelope {
-    background: #fdf5e6;
-    height: 100%;
-    width: 100%;
-    position: relative;
-    border-radius: 0 0 5px 5px;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-}
-
-.envelope .flap {
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-left: 150px solid transparent;
-    border-right: 150px solid transparent;
-    border-top: 100px solid #dcd0b9;
-    z-index: 3;
-    transform-origin: top;
-    transition: transform 0.6s ease;
-}
-
-.envelope.open .flap {
-    transform: rotateX(180deg);
-}
-
-.letter {
-    position: absolute;
-    top: 5px;
-    left: 10px;
-    width: 280px;
-    height: 180px;
-    background: white;
-    padding: 20px;
-    z-index: 2;
-    transition: transform 0.6s ease;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    color: #333;
-    font-family: 'Indie Flower', cursive;
-    font-size: 1.2rem;
-    overflow: hidden;
-    text-align: left;
-}
-
-.envelope.open .letter {
-    transform: translateY(-130px);
-    height: 240px;
-}
-
-#final-ny-text {
-    font-family: 'Dancing Script', cursive;
-    font-size: 3rem;
-    color: #d4af37;
-    margin-top: 20px;
-    text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-}
+@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+@media (max-width: 768px) { .song-entry { grid-template-columns: 1fr; } .mobile-hidden { display: none; } }
