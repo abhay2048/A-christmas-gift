@@ -1,58 +1,104 @@
-/* ADD THIS TO YOUR :root */
 :root {
-    --glass: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --accent: #ff4d4d; /* Christmas Red Default */
-    --ny-gold: #ffd700;
-    --spotify-green: #1db954;
+    --vault-bg: #0a0e14;
+    --glass: rgba(255, 255, 255, 0.05);
+    --gold: #ffd700;
+    --accent: #ff4d4d;
     --text: #ffffff;
-    --handwritten: 'Indie Flower', cursive;
-    --spotify-font: 'Montserrat', sans-serif;
+    --font-main: 'Quicksand', sans-serif;
+    --font-fancy: 'Playfair Display', serif;
 }
 
-/* NEW YEAR THEME OVERRIDES */
-body.ny-mode {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                url('https://images.unsplash.com/photo-1467810563316-b5476525c0f9?q=80&w=2069') no-repeat center center fixed;
+body {
+    margin: 0; font-family: var(--font-main);
+    background: var(--vault-bg); color: var(--text);
+    overflow-x: hidden;
 }
 
-body.ny-mode .main-title {
-    color: var(--ny-gold);
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+/* --- OVERLAYS --- */
+.login-overlay, .reveal-overlay, .ny-experience {
+    position: fixed; inset: 0; z-index: 10000;
+    display: flex; justify-content: center; align-items: center;
+    backdrop-filter: blur(20px); text-align: center;
 }
 
-body.ny-mode .primary-btn, 
-body.ny-mode .icon-btn, 
-body.ny-mode .favorite-line-box {
-    background: var(--ny-gold);
-    color: #000;
+.login-overlay { background: #000; }
+.ny-experience { background: #000; overflow: hidden; }
+#fireworks { position: absolute; inset: 0; z-index: 1; }
+
+/* --- NY CINEMATIC STAGES --- */
+.ny-stage { position: relative; z-index: 10; width: 90%; max-width: 800px; animation: fadeIn 2s ease; }
+
+.cinematic-title { font-family: var(--font-fancy); font-size: 3rem; font-style: italic; }
+
+.floating-gallery {
+    display: flex; justify-content: center; gap: 20px; margin-top: 50px;
 }
 
-/* SEASON BUTTONS */
-.season-toggle-area {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    padding: 10px;
+.float-img {
+    width: 200px; height: 300px; border: 4px solid #fff; border-radius: 10px;
+    overflow: hidden; animation: float 6s ease-in-out infinite alternate;
+    animation-delay: var(--d);
 }
 
-.season-btn {
-    padding: 12px 24px;
-    border-radius: 50px;
-    border: 1px solid var(--glass-border);
-    background: rgba(255,255,255,0.05);
-    color: white;
-    cursor: pointer;
-    font-family: var(--spotify-font);
-    font-weight: bold;
-    transition: all 0.3s ease;
+.float-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.gold-gradient-text {
+    font-size: clamp(2rem, 10vw, 4rem);
+    background: linear-gradient(to bottom, #fff7ad 0%, #ffa700 50%, #ffeb3b 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-family: var(--font-fancy);
 }
 
-.season-btn.active {
-    background: white;
-    color: black;
-    transform: scale(1.05);
+.reason-card {
+    background: rgba(255, 215, 0, 0.1); border: 2px solid var(--gold);
+    padding: 30px; border-radius: 20px; margin: 30px 0; cursor: pointer;
+    transition: 0.3s;
 }
 
-/* Ensure overlay stays high contrast */
-.reveal-overlay { transition: opacity 0.8s ease; }
+.reason-card:active { transform: scale(0.95); }
+
+/* --- MAIN DASHBOARD --- */
+.main-content { max-width: 900px; margin: 0 auto; padding: 20px; position: relative; z-index: 5; }
+
+.main-title { font-family: var(--font-fancy); font-size: 3.5rem; text-align: center; margin-bottom: 10px; }
+
+.seasonal-selector { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
+
+.magic-pill {
+    padding: 12px 25px; border-radius: 50px; border: none; color: #fff;
+    font-weight: 700; cursor: pointer; transition: 0.3s;
+}
+
+.xmas-pill { background: linear-gradient(45deg, #d42426, #1a472a); }
+.ny-pill { background: linear-gradient(45deg, #000, #444); border: 1px solid var(--gold); }
+
+.glass-card {
+    background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+    padding: 25px; border-radius: 25px; margin-bottom: 30px;
+}
+
+.pinned-note {
+    background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;
+    font-family: 'Dancing Script'; font-size: 1.8rem; margin: 20px 0;
+}
+
+.custom-list li {
+    background: rgba(255,255,255,0.03); margin: 10px 0; padding: 15px;
+    border-radius: 12px; display: flex; justify-content: space-between;
+}
+
+.song-entry {
+    background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px;
+    margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+}
+
+@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+@keyframes float { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-30px) rotate(3deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+@media (max-width: 600px) {
+    .song-entry { grid-template-columns: 1fr; }
+    .floating-gallery { flex-direction: column; align-items: center; }
+}
+
+.hidden { display: none !important; }
