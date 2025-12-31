@@ -13,7 +13,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// 1. Theme Logic
+// --- 1. THEME TOGGLE ---
 const gift = document.getElementById('theme-toggle-gift');
 gift.onclick = () => {
     const isXmas = document.body.classList.contains('christmas-theme');
@@ -22,97 +22,92 @@ gift.onclick = () => {
     gift.innerText = isXmas ? "🎆" : "🎁";
 };
 
-// 2. Login
+// --- 2. LOGIN ---
 document.getElementById('loginBtn').onclick = () => {
     if (document.getElementById('passwordInput').value.toUpperCase() === "MOON") {
         document.getElementById('login-screen').classList.add('hidden');
-    }
+    } else alert("Incorrect word, my love. ❤️");
 };
 
-// 3. New Year Cinema Experience
-const starMessages = ["Handling me❤️", "Safe place🏠", "Late laughs🌙", "Choosing me✨", "Making me better🌸", "Simply you🥂"];
+// --- 3. PREMIUM NEW YEAR JOURNEY ---
+const starMessages = ["Handling me❤️", "My safe place🏠", "Late night laughs🌙", "Choosing me✨", "Making me better🌸", "Simply being you🥂"];
 
 document.getElementById('mem-newyear').onclick = () => {
     document.getElementById('ny-experience-overlay').classList.remove('hidden');
-    startStarStage();
-};
-
-function startStarStage() {
     const field = document.getElementById('star-field');
     field.innerHTML = '';
     let found = 0;
     starMessages.forEach(msg => {
         const star = document.createElement('div');
-        star.style.cssText = `position:absolute; left:${Math.random()*90}%; top:${Math.random()*80}%; cursor:pointer; font-size:2rem;`;
+        star.className = 'drifting-star';
+        star.style.cssText = `left:${Math.random()*90}%; top:${Math.random()*80}%;`;
         star.innerText = '⭐';
         star.onclick = () => {
             if (star.style.opacity === '0.5') return;
             star.style.opacity = '0.5';
-            star.innerHTML = `<span style="font-size:1rem; background:gold; color:black; padding:5px; border-radius:5px;">${msg}</span>`;
+            star.innerHTML = `<span class="star-msg">${msg}</span>`;
             found++;
             document.querySelector('.star-count-hint').innerText = `Drifting memories: (${found}/6)`;
             if (found === 6) setTimeout(startTimeMachine, 2000);
         };
         field.appendChild(star);
     });
-}
+};
 
 function startTimeMachine() {
     document.getElementById('star-stage').classList.add('hidden');
     document.getElementById('countdown-stage').classList.remove('hidden');
     const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-    let m = 0;
     const ffMonth = document.getElementById('ff-month');
     const clock = document.getElementById('digital-clock');
-
+    let m = 0;
     let interval = setInterval(() => {
         ffMonth.innerText = months[m];
         ffMonth.className = 'month-zoom';
-        setTimeout(() => ffMonth.className = '', 400);
+        setTimeout(() => ffMonth.className = '', 350);
         m++;
         if (m >= months.length) {
             clearInterval(interval);
             let sec = 55;
             let timer = setInterval(() => {
                 sec++;
-                if (sec < 60) clock.innerText = `11:59:${sec.toString().padStart(2, '0')}`;
+                if (sec < 60) clock.innerText = `11:59:${sec.toString().padStart(2,'0')}`;
                 else {
                     clearInterval(timer);
-                    clock.innerText = "12:00:00";
-                    clock.className = 'midnight-strike';
+                    clock.innerText = "12:00:00"; clock.className = 'midnight-strike';
+                    document.getElementById('ff-year').innerText = "2026";
                     document.getElementById('midnight-message').classList.remove('hidden');
                     setTimeout(showLetter, 3000);
                 }
             }, 1000);
         }
-    }, 500);
+    }, 450);
 }
 
 function showLetter() {
     document.getElementById('countdown-stage').classList.add('hidden');
     document.getElementById('envelope-stage').classList.remove('hidden');
-    const envelope = document.getElementById('main-envelope');
-    const textTarget = document.getElementById('typewriter-text');
-    const msg = "2025 was a dream because of you. Thank you for handling my moods and for loving me perfectly.\n\nI promise to hold you tighter in 2026. You are my forever gift. Happy New Year, my everything. ❤️";
+    const env = document.getElementById('main-envelope');
+    const target = document.getElementById('typewriter-text');
+    const msg = "2025 was a dream because of you. Thank you for handling my moods, for being my peace, and for loving me perfectly. In 2026, I promise to hold you tighter. You are my forever gift. Happy New Year! ❤️";
 
-    envelope.onclick = () => {
-        if (envelope.classList.contains('open')) return;
-        envelope.classList.add('open');
+    env.onclick = () => {
+        if (env.classList.contains('open')) return;
+        env.classList.add('open');
         setTimeout(() => {
             let i = 0;
             let typing = setInterval(() => {
-                textTarget.innerText += msg[i];
-                i++;
+                target.innerText += msg[i]; i++;
                 if (i >= msg.length) {
                     clearInterval(typing);
-                    setTimeout(() => { if(confirm("Back to Site?")) document.getElementById('ny-experience-overlay').classList.add('hidden'); }, 5000);
+                    setTimeout(() => { if(confirm("Close journey?")) document.getElementById('ny-experience-overlay').classList.add('hidden'); }, 5000);
                 }
-            }, 70);
+            }, 60);
         }, 1500);
     };
 }
 
-// 4. Original App Logic
+// --- 4. FIREBASE CRUD ---
 onValue(ref(db, 'notes/currentNote'), (s) => document.getElementById('latestNote').innerText = s.val() || "No notes...");
 document.getElementById('saveNoteBtn').onclick = () => {
     const inp = document.getElementById('noteInput');
@@ -121,14 +116,13 @@ document.getElementById('saveNoteBtn').onclick = () => {
 };
 
 onValue(ref(db, 'bucketList'), (snap) => {
-    const list = document.getElementById('bucketList');
-    list.innerHTML = '';
+    const list = document.getElementById('bucketList'); list.innerHTML = '';
     const data = snap.val();
     if (data) Object.entries(data).forEach(([key, item]) => {
-        const li = document.createElement('li');
-        li.className = item.done ? 'done' : '';
-        li.innerHTML = `<span>${item.text}</span><button>❄️</button>`;
-        li.onclick = () => update(ref(db, `bucketList/${key}`), { done: !item.done });
+        const li = document.createElement('li'); li.className = item.done ? 'done' : '';
+        li.innerHTML = `<div class="item-text"><span>${item.done?'✅':'🌟'}</span><span>${item.text}</span></div><button class="del-btn">❄️</button>`;
+        li.querySelector('.item-text').onclick = () => update(ref(db, `bucketList/${key}`), { done: !item.done });
+        li.querySelector('.del-btn').onclick = () => remove(ref(db, `bucketList/${key}`));
         list.appendChild(li);
     });
 });
@@ -136,27 +130,54 @@ onValue(ref(db, 'bucketList'), (snap) => {
 let allSongs = [], currentPage = 1;
 onValue(ref(db, 'binderSongs'), snap => {
     const data = snap.val();
-    allSongs = data ? Object.entries(data).map(([id, s]) => ({...s, id})) : [];
+    allSongs = data ? Object.entries(data).map(([id, s]) => ({...s, id})).sort((a,b)=>b.timestamp-a.timestamp) : [];
     renderBinder();
 });
 
 function renderBinder() {
-    const display = document.getElementById('binder-pages-display');
-    display.innerHTML = '';
-    allSongs.slice((currentPage-1)*2, currentPage*2).forEach(song => {
-        const div = document.createElement('div');
-        div.className = 'song-entry';
-        div.innerHTML = `<div class="music-box"><iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0"></iframe></div>
-                         <textarea>${song.sideNote || ''}</textarea>`;
+    const display = document.getElementById('binder-pages-display'); display.innerHTML = '';
+    allSongs.slice((currentPage-1)*3, currentPage*3).forEach(song => {
+        const div = document.createElement('div'); div.className = 'song-entry';
+        div.innerHTML = `
+            <div class="song-memory"><h3>Our Memory</h3><textarea class="side-note">${song.sideNote||""}</textarea></div>
+            <div class="song-visual-stack">
+                <button class="del-song">×</button>
+                <div class="music-box"><iframe src="${song.embedUrl}" width="100%" height="100%" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe></div>
+                <div class="favorite-line-box"><input type="text" class="fav-line" value="${song.favLine||""}" placeholder="♥ Add favorite line..."></div>
+            </div>`;
+        div.querySelector('.fav-line').onchange = (e) => update(ref(db, `binderSongs/${song.id}`), {favLine: e.target.value});
+        div.querySelector('.side-note').onchange = (e) => update(ref(db, `binderSongs/${song.id}`), {sideNote: e.target.value});
+        div.querySelector('.del-song').onclick = () => remove(ref(db, `binderSongs/${song.id}`));
         display.appendChild(div);
     });
+    document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
 }
 
+document.getElementById('addSongBtn').onclick = () => {
+    const val = document.getElementById('songLinkInput').value;
+    const match = val.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+    if (match) push(ref(db, 'binderSongs'), { embedUrl: `https://open.spotify.com/embed/${match[1]}/${match[2]}`, timestamp: Date.now() });
+    document.getElementById('songLinkInput').value = '';
+};
+
+document.getElementById('prevBtn').onclick = () => { if(currentPage > 1) { currentPage--; renderBinder(); } };
+document.getElementById('nextBtn').onclick = () => { if(currentPage * 3 < allSongs.length) { currentPage++; renderBinder(); } };
+
+document.getElementById('mem-christmas').onclick = () => document.getElementById('reveal-overlay').classList.remove('hidden');
+document.querySelector('.close-reveal-btn').onclick = () => document.getElementById('reveal-overlay').classList.add('hidden');
+
+// Snow
 setInterval(() => {
-    const container = document.getElementById('snow-container');
     const flake = document.createElement('div');
-    flake.innerHTML = document.body.classList.contains('ny-theme') ? '✨' : '❄️';
-    flake.style.cssText = `position:fixed; top:-10%; left:${Math.random()*100}vw; animation: fall ${Math.random()*4+5}s linear forwards; font-size:20px; z-index:1;`;
-    container.appendChild(flake);
+    flake.innerHTML = body.classList.contains('ny-theme') ? '✨' : '❄️';
+    flake.style.cssText = `position:fixed; top:-10%; left:${Math.random()*100}vw; animation: fall ${Math.random()*4+5}s linear forwards; font-size:20px; z-index:1; pointer-events:none;`;
+    document.getElementById('snow-container').appendChild(flake);
     setTimeout(() => flake.remove(), 7000);
 }, 300);
+
+// Timer
+setInterval(() => {
+    const gap = new Date("Dec 25, 2025").getTime() - new Date().getTime();
+    const d = Math.max(0, Math.floor(gap / 86400000)), h = Math.max(0, Math.floor((gap % 86400000) / 3600000)), m = Math.max(0, Math.floor((gap % 3600000) / 60000)), s = Math.max(0, Math.floor((gap % 60000) / 1000));
+    document.getElementById('countdown-timer').innerText = gap > 0 ? `${d}d : ${h}h : ${m}m : ${s}s` : "Merry Christmas! ❤️";
+}, 1000);
