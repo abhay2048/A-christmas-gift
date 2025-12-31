@@ -1,154 +1,185 @@
+// ---------- FIREBASE SETUP ----------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
-    authDomain: "a-christmas-gift.firebaseapp.com",
-    databaseURL: "https://a-christmas-gift-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "a-christmas-gift",
-    storageBucket: "a-christmas-gift.firebasestorage.app",
-    messagingSenderId: "560215769128",
-    appId: "1:560215769128:web:331327bdc0417b4056351d"
+  apiKey: "AIzaSyDau2bGEVfZZIZtdEInGjTlQA7jSs0ndGU",
+  authDomain: "a-christmas-gift.firebaseapp.com",
+  databaseURL: "https://a-christmas-gift-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "a-christmas-gift",
+  storageBucket: "a-christmas-gift.firebasestorage.app",
+  messagingSenderId: "560215769128",
+  appId: "1:560215769128:web:331327bdc0417b4056351d"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+// Initialize Firebase
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getDatabase(firebaseApp);
 
-// --- GIFT TRANSITION ---
-const gift = document.getElementById('magic-gift');
-gift.onclick = () => {
-    gift.style.transform = "scale(150) rotate(45deg)";
-    gift.style.opacity = "0";
-    const portal = document.getElementById('portal-overlay');
-    portal.classList.remove('hidden');
-    portal.style.transform = "scale(1)";
+// ---------- STATE & DOM ELEMENTS ----------
+let unlocked = localStorage.getItem('wonderlandUnlocked') === 'true';
+
+const lockScreen = document.getElementById('lockScreen');
+const app = document.getElementById('app');
+const gift = document.getElementById('floatingGift');
+const countdownEl = document.getElementById('countdown');
+
+// ---------- LOGIN ----------
+if (unlocked) {
+  lockScreen.classList.add('hidden');
+  app.classList.remove('hidden');
+}
+
+document.getElementById('unlockBtn').addEventListener('click', () => {
+  const pw = document.getElementById('passwordInput').value.trim();
+  if (pw.toUpperCase() === 'MOON') {
+    localStorage.setItem('wonderlandUnlocked', 'true');
+    
+    lockScreen.classList.add('fade-out');
     setTimeout(() => {
-        document.body.className = 'vault-theme';
-        document.getElementById('old-world').classList.add('hidden');
-        document.getElementById('new-world').classList.remove('hidden');
-        portal.style.opacity = "0";
-    }, 1200);
-};
+      lockScreen.classList.add('hidden');
+      app.classList.remove('hidden');
+    }, 250);
+  } else {
+    alert('Incorrect secret word ❤️');
+  }
+});
 
-// --- STAR GAME ENGINE ---
-const starReasons = ["Kindness", "Safe Space", "Laughter", "Support", "Strength", "Forever"];
-const loveReasons = [
-    "The way you make the simplest moments feel like magic.",
-    "Your laugh is my favorite song in the whole world.",
-    "How you believe in me even when I don't believe in myself.",
-    "Because you are my home and my greatest adventure.",
-    "The way your hand feels perfectly in mine.",
-    "Your kindness towards every soul you meet."
-];
+// ---------- NOTES ----------
+const noteInput = document.getElementById('noteInput');
+const saveNoteBtn = document.getElementById('saveNote');
+const notesContainer = document.getElementById('notesContainer');
 
-class BouncingStar {
-    constructor(text) {
-        this.el = document.createElement('div');
-        this.el.className = 'game-star';
-        this.el.innerHTML = `✨<div class="star-label">${text}</div>`;
-        this.x = Math.random() * 80 + 10;
-        this.y = Math.random() * 80 + 10;
-        this.vx = (Math.random() - 0.5) * 0.8;
-        this.vy = (Math.random() - 0.5) * 0.8;
-        this.caught = false;
-    }
-    move() {
-        if(this.caught) return;
-        this.x += this.vx; this.y += this.vy;
-        if(this.x < 5 || this.x > 90) this.vx *= -1;
-        if(this.y < 5 || this.y > 90) this.vy *= -1;
-        this.el.style.left = this.x + '%';
-        this.el.style.top = this.y + '%';
-    }
-}
+const notesRef = ref(db, 'notes');
 
-let activeStars = [];
-let count = 0;
+saveNoteBtn.addEventListener('click', () => {
+  const text = noteInput.value.trim();
+  if (!text) return;
 
-function startStarGame() {
-    const area = document.getElementById('game-area');
-    area.innerHTML = ''; count = 0;
-    document.getElementById('starCount').innerText = 0;
-    activeStars = starReasons.map(s => {
-        const star = new BouncingStar(s);
-        star.el.onclick = () => {
-            if(!star.caught) {
-                star.caught = true; star.el.classList.add('caught');
-                count++; document.getElementById('starCount').innerText = count;
-                if(count === starReasons.length) setTimeout(() => switchStage('ny-stage-menu'), 1500);
-            }
-        };
-        area.appendChild(star.el); return star;
+  push(notesRef, {
+    text,
+    time: Date.now()
+  });
+
+  noteInput.value = '';
+});
+
+onValue(notesRef, snapshot => {
+  notesContainer.innerHTML = '';
+  snapshot.forEach(child => {
+    const div = document.createElement('div');
+    div.className = 'note';
+    div.textContent = child.val().text;
+    notesContainer.appendChild(div);
+  });
+});
+
+// ---------- BUCKET LIST ----------
+const bucketInput = document.getElementById('bucketInput');
+const addBucketBtn = document.getElementById('addBucketBtn');
+const bucketList = document.getElementById('bucketList');
+
+const bucketRef = ref(db, 'bucketList');
+
+addBucketBtn.addEventListener('click', () => {
+  const text = bucketInput.value.trim();
+  if (!text) return;
+  push(bucketRef, { text });
+  bucketInput.value = '';
+});
+
+onValue(bucketRef, snapshot => {
+  bucketList.innerHTML = '';
+  snapshot.forEach(child => {
+    const li = document.createElement('li');
+    li.textContent = child.val().text;
+    
+    // Smooth delete animation
+    li.addEventListener('click', () => {
+      li.classList.add('fade-out');
+      setTimeout(() => {
+        remove(ref(db, `bucketList/${child.key}`));
+      }, 250);
     });
-    function loop() {
-        if(document.getElementById('ny-stage-1').classList.contains('hidden')) return;
-        activeStars.forEach(s => s.move());
-        requestAnimationFrame(loop);
-    } loop();
+    
+    bucketList.appendChild(li);
+  });
+});
+
+// ---------- MUSIC ----------
+const musicInput = document.getElementById('songInput');
+const addMusicBtn = document.getElementById('addSongBtn');
+const musicList = document.getElementById('songsContainer');
+
+const musicRef = ref(db, 'music');
+
+addMusicBtn.addEventListener('click', () => {
+  const link = musicInput.value.trim();
+  if (!link) return;
+  push(musicRef, { link });
+  musicInput.value = '';
+});
+
+onValue(musicRef, snapshot => {
+  musicList.innerHTML = '';
+  snapshot.forEach(child => {
+    const iframe = document.createElement('iframe');
+    iframe.src = child.val().link;
+    iframe.width = "100%";
+    iframe.height = "80";
+    iframe.allow = "encrypted-media";
+    iframe.style.borderRadius = "12px";
+    iframe.style.border = "none";
+    iframe.style.marginBottom = "10px";
+    musicList.appendChild(iframe);
+  });
+});
+
+// ---------- COUNTDOWN ----------
+function updateCountdown() {
+  const target = new Date("December 25, 2026 00:00:00").getTime();
+  const now = Date.now();
+  const gap = target - now;
+
+  if (gap <= 0) {
+    countdownEl.textContent = 'Merry Christmas 🎄';
+    return;
+  }
+
+  const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+  const h = Math.floor((gap / (1000 * 60 * 60)) % 24);
+  const m = Math.floor((gap / (1000 * 60)) % 60);
+  const s = Math.floor((gap / 1000) % 60);
+
+  countdownEl.textContent = `${d}d : ${h}h : ${m}m : ${s}s`;
 }
+setInterval(updateCountdown, 1000);
+updateCountdown();
 
-// --- NEW YEAR FLOW ---
-function switchStage(id) {
-    document.querySelectorAll('.ny-stage').forEach(s => s.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-    if(id === 'ny-stage-menu') startFireworks();
-}
+// ---------- FLOATING GIFT ----------
+let gx = 50, gy = 50;
+let dx = 0.15, dy = 0.12;
 
-document.getElementById('btnNY').onclick = () => {
-    document.getElementById('ny-overlay').classList.remove('hidden');
-    switchStage('ny-stage-1');
-    startStarGame();
-};
+setInterval(() => {
+  gx += dx;
+  gy += dy;
+  if (gx < 0 || gx > 95) dx *= -1;
+  if (gy < 0 || gy > 90) dy *= -1;
+  gift.style.left = gx + '%';
+  gift.style.top = gy + '%';
+}, 50);
 
-document.getElementById('goReasons').onclick = () => switchStage('ny-stage-reasons');
-document.getElementById('goLetter').onclick = () => {
-    switchStage('ny-stage-letter');
-    const txt = document.getElementById('typewriter-text');
-    txt.innerHTML = ""; let i = 0;
-    const msg = "My Dearest... Looking back at 2025, the best part was simply having you by my side. Every laughter we shared and every challenge we faced only made us stronger. You are my home, my heart, and my future. Happy New Year, my love.";
-    function type() {
-        if(i < msg.length) { txt.innerHTML += msg.charAt(i); i++; setTimeout(type, 50); }
-    } type();
-};
+// ---------- SNOW ----------
+const snowContainer = document.getElementById('snowContainer');
+setInterval(() => {
+  const flake = document.createElement('div');
+  flake.className = 'snowflake';
+  flake.textContent = ['❄','✨','🤍'][Math.floor(Math.random() * 3)];
+  flake.style.left = Math.random() * 100 + 'vw';
+  flake.style.fontSize = 10 + Math.random() * 15 + 'px';
+  flake.style.opacity = Math.random();
+  flake.style.animationDuration = 5 + Math.random() * 5 + 's';
+  document.body.appendChild(flake);
 
-document.querySelectorAll('.back-link').forEach(b => b.onclick = () => switchStage('ny-stage-menu'));
-document.getElementById('exitNY').onclick = () => document.getElementById('ny-overlay').classList.add('hidden');
-
-let rIdx = 0;
-document.getElementById('reasonTrigger').onclick = () => {
-    const d = document.getElementById('reasonDisplay');
-    d.style.opacity = 0;
-    setTimeout(() => { d.innerText = loveReasons[rIdx % loveReasons.length]; d.style.opacity = 1; rIdx++; }, 300);
-};
-
-// --- FIREWORKS ---
-function startFireworks() {
-    const canvas = document.getElementById('fireworks'); const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    let parts = [];
-    function anim() {
-        if(document.getElementById('ny-overlay').classList.contains('hidden')) return;
-        requestAnimationFrame(anim);
-        ctx.fillStyle = 'rgba(0,0,0,0.15)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        if(Math.random()<0.1) {
-            const x=Math.random()*canvas.width, y=Math.random()*canvas.height/2, c=`hsl(${Math.random()*360},70%,60%)`;
-            for(let i=0; i<25; i++) parts.push({x,y,vx:(Math.random()-0.5)*12,vy:(Math.random()-0.5)*12,a:1,c});
-        }
-        parts.forEach((p,i)=>{
-            p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.a-=0.01;
-            ctx.globalAlpha=p.a; ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill();
-            if(p.a<=0) parts.splice(i,1);
-        });
-    } anim();
-}
-
-// --- FIREBASE SYNC (Existing) ---
-onValue(ref(db, 'notes/currentNote'), (s) => { document.getElementById('latestNote').innerText = s.val() || "No notes yet..."; });
-document.getElementById('saveNoteBtn').onclick = () => {
-    const i = document.getElementById('noteInput');
-    if(i.value.trim()) { set(ref(db, 'notes/currentNote'), i.value); i.value = ''; }
-};
-
-document.getElementById('loginBtn').onclick = () => {
-    if(document.getElementById('passwordInput').value.toUpperCase() === "MOON") document.getElementById('login-screen').classList.add('hidden');
-};
+  setTimeout(() => flake.remove(), 10000);
+}, 300);
