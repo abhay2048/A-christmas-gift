@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Memory Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="christmas-theme">
@@ -13,7 +13,7 @@
     <div id="login-screen" class="login-overlay">
         <div class="glass-login">
             <div class="lock-circle">🔒</div>
-            <h2 class="premium-header">The Private Vault</h2>
+            <h2 class="premium-header gold-text">The Private Vault</h2>
             <input type="password" id="passwordInput" placeholder="Secret Word">
             <button id="loginBtn" class="glow-btn">Unlock Experience</button>
         </div>
@@ -23,7 +23,7 @@
     <div id="magic-gift" class="floating-gift">🎁<div class="pulse-ring"></div></div>
     <div id="portal-overlay" class="portal hidden"></div>
 
-    <!-- 3. THE OLD WORLD (Your Original Christmas UI) -->
+    <!-- 3. THE OLD WORLD (Christmas UI) -->
     <div id="old-world">
         <div class="snow-container" id="snow-container"></div>
         <main class="main-content">
@@ -33,7 +33,8 @@
             </header>
             <section class="original-glass-card">
                 <div class="pinned-note">
-                    Tap the floating gift for a surprise... ❤️
+                    I've hidden something special inside this gift for you... <br>
+                    Tap it whenever you're ready. ❤️
                 </div>
             </section>
         </main>
@@ -52,7 +53,7 @@
                 <div id="game-canvas-area" class="star-field"></div>
             </div>
 
-            <!-- Stage 2: Selection Menu (Modern Grid) -->
+            <!-- Stage 2: Selection Menu -->
             <div id="ny-stage-menu" class="ny-stage hidden">
                 <h1 class="premium-header gold-text">Choose Your Journey</h1>
                 <div class="modern-menu">
@@ -64,7 +65,7 @@
                     <div class="luxury-card" id="goLetter">
                         <div class="card-icon">📜</div>
                         <h3>A Soul's Letter</h3>
-                        <p>A message for our new year together.</p>
+                        <p>A message for our new year.</p>
                     </div>
                 </div>
                 <button class="minimal-btn" id="exitNY">Return to Vault</button>
@@ -72,20 +73,20 @@
 
             <!-- Stage 3A: Reasons -->
             <div id="ny-stage-reasons" class="ny-stage hidden">
-                <div class="nebula-card">
+                <div class="vault-section">
                     <h2 class="premium-header gold-text">Why I Love You</h2>
-                    <div class="reason-container" id="reasonTrigger">
+                    <div class="reason-display" id="reasonTrigger">
                         <p id="reasonDisplay">Tap into my heart...</p>
                     </div>
                     <button class="minimal-btn back-to-menu">← Back to Menu</button>
                 </div>
             </div>
 
-            <!-- Stage 3B: Letter (Luxury Stationery) -->
+            <!-- Stage 3B: Letter -->
             <div id="ny-stage-letter" class="ny-stage hidden">
                 <div class="stationery-container">
                     <div class="luxury-paper">
-                        <div id="typewriter-text" class="luxury-letter-text"></div>
+                        <div id="typewriter-text"></div>
                     </div>
                 </div>
                 <button class="minimal-btn back-to-menu">← Back to Menu</button>
@@ -95,16 +96,15 @@
         <main class="main-content">
             <header class="vault-hero">
                 <h1 class="premium-header gold-text">The Memory Vault</h1>
-                <button id="btnNY" class="vault-action-btn">🎆 Start 2026 Journey</button>
+                <button id="btnNY" class="vault-action-btn">🎇 Start 2026 Journey</button>
             </header>
 
-            <!-- Functionality from before, integrated into high-end UI -->
             <div class="vault-section">
                 <div class="section-title">✉️ Note Station</div>
                 <div id="latestNote" class="luxury-note-display">Loading...</div>
                 <div class="input-container">
                     <textarea id="noteInput" placeholder="Write something for me..."></textarea>
-                    <button id="saveNoteBtn" class="small-glow-btn">Pin Note</button>
+                    <button id="saveNoteBtn" class="plus-circle">✓</button>
                 </div>
             </div>
 
@@ -115,6 +115,20 @@
                     <button id="addBucketBtn" class="plus-circle">+</button>
                 </div>
                 <ul id="bucketList" class="luxury-list"></ul>
+            </section>
+
+            <div class="vault-section">
+                <div class="section-title">🎵 Our Soundtrack</div>
+                <div class="input-container">
+                    <input type="text" id="songLinkInput" placeholder="Paste Spotify Track Link...">
+                    <button id="addSongBtn" class="plus-circle">+</button>
+                </div>
+                <div id="binder-pages-display"></div>
+                <div class="pagination">
+                    <button id="prevBtn" class="minimal-btn">« Prev</button>
+                    <span id="pageIndicator">Page 1</span>
+                    <button id="nextBtn" class="minimal-btn">Next »</button>
+                </div>
             </div>
         </main>
     </div>
